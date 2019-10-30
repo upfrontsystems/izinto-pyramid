@@ -3,11 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8efb5a65-aca4-45bc-9233-bc12396b963c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/izinto/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/izinto/models/meta.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/models/meta.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/izinto/scripts/initialize_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/scripts/initialize_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/izinto/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/security.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/izinto/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/development.ini" beforeDir="false" afterPath="$PROJECT_DIR$/development.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/izinto/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,66 +16,18 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/izinto/models/meta.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="15" selection-start-line="15" selection-end-line="15" />
-              <folding>
-                <element signature="e#0#55#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/izinto/models/__init__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="59" column="7" lean-forward="true" selection-start-line="59" selection-start-column="7" selection-end-line="59" selection-end-column="7" />
-              <folding>
-                <element signature="e#0#74#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/izinto/security.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="505">
-              <caret line="177" column="36" selection-start-line="177" selection-start-column="36" selection-end-line="177" selection-end-column="36" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/izinto/scripts/initialize_db.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="39" column="23" selection-start-line="39" selection-start-column="23" selection-end-line="39" selection-end-column="23" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="443">
-              <caret line="43" column="30" lean-forward="true" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="35" />
+            <state relative-caret-position="731">
+              <caret line="43" column="30" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="35" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/izinto/tests.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="646">
+            <state relative-caret-position="420">
               <caret line="38" column="43" selection-start-line="38" selection-start-column="43" selection-end-line="38" selection-end-column="43" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
@@ -87,18 +36,109 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/izinto/views/auth.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="48" selection-start-line="43" selection-end-line="48" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/izinto/services/otp.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1739">
+              <caret line="141" column="4" selection-start-line="141" selection-start-column="4" selection-end-line="141" selection-end-column="4" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="221">
+              <caret line="13" selection-start-line="13" selection-end-line="13" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/izinto/utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-396">
+              <caret line="3" selection-start-line="3" selection-end-line="3" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/izinto/routes.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="629">
+              <caret line="37" column="6" selection-start-line="37" selection-start-column="6" selection-end-line="37" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/izinto/views/user.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="420">
+              <caret line="158" selection-start-line="158" selection-end-line="158" />
+              <folding>
+                <element signature="e#0#36#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/izinto/models/user.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="7" selection-start-line="7" selection-end-line="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/development.ini">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="15" selection-start-line="15" selection-end-line="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>agibase</find>
       <find>Base</find>
       <find>dbsession</find>
       <find>DBSession</find>
+      <find>Agibase</find>
+      <find>ConnectionError</find>
+      <find>html2text</find>
+      <find>agibase</find>
     </findStrings>
     <replaceStrings>
       <replace>izinto</replace>
       <replace>session</replace>
+      <replace>Izinto</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -108,7 +148,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/development.ini" />
         <option value="$PROJECT_DIR$/production.ini" />
         <option value="$PROJECT_DIR$/izinto/models/role.py" />
         <option value="$PROJECT_DIR$/izinto/models/otp.py" />
@@ -117,13 +156,19 @@
         <option value="$PROJECT_DIR$/izinto/models/permisson_role.py" />
         <option value="$PROJECT_DIR$/izinto/models/user_role.py" />
         <option value="$PROJECT_DIR$/izinto/alembic/versions/20191029_788f9a487d85.py" />
-        <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/izinto/models/meta.py" />
         <option value="$PROJECT_DIR$/izinto/security.py" />
         <option value="$PROJECT_DIR$/README.txt" />
         <option value="$PROJECT_DIR$/izinto/scripts/initialize_db.py" />
         <option value="$PROJECT_DIR$/izinto/models/__init__.py" />
         <option value="$PROJECT_DIR$/izinto/tests.py" />
+        <option value="$PROJECT_DIR$/development.ini" />
+        <option value="$PROJECT_DIR$/izinto/routes.py" />
+        <option value="$PROJECT_DIR$/izinto/utils.py" />
+        <option value="$PROJECT_DIR$/setup.py" />
+        <option value="$PROJECT_DIR$/izinto/services/otp.py" />
+        <option value="$PROJECT_DIR$/izinto/views/auth.py" />
+        <option value="$PROJECT_DIR$/izinto/views/user.py" />
       </list>
     </option>
   </component>
@@ -170,19 +215,7 @@
               <item name="izinto-pyramid" type="b2602c69:ProjectViewProjectNode" />
               <item name="izinto-pyramid" type="462c0819:PsiDirectoryNode" />
               <item name="izinto" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="izinto-pyramid" type="b2602c69:ProjectViewProjectNode" />
-              <item name="izinto-pyramid" type="462c0819:PsiDirectoryNode" />
-              <item name="izinto" type="462c0819:PsiDirectoryNode" />
               <item name="scripts" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="izinto-pyramid" type="b2602c69:ProjectViewProjectNode" />
-              <item name="izinto-pyramid" type="462c0819:PsiDirectoryNode" />
-              <item name="izinto" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -199,12 +232,14 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Niel\PycharmProjects\izinto-pyramid\izinto" />
-      <recent name="C:\Users\Niel\PycharmProjects\izinto-pyramid\izinto\models" />
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Niel\PycharmProjects\izinto-pyramid" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Niel\PycharmProjects\izinto-pyramid\izinto" />
+      <recent name="C:\Users\Niel\PycharmProjects\izinto-pyramid\izinto\services" />
+      <recent name="C:\Users\Niel\PycharmProjects\izinto-pyramid\izinto\views" />
+      <recent name="C:\Users\Niel\PycharmProjects\izinto-pyramid\izinto\models" />
       <recent name="C:\Users\Niel\PycharmProjects\izinto-pyramid" />
     </key>
   </component>
@@ -277,18 +312,19 @@
       <workItem from="1572349573545" duration="2992000" />
       <workItem from="1572352749949" duration="1759000" />
       <workItem from="1572365719904" duration="1105000" />
-      <workItem from="1572422189775" duration="1201000" />
+      <workItem from="1572422189775" duration="1840000" />
+      <workItem from="1572446874043" duration="2528000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11031000" />
+    <option name="totallyTimeSpent" value="14198000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17004265" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1716418" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -321,7 +357,7 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/izinto_pyramid$izinto.coverage" NAME="izinto Coverage Results" MODIFIED="1572422958574" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/izinto_pyramid$izinto.coverage" NAME="izinto Coverage Results" MODIFIED="1572423398384" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/izintop/.gitignore" />
@@ -363,9 +399,6 @@
           <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/routes.py">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/izinto/pshell.py">
       <provider selected="true" editor-type-id="text-editor" />
@@ -418,13 +451,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/models/user.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-804">
-          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/izinto/models/user_role.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -445,46 +471,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/development.ini">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/izinto/scripts/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="443">
-          <caret line="43" column="30" lean-forward="true" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/scripts/initialize_db.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="39" column="23" selection-start-line="39" selection-start-column="23" selection-end-line="39" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/izinto/models/meta.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
+        <state relative-caret-position="204">
           <caret line="15" selection-start-line="15" selection-end-line="15" />
           <folding>
             <element signature="e#0#55#0" expanded="true" />
@@ -492,9 +484,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/models/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="952">
+          <caret line="59" column="7" selection-start-line="59" selection-start-column="7" selection-end-line="59" selection-end-column="7" />
+          <folding>
+            <element signature="e#0#74#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/izinto/security.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="505">
+        <state relative-caret-position="2907">
           <caret line="177" column="36" selection-start-line="177" selection-start-column="36" selection-end-line="177" selection-end-column="36" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
@@ -502,22 +504,100 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/models/__init__.py">
+    <entry file="file://$PROJECT_DIR$/izinto/scripts/initialize_db.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="59" column="7" lean-forward="true" selection-start-line="59" selection-start-column="7" selection-end-line="59" selection-end-column="7" />
+        <state relative-caret-position="476">
+          <caret line="39" column="23" selection-start-line="39" selection-start-column="23" selection-end-line="39" selection-end-column="23" />
           <folding>
-            <element signature="e#0#74#0" expanded="true" />
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="731">
+          <caret line="43" column="30" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/izinto/tests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
+        <state relative-caret-position="420">
           <caret line="38" column="43" selection-start-line="38" selection-start-column="43" selection-end-line="38" selection-end-column="43" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/development.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/routes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="629">
+          <caret line="37" column="6" selection-start-line="37" selection-start-column="6" selection-end-line="37" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/models/user.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="13" selection-start-line="13" selection-end-line="13" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-396">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/views/auth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="48" selection-start-line="43" selection-end-line="48" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/services/otp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1739">
+          <caret line="141" column="4" selection-start-line="141" selection-start-column="4" selection-end-line="141" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/views/user.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="158" selection-start-line="158" selection-end-line="158" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
           </folding>
         </state>
       </provider>

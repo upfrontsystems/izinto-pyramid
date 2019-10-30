@@ -1,7 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
-from zope.sqlalchemy import ZopeTransactionEvents
+from zope.sqlalchemy import ZopeTransactionExtension
 
 # Recommended naming convention used by Alembic, as various different database
 # providers will autogenerate vastly different names making migrations more
@@ -14,6 +14,6 @@ NAMING_CONVENTION = {
     "pk": "pk_%(table_name)s"
 }
 
-session = scoped_session(sessionmaker(extension=ZopeTransactionEvents()))
+session = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 metadata = MetaData(naming_convention=NAMING_CONVENTION)
 Base = declarative_base(metadata=metadata)

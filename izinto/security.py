@@ -4,8 +4,7 @@ from pyramid.authentication import CallbackAuthenticationPolicy
 from pyramid.decorator import reify
 from pyramid.security import Allow, Deny, Everyone
 
-from izinto.models import Role
-from izinto.models.meta import session
+from izinto.models import Role, session
 
 # Roles
 Authenticated = 'Authenticated'
@@ -163,20 +162,20 @@ class ProtectedFunction(object):
 
         acl = []
         for r in self.allowed:
-            view_roles = DBSession.query(Role). \
+            view_roles = session.query(Role). \
                 filter_by(name=r). \
                 join(Role.permissions, aliased=True). \
                 filter_by(name=view_permission).all()
 
-            edit_roles = DBSession.query(Role). \
+            edit_roles = session.query(Role). \
                 filter_by(name=r).join(Role.permissions, aliased=True). \
                 filter_by(name=edit_permission).all()
 
-            add_roles = DBSession.query(Role).filter_by(name=r). \
+            add_roles = session.query(Role).filter_by(name=r). \
                 join(Role.permissions, aliased=True). \
                 filter_by(name=add_permission).all()
 
-            delete_roles = DBSession.query(Role).filter_by(name=r). \
+            delete_roles = session.query(Role).filter_by(name=r). \
                 join(Role.permissions, aliased=True). \
                 filter_by(name=delete_permission).all()
 

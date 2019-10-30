@@ -1,11 +1,15 @@
 import argparse
 import sys
-
-from pyramid.paster import bootstrap, setup_logging
+import transaction
+from pyramid.paster import (
+    get_appsettings,
+    setup_logging,
+)
+from sqlalchemy import engine_from_config
 from sqlalchemy.exc import OperationalError
 from izinto.security import Administrator, all_roles, all_permissions
 
-from izinto.models import User, Role, Permission, PermissionRole
+from izinto.models import User, Role, Permission, PermissionRole, initialize_sql
 
 
 def setup_models(session):
@@ -29,8 +33,11 @@ def setup_models(session):
     admin = User(firstname='Admin', surname='Admin', email='admin@izinto.net', confirmed_registration=True)
     session.add(admin)
     admin_role = session.query(Role).filter(Role.name == Administrator).first()
+    print(admin_role)
     admin.roles.append(admin_role)
     admin.set_password('admin')
+
+    transaction.commit()
 
 
 def parse_args(argv):
@@ -45,12 +52,12 @@ def parse_args(argv):
 def main(argv=sys.argv):
     args = parse_args(argv)
     setup_logging(args.config_uri)
-    env = bootstrap(args.config_uri)
+    settings = get_appsettings(args.config_uri, options={})
+    engine = engine_from_config(settings, 'sqlalchemy.')
+    session = initialize_sql(engine)
 
     try:
-        with env['request'].tm:
-            dbsession = env['request'].dbsession
-            setup_models(dbsession)
+        setup_models(session)
     except OperationalError:
         print('''
 Pyramid is having a problem using your SQL database.  The problem

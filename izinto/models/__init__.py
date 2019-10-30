@@ -1,7 +1,27 @@
+from sqlalchemy.orm import configure_mappers, scoped_session, sessionmaker
 from sqlalchemy import engine_from_config
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import configure_mappers
+from sqlalchemy.ext.declarative import declarative_base
 import zope.sqlalchemy
+
+
+session = scoped_session(sessionmaker(extension=zope.sqlalchemy.ZopeTransactionExtension()))
+Base = declarative_base()
+
+
+def includeme(config):
+    """Call this function if this app is included in pyramid.includes."""
+    settings = config.get_settings()
+    engine = engine_from_config(settings, 'sqlalchemy.')
+    initialize_sql(engine)
+
+
+def initialize_sql(engine):
+    """ Start the session with the given engine and build the base """
+    session.configure(bind=engine)
+    Base.metadata.bind = engine
+
+    return session
+
 
 # import or define all models here to ensure they are attached to the
 # Base.metadata prior to any initialization routines
@@ -15,16 +35,6 @@ from izinto.models.permisson_role import PermissionRole
 # run configure_mappers after defining all of the models to ensure
 # all relationships can be setup
 configure_mappers()
-
-
-def get_engine(settings, prefix='sqlalchemy.'):
-    return engine_from_config(settings, prefix)
-
-
-def get_session_factory(engine):
-    factory = sessionmaker()
-    factory.configure(bind=engine)
-    return factory
 
 
 def get_tm_session(session_factory, transaction_manager):
@@ -48,39 +58,7 @@ def get_tm_session(session_factory, transaction_manager):
               dbsession = get_tm_session(session_factory, transaction.manager)
 
     """
-    # dbsession = session_factory()
-    # zope.sqlalchemy.register(
-    #     dbsession, transaction_manager=transaction_manager)
-    # return dbsession
-
-    from izinto.models.meta import session
-    return session
-
-
-
-def includeme(config):
-    """
-    Initialize the model for a Pyramid app.
-
-    Activate this setup using ``config.include('izinto.models')``.
-
-    """
-    settings = config.get_settings()
-    settings['tm.manager_hook'] = 'pyramid_tm.explicit_manager'
-
-    # use pyramid_tm to hook the transaction lifecycle to the request
-    config.include('pyramid_tm')
-
-    # use pyramid_retry to retry a request when transient exceptions occur
-    config.include('pyramid_retry')
-
-    session_factory = get_session_factory(get_engine(settings))
-    config.registry['dbsession_factory'] = session_factory
-
-    # make request.dbsession available for use in Pyramid
-    config.add_request_method(
-        # r.tm is the transaction manager used by pyramid_tm
-        lambda r: get_tm_session(session_factory, r.tm),
-        'dbsession',
-        reify=True
-    )
+    dbsession = session_factory()
+    zope.sqlalchemy.register(
+        dbsession, transaction_manager=transaction_manager)
+    return dbsession

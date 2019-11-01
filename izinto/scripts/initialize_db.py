@@ -33,7 +33,6 @@ def setup_models(session):
     admin = User(firstname='Admin', surname='Admin', email='admin@izinto.net', confirmed_registration=True)
     session.add(admin)
     admin_role = session.query(Role).filter(Role.name == Administrator).first()
-    print(admin_role)
     admin.roles.append(admin_role)
     admin.set_password('admin')
 

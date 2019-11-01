@@ -11,6 +11,7 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
 requires = [
     'alembic==1.0.10',
     'html2text',
+    'Paste',
     'plaster_pastedeploy==0.7',
     'postgres==2.2.2',
     'PyJWT==1.7.1',

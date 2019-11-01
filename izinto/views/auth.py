@@ -60,8 +60,7 @@ def login(request):
     :param request:
     :return a token:
     """
-    if request.method != 'POST':
-        raise exc.HTTPMethodNotAllowed()
+
     password = request.json_body.get('password', None)
     email = request.json_body.get('email', None)
     if email is None:
@@ -77,15 +76,6 @@ def login(request):
         log.info('Login failed, user not found for %s' % email)
         raise exc.HTTPBadRequest(json_body={'message': 'No account exists for "%s"' % email})
     else:
-
-        if not user.get_password():
-            # temporary redirect to set password
-            request.response.status = 307
-            return {'message': 'You have not yet set your password. '
-                               'Please check your email for further instructions.',
-                    'user_id': user.id,
-                    'secrets': services.generate_and_send_otp(request, user, 'set-password')}
-
         if not user.confirmed_registration:
             # temporary redirect to validate account
             request.response.status = 308

@@ -1,6 +1,7 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, User, Role, OTP
+from sqlalchemy import or_
+from izinto.models import session, User, Role, UserRole
 from izinto.security import Administrator
 
 
@@ -152,8 +153,55 @@ def edit_user(request):
     user.firstname = firstname
     user.surname = surname
     user.address = address
+    user.inactive = inactive
 
     user_data = user.as_dict()
     return user_data
+
+
+@view_config(route_name='user_views.list_users', renderer='json', permission='view')
+def list_users(request):
+
+    filters = request.params
+    query = session.query(User)
+    if 'role' in filters:
+        role = session.query(Role).filter(Role.name == filters['role']).first()
+        query = query.join(UserRole).filter(UserRole.role_id == role.id)
+    # query matches user fullname
+    if 'name' in filters:
+        query = query.filter(User.fullname.ilike(u'{}%'.format(filters['name'])))
+    # search for users on name
+    if 'search' in filters:
+        query = query.filter(or_(User.fullname.ilike(u'{}%'.format(filters['search'])),
+                             User.firstname.ilike(u'{}%'.format(filters['search'])),
+                             User.surname.ilike(u'{}%'.format(filters['search']))))
+    if 'inactive' in filters:
+        query = query.filter(User.inactive == filters['inactive'])
+
+    return [user.as_dict() for user in query.order_by(User.surname).all()]
+
+
+@view_config(route_name='user_views.delete_user', renderer='json', permission='delete')
+def delete_user(request):
+    """
+    Delete a user view
+    :param request:
+    :return:
+    """
+    user_id = request.matchdict.get('id')
+    if not user_id:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need user id.'})
+
+    user = get_user(user_id)
+    if not user:
+        raise exc.HTTPNotFound(json_body={'message': 'No user found.'})
+
+    session.query(UserRole). \
+        filter(UserRole.user_id == user_id). \
+        delete(synchronize_session='fetch')
+
+    session.query(User). \
+        filter(User.id == user_id). \
+        delete(synchronize_session='fetch')
 
 

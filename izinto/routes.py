@@ -6,6 +6,7 @@ from izinto.security import (
     User
 )
 
+
 def includeme(config):
     # auth views
     config.add_route('auth_views.register_user',

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, VARCHAR
-from izinto.models.meta import Base
+from izinto.models import Base
 
 
 class UserRole(Base):

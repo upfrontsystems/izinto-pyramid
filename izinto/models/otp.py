@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, Text, DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import VARCHAR
 
-from izinto.models.meta import Base
+from izinto.models import Base
 
 log = logging.getLogger(__name__)
 

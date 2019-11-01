@@ -6,8 +6,7 @@ from sqlalchemy import (Column, VARCHAR, Unicode, Boolean, func)
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from izinto.models.meta import Base
-from izinto.models import Role, UserRole
+from izinto.models import Base, Role, UserRole
 
 
 def new_uuid():

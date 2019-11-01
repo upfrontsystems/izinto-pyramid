@@ -28,11 +28,11 @@ class BaseTest(unittest.TestCase):
         self.session = get_tm_session(session_factory, transaction.manager)
 
     def init_database(self):
-        from izinto.models.meta import Base
+        from izinto.models import Base
         Base.metadata.create_all(self.engine)
 
     def tearDown(self):
-        from izinto.models.meta import Base
+        from izinto.models import Base
 
         testing.tearDown()
         transaction.abort()

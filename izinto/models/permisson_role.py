@@ -1,6 +1,6 @@
 from sqlalchemy import ForeignKey, Column, Integer
 
-from izinto.models.meta import Base
+from izinto.models import Base
 
 
 class PermissionRole(Base):

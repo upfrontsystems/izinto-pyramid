@@ -3,13 +3,14 @@ from alembic import context
 from pyramid.paster import get_appsettings, setup_logging
 from sqlalchemy import engine_from_config
 
-from izinto.models.meta import Base
+from izinto.models import Base
 
 config = context.config
 
 setup_logging(config.config_file_name)
 
 settings = get_appsettings(config.config_file_name)
+print(settings)
 target_metadata = Base.metadata
 
 

@@ -1,11 +1,19 @@
 from sqlalchemy.orm import configure_mappers, scoped_session, sessionmaker
+from sqlalchemy.schema import MetaData
 from sqlalchemy import engine_from_config
 from sqlalchemy.ext.declarative import declarative_base
 import zope.sqlalchemy
 
-
+NAMING_CONVENTION = {
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s"
+}
 session = scoped_session(sessionmaker(extension=zope.sqlalchemy.ZopeTransactionExtension()))
-Base = declarative_base()
+metadata = MetaData(naming_convention=NAMING_CONVENTION)
+Base = declarative_base(metadata=metadata)
 
 
 def includeme(config):
@@ -25,6 +33,8 @@ def initialize_sql(engine):
 
 # import or define all models here to ensure they are attached to the
 # Base.metadata prior to any initialization routines
+from izinto.models.chart import Chart
+from izinto.models.dashboard import Dashboard
 from izinto.models.role import Role
 from izinto.models.user_role import UserRole
 from izinto.models.user import User  # flake8: noqa
@@ -34,7 +44,7 @@ from izinto.models.permisson_role import PermissionRole
 
 # run configure_mappers after defining all of the models to ensure
 # all relationships can be setup
-configure_mappers()
+# configure_mappers()
 
 
 def get_tm_session(session_factory, transaction_manager):

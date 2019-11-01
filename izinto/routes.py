@@ -56,3 +56,45 @@ def includeme(config):
     config.add_route('user_views.edit_user',
                      '/user/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
+
+    # chart views
+    config.add_route('chart_views.list_charts',
+                     '/charts', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('chart_views.create_chart',
+                     '/charts', request_method='POST',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('chart_views.delete_chart',
+                     '/chart/{id}', request_method='DELETE',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('chart_views.get_chart',
+                     '/chart/{id}', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('chart_views.edit_chart',
+                     '/chart/{id}', request_method='PUT',
+                     factory=make_protected_function(*all_roles))
+
+    # dashboard views
+    config.add_route('dashboard_views.list_dashboards',
+                     '/dashboards', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('dashboard_views.create_dashboard',
+                     '/dashboards', request_method='POST',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('dashboard_views.delete_dashboard',
+                     '/dashboard/{id}', request_method='DELETE',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('dashboard_views.get_dashboard',
+                     '/dashboard/{id}', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('dashboard_views.edit_dashboard',
+                     '/dashboard/{id}', request_method='PUT',
+                     factory=make_protected_function(*all_roles))

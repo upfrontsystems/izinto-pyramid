@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, Unicode
 from sqlalchemy.orm import relationship
 
-from izinto.models.meta import Base
+from izinto.models import Base
 from izinto.models.permission import Permission
 from izinto.models.permisson_role import PermissionRole
 

@@ -1,17 +1,14 @@
 """Pyramid bootstrap environment. """
 from alembic import context
-from pyramid.paster import get_appsettings, setup_logging
-from sqlalchemy import engine_from_config
-
-from izinto.models import Base
+from pyramid.paster import setup_logging
+from sqlalchemy import engine_from_config, pool
+from izinto import models
 
 config = context.config
 
 setup_logging(config.config_file_name)
 
-settings = get_appsettings(config.config_file_name)
-print(settings)
-target_metadata = Base.metadata
+target_metadata = models.Base.metadata
 
 
 def run_migrations_offline():
@@ -26,7 +23,10 @@ def run_migrations_offline():
     script output.
 
     """
-    context.configure(url=settings['sqlalchemy.url'])
+    url = config.get_main_option("sqlalchemy.url")
+    context.configure(
+        url=url, target_metadata=target_metadata, literal_binds=True)
+
     with context.begin_transaction():
         context.run_migrations()
 
@@ -38,19 +38,20 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    engine = engine_from_config(settings, prefix='sqlalchemy.')
+    print(config.get_section(config.config_ini_section))
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section),
+        prefix='sqlalchemy.',
+        poolclass=pool.NullPool)
 
-    connection = engine.connect()
-    context.configure(
-        connection=connection,
-        target_metadata=target_metadata
-    )
+    with connectable.connect() as connection:
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata
+        )
 
-    try:
         with context.begin_transaction():
             context.run_migrations()
-    finally:
-        connection.close()
 
 
 if context.is_offline_mode():

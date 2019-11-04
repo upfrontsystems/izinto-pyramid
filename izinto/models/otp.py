@@ -1,5 +1,5 @@
 import logging
-from sqlalchemy import Column, Integer, Text, DateTime
+from sqlalchemy import Column, Integer, VARCHAR, DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import VARCHAR
 
@@ -13,9 +13,9 @@ class OTP(Base):
 
     __tablename__ = 'otp_table'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    identifier = Column(Text)
-    otp = Column(Text)
-    secret = Column(Text)  # uuid.uuid4
+    identifier = Column(VARCHAR)
+    otp = Column(VARCHAR)
+    secret = Column(VARCHAR)  # uuid.uuid4
     timestamp = Column(DateTime)
     user_id = Column(VARCHAR(length=32), ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 

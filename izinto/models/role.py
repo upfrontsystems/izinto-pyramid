@@ -2,8 +2,6 @@ from sqlalchemy import Column, Integer, Unicode
 from sqlalchemy.orm import relationship
 
 from izinto.models import Base
-from izinto.models.permission import Permission
-from izinto.models.permisson_role import PermissionRole
 
 
 class Role(Base):
@@ -13,7 +11,7 @@ class Role(Base):
     id = Column(Integer, primary_key=True)
     name = Column(Unicode(length=100))
 
-    permissions = relationship(Permission, secondary=PermissionRole.__table__)
+    permissions = relationship('Permission', secondary='permission_role')
 
     def __repr__(self):
         return '<role(id="%s", name="%s")>' % (self.id, self.name)

@@ -19,13 +19,10 @@ class BaseTest(unittest.TestCase):
         self.config.include('.models')
         settings = self.config.get_settings()
 
-        from izinto.models import get_tm_session
+        from izinto.models import initialize_sql
 
         self.engine = engine_from_config(settings, 'sqlalchemy.')
-        session_factory = sessionmaker()
-        session_factory.configure(bind=self.engine)
-
-        self.session = get_tm_session(session_factory, transaction.manager)
+        self.session = initialize_sql(self.engine)
 
     def init_database(self):
         from izinto.models import Base

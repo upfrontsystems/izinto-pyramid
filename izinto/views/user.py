@@ -1,6 +1,7 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from sqlalchemy import or_
+from izinto import models
 from izinto.models import session, User, Role, UserRole
 from izinto.security import Administrator
 

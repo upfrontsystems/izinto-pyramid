@@ -16,7 +16,7 @@ class Chart(Base):
     selector = Column(Unicode(length=100))
     title = Column(Unicode(length=100), nullable=False)
     unit = Column(VARCHAR)
-    color = relationship(VARCHAR)
+    color = Column(VARCHAR)
     type = Column(VARCHAR)
     group_by = Column(VARCHAR)
     query = Column(VARCHAR)

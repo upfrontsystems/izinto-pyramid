@@ -2,11 +2,11 @@ import codecs
 import hashlib
 import os
 import uuid
-from sqlalchemy import (Column, VARCHAR, Unicode, Boolean, func)
+from sqlalchemy import (Column, Unicode, Boolean, func, VARCHAR)
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from izinto.models import Base, Role, UserRole
+from izinto.models import Base
 
 
 def new_uuid():
@@ -21,12 +21,11 @@ class User(Base):
 
     __tablename__ = 'user'
 
-    id = Column(VARCHAR(length=32), primary_key=True, index=True, default=new_uuid)
+    id = Column(VARCHAR, primary_key=True, index=True, default=new_uuid)
     firstname = Column(Unicode(length=100), nullable=False)
     surname = Column(Unicode(length=100), nullable=False)
     telephone = Column(Unicode(100), index=True, nullable=True)
     address = Column(VARCHAR, nullable=True)
-    roles = relationship(Role, secondary=UserRole.__table__)
     password = Column(Unicode(length=100), nullable=True)
     salt = Column(Unicode(length=100), nullable=True)
     email = Column(Unicode(255), index=True, unique=True, nullable=True)
@@ -34,6 +33,7 @@ class User(Base):
     inactive = Column(Boolean, default=False)
 
     otp = relationship('OTP', uselist=False)
+    roles = relationship('Role', secondary="user_role")
 
     @hybrid_property
     def fullname(self):

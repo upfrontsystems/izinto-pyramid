@@ -1,6 +1,6 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Chart
+from izinto.models import session, Chart, Dashboard
 
 
 @view_config(route_name='chart_views.create_chart', renderer='json', permission='add')
@@ -19,7 +19,10 @@ def create_chart(request):
     if not title:
         raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
 
-    index = session.query(Chart).filter(Chart.dashboard_id == dashboard_id).count()
+    prev = session.query(Chart).filter(Chart.dashboard_id == dashboard_id).order_by(Chart.index.desc()).first()
+    index = 0
+    if prev:
+        index = prev.index + 1
     chart = Chart(title=title,
                   selector=selector,
                   unit=unit,

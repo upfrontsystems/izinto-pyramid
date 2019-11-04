@@ -33,6 +33,7 @@ def upgrade():
                     sa.Column('selector', sa.Unicode(length=100), nullable=True),
                     sa.Column('title', sa.Unicode(length=100), nullable=False),
                     sa.Column('unit', sa.VARCHAR(), nullable=True),
+                    sa.Column('color', sa.VARCHAR(), nullable=True),
                     sa.Column('type', sa.VARCHAR(), nullable=True),
                     sa.Column('group_by', sa.VARCHAR(), nullable=True),
                     sa.Column('query', sa.VARCHAR(), nullable=True),

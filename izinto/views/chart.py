@@ -126,7 +126,7 @@ def list_charts(request):
     if 'dashboard_id' in filters:
         query = query.filter(Chart.dashboard_id == filters['dashboard_id'])
 
-    return [chart.as_dict() for chart in query.order_by(Chart.title).all()]
+    return [chart.as_dict() for chart in query.order_by(Chart.index).all()]
 
 
 @view_config(route_name='chart_views.delete_chart', renderer='json', permission='delete')

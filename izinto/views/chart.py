@@ -15,6 +15,11 @@ def create_chart(request):
     query = data.get('query')
     dashboard_id = data.get('dashboard_id')
 
+    userid = request.authenticated_userid
+    dash = Dashboard(id=dashboard_id, title='Dashboard', description='Dashboard', user_id=userid)
+    session.add(dash)
+    session.flush()
+
     # check vital data
     if not title:
         raise exc.HTTPBadRequest(json_body={'message': 'Need title'})

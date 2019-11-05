@@ -17,8 +17,8 @@ def create_dashboard(request):
         user_id = request.authenticated_userid
 
     dashboard = Dashboard(title=title,
-                  description=description,
-                  user_id=user_id)
+                          description=description,
+                          user_id=user_id)
     session.add(dashboard)
     session.flush()
 
@@ -68,7 +68,6 @@ def edit_dashboard(request):
     dashboard_id = request.matchdict.get('id')
     description = data.get('description')
     title = data.get('title')
-    user_id = data.get('user_id')
 
     # check vital data
     if not dashboard_id:
@@ -80,7 +79,6 @@ def edit_dashboard(request):
     if not dashboard:
         raise exc.HTTPNotFound(json_body={'message': 'Dashboard not found'})
 
-    dashboard.user_id = user_id
     dashboard.description = description
     dashboard.title = title
 
@@ -97,6 +95,9 @@ def list_dashboards(request):
     """
     filters = request.params
     query = session.query(Dashboard)
+
+    if 'user_id' in filters:
+        query = query.filter(Dashboard.user_id == request.authenticated_userid)
 
     return [dashboard.as_dict() for dashboard in query.order_by(Dashboard.title).all()]
 

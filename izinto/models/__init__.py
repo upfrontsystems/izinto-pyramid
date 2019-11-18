@@ -33,3 +33,4 @@ from izinto.models.user import User  # flake8: noqa
 from izinto.models.otp import OTP
 from izinto.models.permission import Permission
 from izinto.models.permisson_role import PermissionRole
+from izinto.models.variable import Variable

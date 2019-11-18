@@ -17,13 +17,15 @@ class Dashboard(Base):
     user_id = Column(VARCHAR(length=32), ForeignKey('user.id', ondelete='CASCADE'))
 
     user = relationship('User')
+    variables = relationship('Variable')
 
     def as_dict(self):
 
         return {'id': self.id,
                 'title': self.title,
                 'description': self.description,
-                'user_id': self.user_id}
+                'user_id': self.user_id,
+                'variables': [var.as_dict() for var in self.variables]}
 
     def __repr__(self):
         return 'Dashboard<title: %s>' % self.title

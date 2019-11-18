@@ -98,3 +98,24 @@ def includeme(config):
     config.add_route('dashboard_views.edit_dashboard',
                      '/dashboard/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
+
+    # variable views
+    config.add_route('variable_views.list_variables',
+                     '/variables', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('variable_views.create_variable',
+                     '/variables', request_method='POST',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('variable_views.delete_variable',
+                     '/variable/{id}', request_method='DELETE',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('variable_views.get_variable',
+                     '/variable/{id}', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('variable_views.edit_variable',
+                     '/variable/{id}', request_method='PUT',
+                     factory=make_protected_function(*all_roles))

@@ -1,9 +1,9 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from sqlalchemy import or_
-from izinto import models
 from izinto.models import session, User, Role, UserRole
 from izinto.security import Administrator
+from izinto.services.user import get_user
 
 
 @view_config(route_name='user_views.create_user', renderer='json', permission='add')
@@ -68,38 +68,6 @@ def get_user_view(request):
         raise exc.HTTPNotFound(json_body={'message': 'User not found'})
     user_data = user.as_dict()
     return user_data
-
-
-def get_user(user_id=None, telephone=None, email=None, role=None, inactive=None):
-    """
-    Get a user
-    :param user_id:
-    :param telephone:
-    :param email:
-    :param role:
-    :param inactive:
-    :return:
-    """
-
-    query = session.query(User)
-
-    if inactive is not None:
-        query = query.filter(User.inactive == inactive)
-
-    if user_id:
-        query = query.filter(User.id == user_id)
-
-    if telephone:
-        query = query.filter(User.telephone == telephone)
-
-    # case insensitive match by email
-    if email:
-        query = query.filter(User.email.ilike(email))
-
-    if role:
-        query = query.join(User.roles).filter(Role.name == role)
-
-    return query.first()
 
 
 @view_config(route_name='user_views.edit_user', renderer='json', permission='edit')

@@ -99,6 +99,27 @@ def includeme(config):
                      '/dashboard/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
+    # collection views
+    config.add_route('collection_views.list_collections',
+                     '/collections', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('collection_views.create_collection',
+                     '/collections', request_method='POST',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('collection_views.delete_collection',
+                     '/collection/{id}', request_method='DELETE',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('collection_views.get_collection',
+                     '/collection/{id}', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('collection_views.edit_collection',
+                     '/collection/{id}', request_method='PUT',
+                     factory=make_protected_function(*all_roles))
+
     # variable views
     config.add_route('variable_views.list_variables',
                      '/variables', request_method='GET',

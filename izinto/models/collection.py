@@ -4,19 +4,19 @@ from sqlalchemy.orm import relationship
 from izinto.models import Base
 
 
-class Dashboard(Base):
+class Collection(Base):
     """
-    Dashboard Model
+    A collection of dashboards
     """
 
-    __tablename__ = 'dashboard'
+    __tablename__ = 'collection'
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(Unicode(length=100))
     description = Column(Unicode(length=500))
 
-    users = relationship('User', secondary="user_dashboard", backref='dashboards')
-    variables = relationship('Variable')
+    users = relationship('User', secondary="user_collection", backref="collections")
+    dashboards = relationship('Dashboard', secondary="dashboard_collection", backref="collections")
 
     def as_dict(self):
 
@@ -24,7 +24,7 @@ class Dashboard(Base):
                 'title': self.title,
                 'description': self.description,
                 'users': [user.as_dict() for user in self.users],
-                'variables': [var.as_dict() for var in self.variables]}
+                'dashboards': [dashboard.as_dict() for dashboard in self.dashboards]}
 
     def __repr__(self):
-        return 'Dashboard<title: %s>' % self.title
+        return 'Collection<title: %s>' % self.title

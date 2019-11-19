@@ -1,6 +1,6 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Dashboard
+from izinto.models import session, Collection, Dashboard, UserDashboard, User
 
 
 @view_config(route_name='dashboard_views.create_dashboard', renderer='json', permission='add')
@@ -8,19 +8,19 @@ def create_dashboard(request):
     data = request.json_body
     title = data.get('title')
     description = data.get('description')
-    user_id = data.get('user_id')
+    users = data.get('users', [])
 
     # check vital data
     if not title:
         raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
-    if not user_id:
-        user_id = request.authenticated_userid
 
     dashboard = Dashboard(title=title,
-                          description=description,
-                          user_id=user_id)
+                          description=description)
     session.add(dashboard)
     session.flush()
+
+    for user in users:
+        session.add(UserDashboard(user_id=user['id'], dashboard_id=dashboard.id))
 
     return dashboard.as_dict()
 
@@ -68,6 +68,7 @@ def edit_dashboard(request):
     dashboard_id = request.matchdict.get('id')
     description = data.get('description')
     title = data.get('title')
+    users = data.get('users', [])
 
     # check vital data
     if not dashboard_id:
@@ -81,6 +82,10 @@ def edit_dashboard(request):
 
     dashboard.description = description
     dashboard.title = title
+
+    dashboard.users[:] = []
+    for user in users:
+        session.add(UserDashboard(user_id=user['id'], dashboard_id=dashboard.id))
 
     dashboard_data = dashboard.as_dict()
     return dashboard_data
@@ -96,8 +101,13 @@ def list_dashboards(request):
     filters = request.params
     query = session.query(Dashboard)
 
+    # filter by users that can view the dashboards
+    # filter by users that have access to the collection of the dashboard
     if 'user_id' in filters:
-        query = query.filter(Dashboard.user_id == request.authenticated_userid)
+        user_query = query.join(Dashboard.users).filter(User.id == request.authenticated_userid)
+        collection_query = query.join(Dashboard.collections). \
+            join(Collection.users).filter(User.id == request.authenticated_userid)
+        query = user_query.union(collection_query)
 
     return [dashboard.as_dict() for dashboard in query.order_by(Dashboard.title).all()]
 

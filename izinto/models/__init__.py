@@ -26,10 +26,14 @@ def initialize_sql(engine):
 # import or define all models here to ensure they are attached to the
 # Base.metadata prior to any initialization routines
 from izinto.models.chart import Chart
+from izinto.models.collection import Collection
 from izinto.models.dashboard import Dashboard
+from izinto.models.dashboard_collection import DashboardCollection
 from izinto.models.role import Role
 from izinto.models.user_role import UserRole
-from izinto.models.user import User  # flake8: noqa
+from izinto.models.user import User
+from izinto.models.user_collection import UserCollection
+from izinto.models.user_dashboard import UserDashboard
 from izinto.models.otp import OTP
 from izinto.models.permission import Permission
 from izinto.models.permisson_role import PermissionRole

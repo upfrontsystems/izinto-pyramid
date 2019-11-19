@@ -5,3 +5,4 @@
 
 ### Issue Fixes
 * [#13](https://github.com/upfrontsystems/izinto-angular/issues/13) add variable model and views
+* [#14](https://github.com/upfrontsystems/izinto-angular/issues/14) add collection model and views

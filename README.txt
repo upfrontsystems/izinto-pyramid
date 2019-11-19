@@ -29,7 +29,7 @@ Getting Started
 
     - Upgrade to latest revision.
 
-        venv/bin/alembic -c development.ini upgrade head
+        venv/bin/alembic upgrade head
 
 - Load default data into the database using a script.
 

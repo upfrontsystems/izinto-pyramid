@@ -14,9 +14,9 @@ def create_variable(request):
     if not name and value:
         raise exc.HTTPBadRequest(json_body={'message': 'Need name and value'})
     # check duplicates
-    existing = get_variable(value=value, dashboard_id=dashboard_id)
+    existing = get_variable(name=name, dashboard_id=dashboard_id)
     if existing:
-        raise exc.HTTPBadRequest(json_body={'message': 'Variable with same value already exists'})
+        raise exc.HTTPBadRequest(json_body={'message': 'Variable with same id %s already exists' % name})
 
     variable = Variable(name=name,
                         value=value,
@@ -44,11 +44,11 @@ def get_variable_view(request):
     return variable_data
 
 
-def get_variable(variable_id=None, value=None, dashboard_id=None):
+def get_variable(variable_id=None, name=None, dashboard_id=None):
     """
     Get a variable
     :param variable_id:
-    :param value:
+    :param name:
     :param dashboard_id:
     :return:
     """
@@ -57,8 +57,8 @@ def get_variable(variable_id=None, value=None, dashboard_id=None):
 
     if variable_id:
         query = query.filter(Variable.id == variable_id)
-    if value and dashboard_id:
-        query = query.filter(Variable.value == value, Variable.dashboard_id == dashboard_id)
+    if name and dashboard_id:
+        query = query.filter_by(name=name, dashboard_id=dashboard_id)
 
     return query.first()
 
@@ -80,13 +80,15 @@ def edit_variable(request):
         raise exc.HTTPBadRequest(json_body={'message': 'Need variable id'})
     if not value:
         raise exc.HTTPBadRequest(json_body={'message': 'Need value'})
+    if not name:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need variable id'})
 
     variable = get_variable(variable_id=variable_id)
     if not variable:
         raise exc.HTTPNotFound(json_body={'message': 'Variable not found'})
-    existing = get_variable(value=value, dashboard_id=variable.dashboard_id)
+    existing = get_variable(name=name, dashboard_id=variable.dashboard_id)
     if existing and existing.id != variable.id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Variable with value %s already exists' % value})
+        raise exc.HTTPBadRequest(json_body={'message': 'Variable with id %s already exists' % id})
 
     variable.name = name
     variable.value = value

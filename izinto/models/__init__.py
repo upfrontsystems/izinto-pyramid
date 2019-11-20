@@ -28,7 +28,6 @@ def initialize_sql(engine):
 from izinto.models.chart import Chart
 from izinto.models.collection import Collection
 from izinto.models.dashboard import Dashboard
-from izinto.models.dashboard_collection import DashboardCollection
 from izinto.models.role import Role
 from izinto.models.user_role import UserRole
 from izinto.models.user import User

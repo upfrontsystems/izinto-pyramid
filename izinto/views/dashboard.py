@@ -8,6 +8,7 @@ def create_dashboard(request):
     data = request.json_body
     title = data.get('title')
     description = data.get('description')
+    collection_id = data.get('collection_id')
     users = data.get('users', [])
 
     # check vital data
@@ -15,7 +16,8 @@ def create_dashboard(request):
         raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
 
     dashboard = Dashboard(title=title,
-                          description=description)
+                          description=description,
+                          collection_id=collection_id)
     session.add(dashboard)
     session.flush()
 
@@ -101,6 +103,8 @@ def list_dashboards(request):
     filters = request.params
     query = session.query(Dashboard)
 
+    if 'collection_id' in filters:
+        query = query.filter(Dashboard.collection_id == filters['collection_id'])
     # filter by users that can view the dashboards
     # filter by users that have access to the collection of the dashboard
     if 'user_id' in filters:

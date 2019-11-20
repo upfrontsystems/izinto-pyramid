@@ -2,18 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8efb5a65-aca4-45bc-9233-bc12396b963c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/izinto/alembic/versions/20191119_6f25480d827e.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/izinto/models/collection.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/izinto/models/dashboard_collection.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/izinto/models/user_collection.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/izinto/models/user_dashboard.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/izinto/views/collection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CHANGES.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGES.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/izinto/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/izinto/alembic/versions/20191119_6f25480d827e.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/alembic/versions/20191119_6f25480d827e.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/izinto/models/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/models/dashboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/izinto/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/izinto/views/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/views/dashboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/izinto/models/dashboard_collection.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,29 +18,26 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/izinto/models/collection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-              <folding>
-                <element signature="e#0#70#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/izinto/alembic/versions/20191119_6f25480d827e.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="344">
-              <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
+            <state relative-caret-position="221">
+              <caret line="16" selection-start-line="16" selection-end-line="16" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/izinto/alembic/versions/20191119_6f25480d827e.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="497">
+              <caret line="59" column="26" selection-start-line="59" selection-start-column="26" selection-end-line="59" selection-end-column="26" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/CHANGES.txt">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="119">
-              <caret line="7" column="67" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
+              <caret line="7" column="56" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="56" />
             </state>
           </provider>
         </entry>
@@ -56,8 +45,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/izinto/models/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="531">
-              <caret line="40" lean-forward="true" selection-start-line="40" selection-end-line="40" />
+            <state relative-caret-position="629">
+              <caret line="40" selection-start-line="40" selection-end-line="40" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
@@ -68,8 +57,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/izinto/views/dashboard.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1225">
-              <caret line="110" lean-forward="true" selection-start-line="110" selection-end-line="110" />
+            <state relative-caret-position="1836">
+              <caret line="110" selection-start-line="110" selection-end-line="110" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
               </folding>
@@ -80,7 +69,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/izinto/views/variable.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
+            <state relative-caret-position="1819">
               <caret line="109" selection-start-line="107" selection-end-line="109" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
@@ -92,11 +81,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/izinto/models/dashboard.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="17" column="80" selection-start-line="17" selection-start-column="80" selection-end-line="17" selection-end-column="80" />
+            <state relative-caret-position="272">
+              <caret line="16" column="82" selection-start-line="16" selection-start-column="82" selection-end-line="16" selection-end-column="82" />
               <folding>
-                <element signature="e#0#70#0" expanded="true" />
+                <element signature="e#0#49#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/izinto/models/variable.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="221">
+              <caret line="16" column="60" lean-forward="true" selection-start-line="16" selection-start-column="60" selection-end-line="16" selection-end-column="80" />
             </state>
           </provider>
         </entry>
@@ -105,7 +103,7 @@
         <entry file="file://$PROJECT_DIR$/izinto/models/user_dashboard.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="51">
-              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+              <caret line="3" selection-start-line="3" selection-end-line="3" />
               <folding>
                 <element signature="e#0#59#0" expanded="true" />
               </folding>
@@ -116,17 +114,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/izinto/models/user_collection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/izinto/models/dashboard_collection.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+            <state relative-caret-position="136">
+              <caret line="9" selection-start-line="9" selection-end-line="10" />
             </state>
           </provider>
         </entry>
@@ -242,18 +231,18 @@
         <option value="$PROJECT_DIR$/izinto/alembic/versions/20191119_5cecb32e74da.py" />
         <option value="$PROJECT_DIR$/izinto/models/__init__.py" />
         <option value="$PROJECT_DIR$/izinto/views/collection.py" />
-        <option value="$PROJECT_DIR$/izinto/models/dashboard.py" />
         <option value="$PROJECT_DIR$/izinto/models/collection.py" />
         <option value="$PROJECT_DIR$/izinto/views/dashboard.py" />
         <option value="$PROJECT_DIR$/izinto/models/user_dashboard.py" />
         <option value="$PROJECT_DIR$/izinto/routes.py" />
-        <option value="$PROJECT_DIR$/izinto/alembic/versions/20191119_6f25480d827e.py" />
         <option value="$PROJECT_DIR$/CHANGES.txt" />
+        <option value="$PROJECT_DIR$/izinto/models/dashboard.py" />
+        <option value="$PROJECT_DIR$/izinto/alembic/versions/20191119_6f25480d827e.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="953" />
+    <option name="x" value="-7" />
     <option name="width" value="974" />
     <option name="height" value="1057" />
   </component>
@@ -421,18 +410,19 @@
       <workItem from="1574071276894" duration="3082000" />
       <workItem from="1574100129153" duration="3543000" />
       <workItem from="1574149501601" duration="609000" />
-      <workItem from="1574157887274" duration="9818000" />
+      <workItem from="1574157887274" duration="10749000" />
+      <workItem from="1574284575083" duration="329000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="77936000" />
+    <option name="totallyTimeSpent" value="79196000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20415778" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20628998" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -710,13 +700,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/models/variable.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/izinto/alembic/versions/20191118_31e1b48ff8dd.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="544">
@@ -761,43 +744,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/views/variable.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="109" selection-start-line="107" selection-end-line="109" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/alembic/versions/20191119_5cecb32e74da.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="45" column="35" selection-start-line="45" selection-start-column="35" selection-end-line="45" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/models/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="531">
-          <caret line="40" lean-forward="true" selection-start-line="40" selection-end-line="40" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/models/dashboard.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="80" selection-start-line="17" selection-start-column="80" selection-end-line="17" selection-end-column="80" />
-          <folding>
-            <element signature="e#0#70#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/alembic/versions/20191119_5cecb32e74da.py" />
     <entry file="file://$PROJECT_DIR$/izinto/views/collection.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -808,30 +755,47 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/routes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="117" lean-forward="true" selection-start-line="117" selection-end-line="117" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/models/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="629">
+          <caret line="40" selection-start-line="40" selection-end-line="40" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/izinto/views/dashboard.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1225">
-          <caret line="110" lean-forward="true" selection-start-line="110" selection-end-line="110" />
+        <state relative-caret-position="1836">
+          <caret line="110" selection-start-line="110" selection-end-line="110" />
           <folding>
             <element signature="e#0#36#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/models/user_dashboard.py">
+    <entry file="file://$PROJECT_DIR$/izinto/views/variable.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+        <state relative-caret-position="1819">
+          <caret line="109" selection-start-line="107" selection-end-line="109" />
           <folding>
-            <element signature="e#0#59#0" expanded="true" />
+            <element signature="e#0#36#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/models/user_collection.py">
+    <entry file="file://$PROJECT_DIR$/CHANGES.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+        <state relative-caret-position="119">
+          <caret line="7" column="56" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="56" />
         </state>
       </provider>
     </entry>
@@ -842,34 +806,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/routes.py">
+    <entry file="file://$PROJECT_DIR$/izinto/models/collection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="117" lean-forward="true" selection-start-line="117" selection-end-line="117" />
+        <state relative-caret-position="221">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/models/collection.py">
+    <entry file="file://$PROJECT_DIR$/izinto/models/user_dashboard.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+          <folding>
+            <element signature="e#0#59#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/models/user_collection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="9" selection-start-line="9" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/models/variable.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="16" column="60" lean-forward="true" selection-start-line="16" selection-start-column="60" selection-end-line="16" selection-end-column="80" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/models/dashboard.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+          <caret line="16" column="82" selection-start-line="16" selection-start-column="82" selection-end-line="16" selection-end-column="82" />
           <folding>
-            <element signature="e#0#70#0" expanded="true" />
+            <element signature="e#0#49#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/izinto/alembic/versions/20191119_6f25480d827e.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CHANGES.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="67" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
+        <state relative-caret-position="497">
+          <caret line="59" column="26" selection-start-line="59" selection-start-column="26" selection-end-line="59" selection-end-column="26" />
         </state>
       </provider>
     </entry>

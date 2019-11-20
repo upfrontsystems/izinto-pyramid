@@ -16,7 +16,7 @@ class Collection(Base):
     description = Column(Unicode(length=500))
 
     users = relationship('User', secondary="user_collection", backref="collections")
-    dashboards = relationship('Dashboard', secondary="dashboard_collection", backref="collections")
+    dashboards = relationship('Dashboard')
 
     def as_dict(self):
 

@@ -55,6 +55,10 @@ def upgrade():
     op.drop_constraint('fk_dashboard_user_id_user', 'dashboard', type_='foreignkey')
     op.drop_column('dashboard', 'user_id')
 
+    op.add_column('dashboard', sa.Column('collection_id', sa.Integer(), nullable=True))
+    op.create_foreign_key('fk_dashboard_collection_id_collection', 'dashboard', 'collection', ['collection_id'],
+                          ['id'], ondelete='CASCADE')
+
 
 def downgrade():
     op.add_column('dashboard', sa.Column('user_id', sa.VARCHAR(length=32), autoincrement=False, nullable=True))

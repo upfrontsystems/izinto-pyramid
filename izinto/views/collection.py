@@ -1,6 +1,6 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Collection, UserCollection, DashboardCollection
+from izinto.models import session, Collection, UserCollection
 
 
 @view_config(route_name='collection_views.create_collection', renderer='json', permission='add')
@@ -9,7 +9,6 @@ def create_collection(request):
     title = data.get('title')
     description = data.get('description')
     users = data.get('users', [])
-    dashboards = data.get('dashboards', [])
 
     # check vital data
     if not title:
@@ -22,9 +21,6 @@ def create_collection(request):
 
     for user in users:
         session.add(UserCollection(user_id=user['id'], collection_id=collection.id))
-
-    for dashboard in dashboards:
-        session.add(DashboardCollection(dashboard_id=dashboard['id'], collection_id=collection.id))
 
     return collection.as_dict()
 
@@ -69,7 +65,6 @@ def edit_collection(request):
     description = data.get('description')
     title = data.get('title')
     users = data.get('users', [])
-    dashboards = data.get('dashboards', [])
 
     # check vital data
     if not collection_id:
@@ -87,10 +82,6 @@ def edit_collection(request):
     collection.users[:] = []
     for user in users:
         session.add(UserCollection(user_id=user['id'], collection_id=collection.id))
-
-    collection.dashboards[:] = []
-    for dashboard in dashboards:
-        session.add(DashboardCollection(dashboard_id=dashboard['id'], collection_id=collection.id))
 
     return collection.as_dict()
 

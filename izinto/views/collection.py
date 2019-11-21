@@ -1,6 +1,6 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Collection, UserCollection
+from izinto.models import session, Collection, User, UserCollection
 
 
 @view_config(route_name='collection_views.create_collection', renderer='json', permission='add')
@@ -96,8 +96,8 @@ def list_collections(request):
     filters = request.params
     query = session.query(Collection)
 
-    for column, value in filters.items():
-        query = query.filter(getattr(Collection, column) == value)
+    if 'user_id' in filters:
+        query = query.join(Collection.users).filter(User.id == request.authenticated_userid)
 
     return [collection.as_dict() for collection in query.order_by(Collection.title).all()]
 

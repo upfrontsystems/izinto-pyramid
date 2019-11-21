@@ -1,6 +1,7 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, Collection, Dashboard, UserDashboard, User
+from izinto.services.user import get_user
 
 
 @view_config(route_name='dashboard_views.create_dashboard', renderer='json', permission='add')
@@ -87,7 +88,7 @@ def edit_dashboard(request):
 
     dashboard.users[:] = []
     for user in users:
-        session.add(UserDashboard(user_id=user['id'], dashboard_id=dashboard.id))
+        dashboard.users.append(get_user(user['id']))
 
     dashboard_data = dashboard.as_dict()
     return dashboard_data

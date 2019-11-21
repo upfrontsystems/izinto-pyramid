@@ -1,6 +1,7 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, Collection, User, UserCollection
+from izinto.services.user import get_user
 
 
 @view_config(route_name='collection_views.create_collection', renderer='json', permission='add')
@@ -81,7 +82,7 @@ def edit_collection(request):
 
     collection.users[:] = []
     for user in users:
-        session.add(UserCollection(user_id=user['id'], collection_id=collection.id))
+        collection.users.append(get_user(user['id']))
 
     return collection.as_dict()
 

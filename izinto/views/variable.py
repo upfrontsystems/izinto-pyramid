@@ -1,6 +1,7 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Variable, Dashboard
+from izinto.models import session, Variable
+from izinto.services.variable import get_variable, create_variable, edit_variable, delete_variable
 
 
 @view_config(route_name='variable_views.create_variable', renderer='json', permission='add')
@@ -18,12 +19,7 @@ def create_variable(request):
     if existing:
         raise exc.HTTPBadRequest(json_body={'message': 'Variable with same id %s already exists' % name})
 
-    variable = Variable(name=name,
-                        value=value,
-                        dashboard_id=dashboard_id)
-    session.add(variable)
-    session.flush()
-
+    variable = create_variable(name, value, dashboard_id)
     return variable.as_dict()
 
 
@@ -42,25 +38,6 @@ def get_variable_view(request):
         raise exc.HTTPNotFound(json_body={'message': 'Variable not found'})
     variable_data = variable.as_dict()
     return variable_data
-
-
-def get_variable(variable_id=None, name=None, dashboard_id=None):
-    """
-    Get a variable
-    :param variable_id:
-    :param name:
-    :param dashboard_id:
-    :return:
-    """
-
-    query = session.query(Variable)
-
-    if variable_id:
-        query = query.filter(Variable.id == variable_id)
-    if name and dashboard_id:
-        query = query.filter_by(name=name, dashboard_id=dashboard_id)
-
-    return query.first()
 
 
 @view_config(route_name='variable_views.edit_variable', renderer='json', permission='edit')
@@ -90,9 +67,7 @@ def edit_variable(request):
     if existing and existing.id != variable.id:
         raise exc.HTTPBadRequest(json_body={'message': 'Variable with id %s already exists' % id})
 
-    variable.name = name
-    variable.value = value
-
+    variable = edit_variable(variable_id, name, value)
     return variable.as_dict()
 
 
@@ -123,6 +98,4 @@ def delete_variable(request):
     if not variable:
         raise exc.HTTPNotFound(json_body={'message': 'No variable found.'})
 
-    session.query(Variable). \
-        filter(Variable.id == variable_id). \
-        delete(synchronize_session='fetch')
+    return delete_variable(variable_id)

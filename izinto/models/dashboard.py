@@ -16,7 +16,7 @@ class Dashboard(Base):
     description = Column(Unicode(length=500))
     collection_id = Column(Integer, ForeignKey('collection.id', ondelete='CASCADE'), nullable=True)
 
-    collections  = relationship('Collection')
+    collections = relationship('Collection')
     users = relationship('User', secondary="user_dashboard", backref='dashboards')
     variables = relationship('Variable')
 

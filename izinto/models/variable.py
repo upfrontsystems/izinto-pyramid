@@ -18,7 +18,7 @@ class Variable(Base):
 
     dashboard = relationship('Dashboard')
 
-    __table_args__ = (UniqueConstraint('value', 'dashboard_id'),)
+    __table_args__ = (UniqueConstraint('name', 'dashboard_id'),)
 
     def as_dict(self):
 

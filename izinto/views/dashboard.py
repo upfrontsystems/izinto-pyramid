@@ -1,11 +1,12 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Collection, Dashboard, UserDashboard, User
+from izinto.models import session, Dashboard, UserDashboard
 from izinto.services.user import get_user
+from izinto.services.dashboard import get_dashboard, list_dashboards
 
 
 @view_config(route_name='dashboard_views.create_dashboard', renderer='json', permission='add')
-def create_dashboard(request):
+def create_dashboard_view(request):
     data = request.json_body
     title = data.get('title')
     description = data.get('description')
@@ -45,23 +46,8 @@ def get_dashboard_view(request):
     return dashboard_data
 
 
-def get_dashboard(dashboard_id=None):
-    """
-    Get a dashboard
-    :param dashboard_id:
-    :return:
-    """
-
-    query = session.query(Dashboard)
-
-    if dashboard_id:
-        query = query.filter(Dashboard.id == dashboard_id)
-
-    return query.first()
-
-
 @view_config(route_name='dashboard_views.edit_dashboard', renderer='json', permission='edit')
-def edit_dashboard(request):
+def edit_dashboard_view(request):
     """
     Edit dashboard
     :param request:
@@ -95,30 +81,21 @@ def edit_dashboard(request):
 
 
 @view_config(route_name='dashboard_views.list_dashboards', renderer='json', permission='view')
-def list_dashboards(request):
+def list_dashboards_view(request):
     """
     List dashboards
     :param request:
     :return:
     """
-    filters = request.params
-    query = session.query(Dashboard)
-
-    if 'collection_id' in filters:
-        query = query.filter(Dashboard.collection_id == filters['collection_id'])
-    # filter by users that can view the dashboards
-    # filter by users that have access to the collection of the dashboard
+    filters = request.params.copy()
     if 'user_id' in filters:
-        user_query = query.join(Dashboard.users).filter(User.id == request.authenticated_userid)
-        collection_query = query.join(Dashboard.collections). \
-            join(Collection.users).filter(User.id == request.authenticated_userid)
-        query = user_query.union(collection_query)
+        filters['user_id'] = request.authenticated_userid
 
-    return [dashboard.as_dict() for dashboard in query.order_by(Dashboard.title).all()]
+    return [dashboard.as_dict() for dashboard in list_dashboards(**filters)]
 
 
 @view_config(route_name='dashboard_views.delete_dashboard', renderer='json', permission='delete')
-def delete_dashboard(request):
+def delete_dashboard_view(request):
     """
     Delete a dashboard
     :param request:
@@ -132,3 +109,30 @@ def delete_dashboard(request):
     session.query(Dashboard). \
         filter(Dashboard.id == dashboard_id). \
         delete(synchronize_session='fetch')
+
+
+@view_config(route_name='dashboard_views.reorder_dashboard', renderer='json', permission='edit')
+def reorder_dashboard_view(request):
+    data = request.json_body
+    dashboard_id = request.matchdict.get('id')
+    collection_id = data.get('collection_id')
+    order = data.get('order')
+
+    dashboard = get_dashboard(dashboard_id)
+    if not dashboard:
+        raise exc.HTTPNotFound(json_body={'message': 'No dashboard found.'})
+
+    reorder = session.query(Dashboard).filter(Dashboard.collection_id == collection_id)
+
+    if order > dashboard.order:
+        change = -1
+        reorder = reorder.filter(Dashboard.order <= order).all()
+    else:
+        change = 1
+        reorder = reorder.filter(Dashboard.order >= order).all()
+
+    dashboard.order = order
+    for dash in reorder:
+        dash.order += change
+    return {}
+

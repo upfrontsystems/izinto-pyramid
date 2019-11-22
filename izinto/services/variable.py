@@ -14,7 +14,7 @@ def create_variable(name, value, dashboard_id):
     session.add(variable)
     session.flush()
 
-    return variable.as_dict()
+    return variable
 
 
 def get_variable(variable_id=None, name=None, dashboard_id=None):

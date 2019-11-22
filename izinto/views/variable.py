@@ -5,7 +5,7 @@ from izinto.services.variable import get_variable, create_variable, edit_variabl
 
 
 @view_config(route_name='variable_views.create_variable', renderer='json', permission='add')
-def create_variable(request):
+def create_variable_view(request):
     data = request.json_body
     name = data.get('name')
     value = data.get('value')
@@ -41,7 +41,7 @@ def get_variable_view(request):
 
 
 @view_config(route_name='variable_views.edit_variable', renderer='json', permission='edit')
-def edit_variable(request):
+def edit_variable_view(request):
     """
     Edit variable
     :param request:
@@ -72,7 +72,7 @@ def edit_variable(request):
 
 
 @view_config(route_name='variable_views.list_variables', renderer='json', permission='view')
-def list_variables(request):
+def list_variables_view(request):
     """
     List variables by filters
     :param request:
@@ -87,7 +87,7 @@ def list_variables(request):
 
 
 @view_config(route_name='variable_views.delete_variable', renderer='json', permission='delete')
-def delete_variable(request):
+def delete_variable_view(request):
     """
     Delete a variable view
     :param request:

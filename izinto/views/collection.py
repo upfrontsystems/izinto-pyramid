@@ -2,6 +2,7 @@ import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, Collection, User, UserCollection
 from izinto.services.user import get_user
+from izinto.services.dashboard import list_dashboards
 
 
 @view_config(route_name='collection_views.create_collection', renderer='json', permission='add')
@@ -39,7 +40,9 @@ def get_collection_view(request):
     collection = get_collection(collection_id)
     if not collection:
         raise exc.HTTPNotFound(json_body={'message': 'Collection not found'})
+
     collection_data = collection.as_dict()
+    collection_data['dashboards'] = [dash.as_dict() for dash in list_dashboards(collection_id=collection_id)]
     return collection_data
 
 

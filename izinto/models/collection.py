@@ -23,8 +23,7 @@ class Collection(Base):
         return {'id': self.id,
                 'title': self.title,
                 'description': self.description,
-                'users': [user.as_dict() for user in self.users],
-                'dashboards': [dashboard.as_dict() for dashboard in self.dashboards]}
+                'users': [user.as_dict() for user in self.users]}
 
     def __repr__(self):
         return 'Collection<title: %s>' % self.title

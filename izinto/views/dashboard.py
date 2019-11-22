@@ -2,7 +2,6 @@ import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, Collection, Dashboard, UserDashboard, User
 from izinto.services.user import get_user
-from izinto.services.variable import create_variable, edit_variable, delete_variable
 
 
 @view_config(route_name='dashboard_views.create_dashboard', renderer='json', permission='add')
@@ -12,7 +11,6 @@ def create_dashboard(request):
     description = data.get('description')
     collection_id = data.get('collection_id')
     users = data.get('users', [])
-    variables = data.get('variables', [])
 
     # check vital data
     if not title:
@@ -26,8 +24,6 @@ def create_dashboard(request):
 
     for user in users:
         session.add(UserDashboard(user_id=user['id'], dashboard_id=dashboard.id))
-    for variable in variables:
-        create_variable(variable['name'], variable['value'], dashboard.id)
 
     return dashboard.as_dict()
 
@@ -76,7 +72,6 @@ def edit_dashboard(request):
     description = data.get('description')
     title = data.get('title')
     users = data.get('users', [])
-    variables = data.get('variables', [])
 
     # check vital data
     if not dashboard_id:
@@ -94,15 +89,6 @@ def edit_dashboard(request):
     dashboard.users[:] = []
     for user in users:
         dashboard.users.append(get_user(user['id']))
-    deleted = [var for var in variables if var.get('id')]
-    for variable in variables:
-        if variable.get('id'):
-            edit_variable(variable['id'], variable['name'], variable['value'])
-            deleted = [var for var in deleted if var['id'] != variable['id']]
-        else:
-            create_variable(variable['name'], variable['value'], dashboard.id)
-    for variable in deleted:
-        delete_variable(variable['id'])
 
     dashboard_data = dashboard.as_dict()
     return dashboard_data

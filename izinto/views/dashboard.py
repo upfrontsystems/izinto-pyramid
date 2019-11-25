@@ -17,9 +17,15 @@ def create_dashboard_view(request):
     if not title:
         raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
 
+    order = 1
+    if collection_id:
+        dashboards = list_dashboards(collection_id=collection_id)
+        if len(dashboards):
+            order = dashboards[-1].order + 1
     dashboard = Dashboard(title=title,
                           description=description,
-                          collection_id=collection_id)
+                          collection_id=collection_id,
+                          order=order)
     session.add(dashboard)
     session.flush()
 
@@ -122,10 +128,18 @@ def paste_dashboard_view(request):
         raise exc.HTTPBadRequest(json_body={'message': 'Need copied dashboard'})
 
     dashboard = get_dashboard(dashboard_id)
+    title = dashboard.title
     # make "Copy of" title
-    title = build_copied_dashboard_title(dashboard.title, collection_id)
+    if collection_id == dashboard.collection_id:
+        title = build_copied_dashboard_title(title, collection_id)
 
-    dashboard = paste_dashboard(dashboard_id, collection_id, title)
+    order = 1
+    if collection_id:
+        dashboards = list_dashboards(collection_id=collection_id)
+        if len(dashboards):
+            order = dashboards[-1].order + 1
+
+    dashboard = paste_dashboard(dashboard_id, collection_id, title, order)
     return dashboard.as_dict()
 
 

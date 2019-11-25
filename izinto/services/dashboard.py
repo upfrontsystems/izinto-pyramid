@@ -28,7 +28,11 @@ def list_dashboards(**kwargs):
     query = session.query(Dashboard)
 
     if 'collection_id' in kwargs:
-        query = query.filter(Dashboard.collection_id == kwargs['collection_id']).order_by(Dashboard.order)
+        # filter for dashboards in a collection, and dashboard not in a collection
+        if kwargs['collection_id']:
+            query = query.filter(Dashboard.collection_id == kwargs['collection_id']).order_by(Dashboard.order)
+        else:
+            query = query.filter(Dashboard.collection_id == None).order_by(Dashboard.order)
     # filter by users that can view the dashboards
     # filter by users that have access to the collection of the dashboard
     if 'user_id' in kwargs:
@@ -40,19 +44,21 @@ def list_dashboards(**kwargs):
     return query.all()
 
 
-def paste_dashboard(dashboard_id, collection_id, title):
+def paste_dashboard(dashboard_id, collection_id, title, order):
     """
     Paste dashboard
     :param dashboard_id:
     :param collection_id:
     :param title:
+    :param order:
     :return:
     """
 
     dashboard = get_dashboard(dashboard_id)
     pasted_dashboard = Dashboard(title=title,
                                  description=dashboard.description,
-                                 collection_id=collection_id)
+                                 collection_id=collection_id,
+                                 order=order)
     session.add(pasted_dashboard)
     session.flush()
 

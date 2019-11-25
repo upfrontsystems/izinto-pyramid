@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8efb5a65-aca4-45bc-9233-bc12396b963c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/izinto/models/user_collection.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/models/user_collection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/izinto/models/user_dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/models/user_dashboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/izinto/models/user_role.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/models/user_role.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/izinto/models/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/models/dashboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/izinto/services/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/services/dashboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/izinto/views/collection.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/views/collection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/izinto/views/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/izinto/views/dashboard.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,10 +17,19 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/izinto/models/dashboard.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="17" column="37" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/izinto/views/dashboard.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="127" column="22" selection-start-line="127" selection-start-column="22" selection-end-line="127" selection-end-column="22" />
+            <state relative-caret-position="1012">
+              <caret line="140" lean-forward="true" selection-start-line="140" selection-end-line="140" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
               </folding>
@@ -26,23 +37,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/izinto/services/otp.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="295">
-              <caret line="194" column="46" selection-start-line="194" selection-start-column="46" selection-end-line="194" selection-end-column="46" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/izinto/services/dashboard.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
+            <state relative-caret-position="255">
+              <caret line="30" column="82" selection-start-line="30" selection-start-column="82" selection-end-line="30" selection-end-column="82" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -53,8 +52,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/izinto/views/collection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="153" column="33" selection-start-line="153" selection-start-column="33" selection-end-line="153" selection-end-column="33" />
+            <state relative-caret-position="315">
+              <caret line="162" column="92" selection-start-line="162" selection-start-column="92" selection-end-line="162" selection-end-column="92" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -104,11 +103,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/izinto/alembic/versions/20191125_bf8faf69908f.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="349">
-              <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
+            <state relative-caret-position="89">
+              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
             </state>
           </provider>
         </entry>
@@ -231,20 +230,20 @@
         <option value="$PROJECT_DIR$/izinto/services/variable.py" />
         <option value="$PROJECT_DIR$/izinto/models/variable.py" />
         <option value="$PROJECT_DIR$/izinto/alembic/versions/20191122_ca497b4d8ca5.py" />
-        <option value="$PROJECT_DIR$/izinto/models/dashboard.py" />
         <option value="$PROJECT_DIR$/izinto/alembic/versions/20191122_0dcd57b4c430.py" />
         <option value="$PROJECT_DIR$/izinto/models/collection.py" />
         <option value="$PROJECT_DIR$/izinto/routes.py" />
         <option value="$PROJECT_DIR$/izinto/views/chart.py" />
         <option value="$PROJECT_DIR$/izinto/services/chart.py" />
         <option value="$PROJECT_DIR$/CHANGES.txt" />
-        <option value="$PROJECT_DIR$/izinto/views/dashboard.py" />
-        <option value="$PROJECT_DIR$/izinto/views/collection.py" />
-        <option value="$PROJECT_DIR$/izinto/services/dashboard.py" />
         <option value="$PROJECT_DIR$/izinto/models/user_collection.py" />
         <option value="$PROJECT_DIR$/izinto/models/user_dashboard.py" />
         <option value="$PROJECT_DIR$/izinto/models/user_role.py" />
         <option value="$PROJECT_DIR$/izinto/alembic/versions/20191125_bf8faf69908f.py" />
+        <option value="$PROJECT_DIR$/izinto/models/dashboard.py" />
+        <option value="$PROJECT_DIR$/izinto/views/dashboard.py" />
+        <option value="$PROJECT_DIR$/izinto/views/collection.py" />
+        <option value="$PROJECT_DIR$/izinto/services/dashboard.py" />
       </list>
     </option>
   </component>
@@ -292,6 +291,12 @@
               <item name="izinto-pyramid" type="462c0819:PsiDirectoryNode" />
               <item name="izinto" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="izinto-pyramid" type="b2602c69:ProjectViewProjectNode" />
+              <item name="izinto-pyramid" type="462c0819:PsiDirectoryNode" />
+              <item name="izinto" type="462c0819:PsiDirectoryNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="izinto-pyramid" type="b2602c69:ProjectViewProjectNode" />
@@ -419,12 +424,12 @@
       <workItem from="1574442010802" duration="5247000" />
       <workItem from="1574628951859" duration="1220000" />
       <workItem from="1574667636117" duration="906000" />
-      <workItem from="1574672715969" duration="5886000" />
+      <workItem from="1574672715969" duration="7925000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="107018000" />
+    <option name="totallyTimeSpent" value="109057000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
@@ -435,8 +440,8 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3290461" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49946696" visible="true" weight="0.44694534" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39978564" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49946696" weight="0.44694534" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.39978564" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -462,8 +467,19 @@
       </list>
     </option>
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/izinto/services/dashboard.py</url>
+          <line>27</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/izinto_pyramid$izinto.coverage" NAME="izinto Coverage Results" MODIFIED="1574682509832" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/izinto_pyramid$izinto.coverage" NAME="izinto Coverage Results" MODIFIED="1574687532421" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/alembic.ini">
@@ -727,13 +743,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/models/dashboard.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/izinto/routes.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1462">
@@ -771,36 +780,6 @@
           <caret line="194" column="46" selection-start-line="194" selection-start-column="46" selection-end-line="194" selection-end-column="46" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/views/collection.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="153" column="33" selection-start-line="153" selection-start-column="33" selection-end-line="153" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/views/dashboard.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="127" column="22" selection-start-line="127" selection-start-column="22" selection-end-line="127" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/izinto/services/dashboard.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -851,8 +830,45 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/izinto/alembic/versions/20191125_bf8faf69908f.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
+        <state relative-caret-position="89">
+          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/models/dashboard.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="17" column="37" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/views/collection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="162" column="92" selection-start-line="162" selection-start-column="92" selection-end-line="162" selection-end-column="92" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/views/dashboard.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1012">
+          <caret line="140" lean-forward="true" selection-start-line="140" selection-end-line="140" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/izinto/services/dashboard.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="30" column="82" selection-start-line="30" selection-start-column="82" selection-end-line="30" selection-end-column="82" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

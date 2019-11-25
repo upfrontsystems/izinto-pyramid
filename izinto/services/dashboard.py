@@ -1,4 +1,7 @@
-from izinto.models import session, Collection, Dashboard, User
+import re
+from izinto.models import session, Collection, Dashboard, User, UserDashboard
+from izinto.services.variable import create_variable
+from izinto.services.chart import create_chart, list_charts
 
 
 def get_dashboard(dashboard_id=None):
@@ -35,3 +38,57 @@ def list_dashboards(**kwargs):
         query = user_query.union(collection_query).order_by(Dashboard.title)
 
     return query.all()
+
+
+def paste_dashboard(dashboard_id, collection_id, title):
+    """
+    Paste dashboard
+    :param dashboard_id:
+    :param collection_id:
+    :param title:
+    :return:
+    """
+
+    dashboard = get_dashboard(dashboard_id)
+    pasted_dashboard = Dashboard(title=title,
+                                 description=dashboard.description,
+                                 collection_id=collection_id)
+    session.add(pasted_dashboard)
+    session.flush()
+
+    # copy list of users
+    for user in dashboard.users:
+        session.add(UserDashboard(user_id=user.id, dashboard_id=pasted_dashboard.id))
+
+    # copy list of variables
+    for variable in dashboard.variables:
+        create_variable(variable.name, variable.value, pasted_dashboard.id)
+
+    # copy charts
+    for chart in list_charts(dashboard_id=dashboard_id):
+        create_chart(chart.title, chart.selector, chart.unit, chart.color, chart.type, chart.group_by,
+                     chart.query, pasted_dashboard.id, chart.index)
+
+    return pasted_dashboard
+
+
+def build_copied_dashboard_title(title, collection_id):
+    """ Set name and number of copy of title """
+
+    title = 'Copy of %s' % title
+
+    search_str = '%s%s' % (title, '%')
+    query = session.query(Dashboard) \
+        .filter(Dashboard.collection_id == collection_id,
+                Dashboard.title.ilike(search_str)) \
+        .order_by(Dashboard.title.desc()).all()
+
+    if query:
+        number = re.search(r'\((\d+)\)', query[0].title)
+        if number:
+            number = number.group(1)
+        if number:
+            title = '%s (%s)' % (title, (int(number) + 1))
+        else:
+            title = '%s (2)' % title
+    return title

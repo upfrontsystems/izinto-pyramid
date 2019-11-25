@@ -1,8 +1,9 @@
+import re
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, Collection, User, UserCollection
 from izinto.services.user import get_user
-from izinto.services.dashboard import list_dashboards
+from izinto.services.dashboard import list_dashboards, paste_dashboard
 
 
 @view_config(route_name='collection_views.create_collection', renderer='json', permission='add')
@@ -133,13 +134,32 @@ def paste_collection_view(request):
         raise exc.HTTPBadRequest(json_body={'message': 'Need copied collection'})
 
     collection = get_collection(collection_id)
-    pasted_collection = Collection(title=collection.title,
-                                   description=collection.description)
-    session.add(collection)
+
+    # build copy of title for copied collection
+    title = 'Copy of %s' % collection.title
+    search_str = '%s%s' % (title, '%')
+    query = session.query(Collection).filter(Collection.title.ilike(search_str)) \
+        .order_by(Collection.title.desc()).all()
+
+    if query:
+        number = re.search(r'\((\d+)\)', query[0].title)
+        if number:
+            number = number.group(1)
+        if number:
+            title = '%s (%s)' % (title, (int(number) + 1))
+        else:
+            title = '%s (2)' % title
+
+    pasted_collection = Collection(title=title, description=collection.description)
+    session.add(pasted_collection)
     session.flush()
 
     # copy list of users
     for user in collection.users:
-        session.add(UserCollection(user_id=user['id'], collection_id=pasted_collection.id))
+        session.add(UserCollection(user_id=user.id, collection_id=pasted_collection.id))
 
-    return collection.as_dict()
+    # copy dashboards in collection
+    for dashboard in collection.dashboards:
+        paste_dashboard(dashboard.id, pasted_collection.id, dashboard.title)
+
+    return pasted_collection.as_dict()

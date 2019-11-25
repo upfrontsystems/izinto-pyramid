@@ -83,6 +83,10 @@ def includeme(config):
                      '/dashboards', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
+    config.add_route('dashboard_views.paste_dashboard',
+                     '/dashboards/paste', request_method='POST',
+                     factory=make_protected_function(*all_roles))
+
     config.add_route('dashboard_views.create_dashboard',
                      '/dashboards', request_method='POST',
                      factory=make_protected_function(*all_roles))
@@ -106,6 +110,10 @@ def includeme(config):
     # collection views
     config.add_route('collection_views.list_collections',
                      '/collections', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('collection_views.paste_collection',
+                     '/collections/paste', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('collection_views.create_collection',

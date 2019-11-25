@@ -1,10 +1,11 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Chart, Dashboard
+from izinto.models import session, Chart
+from izinto.services.chart import create_chart, list_charts
 
 
 @view_config(route_name='chart_views.create_chart', renderer='json', permission='add')
-def create_chart(request):
+def create_chart_view(request):
     data = request.json_body
     title = data.get('title')
     selector = data.get('selector')
@@ -23,18 +24,8 @@ def create_chart(request):
     index = 0
     if prev:
         index = prev.index + 1
-    chart = Chart(title=title,
-                  selector=selector,
-                  unit=unit,
-                  color=color,
-                  type=typ,
-                  group_by=group_by,
-                  query=query,
-                  dashboard_id=dashboard_id,
-                  index=index)
-    session.add(chart)
-    session.flush()
 
+    chart = create_chart(title, selector, unit, color, typ, group_by, query, dashboard_id, index)
     return chart.as_dict()
 
 
@@ -115,18 +106,16 @@ def edit_chart(request):
 
 
 @view_config(route_name='chart_views.list_charts', renderer='json', permission='view')
-def list_charts(request):
+def list_charts_view(request):
     """
     List charts by filters
     :param request:
     :return:
     """
     filters = request.params
-    query = session.query(Chart)
-    if 'dashboard_id' in filters:
-        query = query.filter(Chart.dashboard_id == filters['dashboard_id'])
+    charts = list_charts(**filters)
 
-    return [chart.as_dict() for chart in query.order_by(Chart.index).all()]
+    return [chart.as_dict() for chart in charts]
 
 
 @view_config(route_name='chart_views.delete_chart', renderer='json', permission='delete')

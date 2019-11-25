@@ -121,3 +121,25 @@ def delete_collection(request):
     session.query(Collection). \
         filter(Collection.id == collection_id). \
         delete(synchronize_session='fetch')
+
+
+@view_config(route_name='collection_views.paste_collection', renderer='json', permission='add')
+def paste_collection_view(request):
+    data = request.json_body
+    collection_id = data.get('id')
+
+    # check vital data
+    if not collection_id:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need copied collection'})
+
+    collection = get_collection(collection_id)
+    pasted_collection = Collection(title=collection.title,
+                                   description=collection.description)
+    session.add(collection)
+    session.flush()
+
+    # copy list of users
+    for user in collection.users:
+        session.add(UserCollection(user_id=user['id'], collection_id=pasted_collection.id))
+
+    return collection.as_dict()

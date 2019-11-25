@@ -3,6 +3,8 @@ from pyramid.view import view_config
 from izinto.models import session, Dashboard, UserDashboard
 from izinto.services.user import get_user
 from izinto.services.dashboard import get_dashboard, list_dashboards
+from izinto.services.variable import create_variable
+from izinto.services.chart import create_chart, list_charts
 
 
 @view_config(route_name='dashboard_views.create_dashboard', renderer='json', permission='add')
@@ -111,6 +113,39 @@ def delete_dashboard_view(request):
         delete(synchronize_session='fetch')
 
 
+@view_config(route_name='dashboard_views.paste_dashboard', renderer='json', permission='add')
+def paste_dashboard_view(request):
+    data = request.json_body
+    dashboard_id = data.get('id')
+    collection_id = data.get('collection_id')
+
+    # check vital data
+    if not dashboard_id:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need copied dashboard'})
+
+    dashboard = get_dashboard(dashboard_id)
+    pasted_dashboard = Dashboard(title=dashboard.title,
+                                 description=dashboard.description,
+                                 collection_id=collection_id)
+    session.add(dashboard)
+    session.flush()
+
+    # copy list of users
+    for user in dashboard.users:
+        session.add(UserDashboard(user_id=user['id'], dashboard_id=pasted_dashboard.id))
+
+    # copy list of variables
+    for variable in dashboard.variables:
+        create_variable(variable.name, variable.value, pasted_dashboard.id)
+
+    # copy charts
+    for chart in list_charts(dashboard_id=dashboard_id):
+        create_chart(chart.title, chart.selector, chart.unit, chart.color, chart.type, chart.group_by,
+                     chart.query, pasted_dashboard.id, chart.index)
+
+    return dashboard.as_dict()
+
+
 @view_config(route_name='dashboard_views.reorder_dashboard', renderer='json', permission='edit')
 def reorder_dashboard_view(request):
     data = request.json_body
@@ -135,4 +170,3 @@ def reorder_dashboard_view(request):
     for dash in reorder:
         dash.order += change
     return {}
-

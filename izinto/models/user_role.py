@@ -7,5 +7,5 @@ class UserRole(Base):
 
     __tablename__ = 'user_role'
 
-    user_id = Column(VARCHAR(length=32), ForeignKey('user.id'), primary_key=True, nullable=False)
-    role_id = Column(Integer, ForeignKey('role.id'), primary_key=True, nullable=False)
+    user_id = Column(VARCHAR(length=32), ForeignKey('user.id', ondelete="cascade"), primary_key=True, nullable=False)
+    role_id = Column(Integer, ForeignKey('role.id', ondelete="cascade"), primary_key=True, nullable=False)

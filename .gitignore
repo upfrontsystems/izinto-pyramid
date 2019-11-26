@@ -117,3 +117,13 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+.idea/workspace.xml
+.idea/dataSources.xml
+.idea/usage.statistics.xml
+.idea/tasks.xml
+.idea/modules.xml
+.idea/agibase.iml
+.idea/misc.xml
+
+mail

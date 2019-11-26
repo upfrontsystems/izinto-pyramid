@@ -32,7 +32,7 @@ def register_user(request):
 
     # check duplicate users
     if get_user(email=email):
-        raise exc.HTTPBadRequest(json_body={'User with email %s already exists' % email})
+        raise exc.HTTPBadRequest(json_body={'message': 'User with email %s already exists' % email})
 
     user = User(firstname=firstname,
                 surname=surname,

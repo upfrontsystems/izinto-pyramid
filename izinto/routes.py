@@ -152,3 +152,24 @@ def includeme(config):
     config.add_route('variable_views.edit_variable',
                      '/variable/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
+
+    # single_stat views
+    config.add_route('single_stat_views.list_single_stats',
+                     '/single_stats', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('single_stat_views.create_single_stat',
+                     '/single_stats', request_method='POST',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('single_stat_views.delete_single_stat',
+                     '/single_stat/{id}', request_method='DELETE',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('single_stat_views.get_single_stat',
+                     '/single_stat/{id}', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('single_stat_views.edit_single_stat',
+                     '/single_stat/{id}', request_method='PUT',
+                     factory=make_protected_function(*all_roles))

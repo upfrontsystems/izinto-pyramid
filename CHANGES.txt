@@ -8,3 +8,4 @@
 * [#14](https://github.com/upfrontsystems/izinto-angular/issues/14) add collection model and views
 * [#14](https://github.com/upfrontsystems/izinto-angular/issues/14) add dashboards in collections reorder
 * [#14](https://github.com/upfrontsystems/izinto-angular/issues/14) add pasting dashboards and collections
+* [#17](https://github.com/upfrontsystems/izinto-angular/issues/17) add single stat

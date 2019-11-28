@@ -9,17 +9,22 @@ def create_single_stat_view(request):
     title = data.get('title')
     query = data.get('query')
     decimals = data.get('decimals', 0)
-    thresholds = data.get('thresholds', [])
-    colors = data.get('colors', [])
+    frmat = data.get('format', '')
+    thresholds = data.get('thresholds', '')
+    colors = data.get('colors', '')
     dashboard_id = data.get('dashboard_id')
 
     # check vital data
     if not (title and query):
         raise exc.HTTPBadRequest(json_body={'message': 'Need title and query'})
+    # check threshold and colors values
+    if len(thresholds.split(',')) != len(colors.split(',')) - 1:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need one more color than thresholds'})
 
     single_stat = SingleStat(title=title,
                              query=query,
                              decimals=decimals,
+                             format=frmat,
                              thresholds=thresholds,
                              colors=colors,
                              dashboard_id=dashboard_id)
@@ -58,8 +63,9 @@ def edit_single_stat_view(request):
     title = data.get('title')
     query = data.get('query')
     decimals = data.get('decimals', 0)
-    thresholds = data.get('thresholds', [])
-    colors = data.get('colors', [])
+    frmat = data.get('format', '')
+    thresholds = data.get('thresholds', '')
+    colors = data.get('colors', '')
 
     # check vital data
     if not single_stat_id:
@@ -68,6 +74,9 @@ def edit_single_stat_view(request):
         raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
     if not query:
         raise exc.HTTPBadRequest(json_body={'message': 'Need query'})
+    # check threshold and colors values
+    if len(thresholds.split(',')) != len(colors.split(',')) - 1:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need one more color than thresholds'})
 
     single_stat = session.query(SingleStat).filter(SingleStat.id == single_stat_id).first()
     if not single_stat:
@@ -76,6 +85,7 @@ def edit_single_stat_view(request):
     single_stat.title = title
     single_stat.query = query
     single_stat.decimals = decimals
+    single_stat.format = frmat
     single_stat.thresholds = thresholds
     single_stat.colors = colors
 

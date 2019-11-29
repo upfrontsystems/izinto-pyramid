@@ -38,4 +38,4 @@ class Chart(Base):
                 'query': self.query}
 
     def __repr__(self):
-        return 'Chart<title: %s>' % self.title
+        return "Chart<id: %s, title: '%s'>" % (self.id, self.title)

@@ -133,3 +133,29 @@ def delete_chart(request):
     session.query(Chart). \
         filter(Chart.id == chart_id). \
         delete(synchronize_session='fetch')
+
+
+@view_config(route_name='chart_views.reorder_chart', renderer='json', permission='edit')
+def reorder_chart_view(request):
+    data = request.json_body
+    chart_id = request.matchdict.get('id')
+    dashboard_id = data.get('dashboard_id')
+    index = data.get('index')
+
+    chart = get_chart(chart_id)
+    if not chart:
+        raise exc.HTTPNotFound(json_body={'message': 'No chart found.'})
+
+    reorder = session.query(chart).filter(Chart.dashboard_id == dashboard_id)
+
+    if index > chart.index:
+        change = -1
+        reorder = reorder.filter(Chart.index <= index).all()
+    else:
+        change = 1
+        reorder = reorder.filter(Chart.index >= index).all()
+
+    chart.index = index
+    for chart in reorder:
+        chart.index += change
+    return {}

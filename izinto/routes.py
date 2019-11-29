@@ -78,6 +78,10 @@ def includeme(config):
                      '/chart/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
+    config.add_route('chart_views.reorder_chart',
+                     '/chart/{id}/reorder', request_method='PUT',
+                     factory=make_protected_function(*all_roles))
+
     # dashboard views
     config.add_route('dashboard_views.list_dashboards',
                      '/dashboards', request_method='GET',

@@ -1,6 +1,5 @@
 from sqlalchemy import (Column, ForeignKey, Unicode, Integer, VARCHAR)
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import ARRAY
 from izinto.models import Base
 
 
@@ -19,8 +18,10 @@ class SingleStat(Base):
     thresholds = Column(VARCHAR, default='')
     colors = Column(VARCHAR, default='')
     dashboard_id = Column(Integer, ForeignKey('dashboard.id', ondelete='CASCADE'), nullable=False)
+    data_source_id = Column(Integer, ForeignKey('data_source.id'))
 
     dashboard = relationship('Dashboard')
+    data_source = relationship('DataSource')
 
     def as_dict(self):
 
@@ -31,7 +32,8 @@ class SingleStat(Base):
                 'format': self.format,
                 'thresholds': self.thresholds,
                 'colors': self.colors,
-                'dashboard_id': self.dashboard_id}
+                'dashboard_id': self.dashboard_id,
+                'data_source_id': self.data_source_id}
 
     def __repr__(self):
         return 'SingleStat<id: %s, title: %s>' % (self.id, self.title)

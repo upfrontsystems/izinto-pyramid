@@ -177,3 +177,24 @@ def includeme(config):
     config.add_route('single_stat_views.edit_single_stat',
                      '/single_stat/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
+
+    # data_source views
+    config.add_route('data_source_views.list_data_sources',
+                     '/data_sources', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('data_source_views.create_data_source',
+                     '/data_sources', request_method='POST',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('data_source_views.delete_data_source',
+                     '/data_source/{id}', request_method='DELETE',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('data_source_views.get_data_source',
+                     '/data_source/{id}', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('data_source_views.edit_data_source',
+                     '/data_source/{id}', request_method='PUT',
+                     factory=make_protected_function(*all_roles))

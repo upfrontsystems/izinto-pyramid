@@ -28,6 +28,7 @@ def initialize_sql(engine):
 from izinto.models.chart import Chart
 from izinto.models.collection import Collection
 from izinto.models.dashboard import Dashboard
+from izinto.models.data_source import DataSource
 from izinto.models.otp import OTP
 from izinto.models.permission import Permission
 from izinto.models.permisson_role import PermissionRole

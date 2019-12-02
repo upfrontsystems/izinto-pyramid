@@ -1,0 +1,32 @@
+from sqlalchemy import (Column, ForeignKey, Unicode, Integer, VARCHAR)
+from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import ARRAY
+from izinto.models import Base
+
+
+class DataSource(Base):
+    """
+    Data source model Model
+    """
+
+    __tablename__ = 'data_source'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(Unicode(length=200))
+    type = Column(Unicode(length=100))
+    url = Column(Unicode(length=200))
+    username = Column(Unicode(length=100))
+    password = Column(Unicode(length=100))
+    database = Column(Unicode(length=200))
+
+    def as_dict(self):
+
+        return {'id': self.id,
+                'name': self.name,
+                'type': self.type,
+                'url': self.url,
+                'username': self.username,
+                'database': self.database}
+
+    def __repr__(self):
+        return 'DataSource<id: %s, name: %s>' % (self.id, self.name)

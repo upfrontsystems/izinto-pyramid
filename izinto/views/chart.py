@@ -146,7 +146,7 @@ def reorder_chart_view(request):
     if not chart:
         raise exc.HTTPNotFound(json_body={'message': 'No chart found.'})
 
-    reorder = session.query(chart).filter(Chart.dashboard_id == dashboard_id)
+    reorder = session.query(Chart).filter(Chart.dashboard_id == dashboard_id)
 
     if index > chart.index:
         change = -1

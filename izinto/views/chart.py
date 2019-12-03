@@ -15,6 +15,7 @@ def create_chart_view(request):
     group_by = data.get('group_by')
     query = data.get('query')
     dashboard_id = data.get('dashboard_id')
+    data_source_id = data.get('data_source_id')
 
     # check vital data
     if not title:
@@ -25,7 +26,7 @@ def create_chart_view(request):
     if prev:
         index = prev.index + 1
 
-    chart = create_chart(title, selector, unit, color, typ, group_by, query, dashboard_id, index)
+    chart = create_chart(title, selector, unit, color, typ, group_by, query, dashboard_id, data_source_id, index)
     return chart.as_dict()
 
 
@@ -81,6 +82,7 @@ def edit_chart(request):
     typ = data.get('type')
     group_by = data.get('group_by')
     query = data.get('query')
+    data_source_id = data.get('data_source_id')
 
     # check vital data
     if not chart_id:
@@ -100,6 +102,7 @@ def edit_chart(request):
     chart.group_by = group_by
     chart.type = typ
     chart.query = query
+    chart.data_source_id = data_source_id
 
     chart_data = chart.as_dict()
     return chart_data
@@ -146,7 +149,7 @@ def reorder_chart_view(request):
     if not chart:
         raise exc.HTTPNotFound(json_body={'message': 'No chart found.'})
 
-    reorder = session.query(Chart).filter(Chart.dashboard_id == dashboard_id)
+    reorder = session.query(Chart).filter(Chart.dashboard_id == dashboard_id, Chart.id != chart_id)
 
     if index > chart.index:
         change = -1

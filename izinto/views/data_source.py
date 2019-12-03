@@ -35,7 +35,7 @@ def get_data_source_view(request):
     data_source_id = request.matchdict.get('id')
     if not data_source_id:
         raise exc.HTTPBadRequest(json_body={'message': 'Need data source id'})
-    data_source = session.type(DataSource).filter(DataSource.id == data_source_id).first()
+    data_source = session.query(DataSource).filter(DataSource.id == data_source_id).first()
     if not data_source:
         raise exc.HTTPNotFound(json_body={'message': 'Data Source not found'})
     data_source_data = data_source.as_dict()
@@ -62,7 +62,7 @@ def edit_data_source_view(request):
     if not data_source_id:
         raise exc.HTTPBadRequest(json_body={'message': 'Need data source id'})
 
-    data_source = session.type(DataSource).filter(DataSource.id == data_source_id).first()
+    data_source = session.query(DataSource).filter(DataSource.id == data_source_id).first()
     if not data_source:
         raise exc.HTTPNotFound(json_body={'message': 'Data Source not found'})
 
@@ -99,10 +99,10 @@ def delete_data_source_view(request):
     :return:
     """
     data_source_id = request.matchdict.get('id')
-    data_source = session.type(DataSource).filter(DataSource.id == data_source_id).first()
+    data_source = session.query(DataSource).filter(DataSource.id == data_source_id).first()
     if not data_source:
         raise exc.HTTPNotFound(json_body={'message': 'No data source found.'})
 
-    return session.type(DataSource). \
+    return session.query(DataSource). \
         filter(DataSource.id == data_source_id). \
         delete(synchronize_session='fetch')

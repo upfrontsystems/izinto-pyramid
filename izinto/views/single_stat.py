@@ -13,6 +13,7 @@ def create_single_stat_view(request):
     thresholds = data.get('thresholds', '')
     colors = data.get('colors', '')
     dashboard_id = data.get('dashboard_id')
+    data_source_id = data.get('data_source_id')
 
     # check vital data
     if not (title and query):
@@ -27,7 +28,8 @@ def create_single_stat_view(request):
                              format=frmat,
                              thresholds=thresholds,
                              colors=colors,
-                             dashboard_id=dashboard_id)
+                             dashboard_id=dashboard_id,
+                             data_source_id=data_source_id)
     session.add(single_stat)
     session.flush()
 
@@ -66,6 +68,7 @@ def edit_single_stat_view(request):
     frmat = data.get('format', '')
     thresholds = data.get('thresholds', '')
     colors = data.get('colors', '')
+    data_source_id = data.get('data_source_id')
 
     # check vital data
     if not single_stat_id:
@@ -88,6 +91,7 @@ def edit_single_stat_view(request):
     single_stat.format = frmat
     single_stat.thresholds = thresholds
     single_stat.colors = colors
+    single_stat.data_source_id = data_source_id
 
     return single_stat.as_dict()
 

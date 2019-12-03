@@ -21,13 +21,12 @@ class Chart(Base):
     group_by = Column(VARCHAR)
     query = Column(VARCHAR)
     dashboard_id = Column(Integer, ForeignKey('dashboard.id', ondelete='CASCADE'))
-    data_source_id = Column(Integer, ForeignKey('data_source.id'))
+    data_source_id = Column(Integer, ForeignKey('data_source.id'), nullable=False)
 
     dashboard = relationship('Dashboard')
     data_source = relationship('DataSource')
 
     def as_dict(self):
-
         return {'id': self.id,
                 'dashboard_id': self.dashboard_id,
                 'index': self.index,
@@ -38,7 +37,8 @@ class Chart(Base):
                 'type': self.type,
                 'group_by': self.group_by,
                 'query': self.query,
-                'data_source_id': self.data_source_id}
+                'data_source_id': self.data_source_id,
+                'data_source': self.data_source.as_dict()}
 
     def __repr__(self):
         return "Chart<id: %s, title: '%s'>" % (self.id, self.title)

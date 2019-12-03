@@ -18,13 +18,12 @@ class SingleStat(Base):
     thresholds = Column(VARCHAR, default='')
     colors = Column(VARCHAR, default='')
     dashboard_id = Column(Integer, ForeignKey('dashboard.id', ondelete='CASCADE'), nullable=False)
-    data_source_id = Column(Integer, ForeignKey('data_source.id'))
+    data_source_id = Column(Integer, ForeignKey('data_source.id'), nullable=False)
 
     dashboard = relationship('Dashboard')
     data_source = relationship('DataSource')
 
     def as_dict(self):
-
         return {'id': self.id,
                 'title': self.title,
                 'query': self.query,
@@ -33,7 +32,8 @@ class SingleStat(Base):
                 'thresholds': self.thresholds,
                 'colors': self.colors,
                 'dashboard_id': self.dashboard_id,
-                'data_source_id': self.data_source_id}
+                'data_source_id': self.data_source_id,
+                'data_source': self.data_source.as_dict()}
 
     def __repr__(self):
         return 'SingleStat<id: %s, title: %s>' % (self.id, self.title)

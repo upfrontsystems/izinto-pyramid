@@ -1,7 +1,7 @@
 from izinto.models import session, Chart
 
 
-def create_chart(title, selector, unit, color, typ, group_by, query, dashboard_id, index):
+def create_chart(title, selector, unit, color, typ, group_by, query, dashboard_id, data_source_id, index):
     """
     Create chart
     :param title:
@@ -12,6 +12,7 @@ def create_chart(title, selector, unit, color, typ, group_by, query, dashboard_i
     :param group_by:
     :param query:
     :param dashboard_id:
+    :param data_source_id:
     :param index:
     :return:
     """
@@ -24,6 +25,7 @@ def create_chart(title, selector, unit, color, typ, group_by, query, dashboard_i
                   group_by=group_by,
                   query=query,
                   dashboard_id=dashboard_id,
+                  data_source_id=data_source_id,
                   index=index)
     session.add(chart)
     session.flush()

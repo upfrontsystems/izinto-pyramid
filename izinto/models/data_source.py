@@ -26,6 +26,7 @@ class DataSource(Base):
                 'type': self.type,
                 'url': self.url,
                 'username': self.username,
+                'password': self.password,
                 'database': self.database}
 
     def __repr__(self):

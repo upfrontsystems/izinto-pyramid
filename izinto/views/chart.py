@@ -1,7 +1,7 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, Chart
-from izinto.services.chart import create_chart, list_charts
+from izinto.services.chart import create_chart, list_charts, get_chart
 
 
 @view_config(route_name='chart_views.create_chart', renderer='json', permission='add')
@@ -45,24 +45,6 @@ def get_chart_view(request):
         raise exc.HTTPNotFound(json_body={'message': 'Chart not found'})
     chart_data = chart.as_dict()
     return chart_data
-
-
-def get_chart(chart_id=None, dashboard_id=None):
-    """
-    Get a chart
-    :param chart_id:
-    :param dashboard_id:
-    :return:
-    """
-
-    query = session.query(Chart)
-
-    if chart_id:
-        query = query.filter(Chart.id == chart_id)
-    if dashboard_id:
-        query = query.filter(Chart.dashboard_id == dashboard_id)
-
-    return query.first()
 
 
 @view_config(route_name='chart_views.edit_chart', renderer='json', permission='edit')

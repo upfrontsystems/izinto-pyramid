@@ -1,6 +1,11 @@
+import json
+from base64 import b64encode
+from http.client import HTTPSConnection, HTTPConnection
+from urllib.parse import urlparse
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, DataSource
+from izinto.services.data_source import get_data_source
 
 
 @view_config(route_name='data_source_views.create_data_source', renderer='json', permission='add')
@@ -35,7 +40,7 @@ def get_data_source_view(request):
     data_source_id = request.matchdict.get('id')
     if not data_source_id:
         raise exc.HTTPBadRequest(json_body={'message': 'Need data source id'})
-    data_source = session.query(DataSource).filter(DataSource.id == data_source_id).first()
+    data_source = get_data_source(data_source_id)
     if not data_source:
         raise exc.HTTPNotFound(json_body={'message': 'Data Source not found'})
     data_source_data = data_source.as_dict()
@@ -62,7 +67,7 @@ def edit_data_source_view(request):
     if not data_source_id:
         raise exc.HTTPBadRequest(json_body={'message': 'Need data source id'})
 
-    data_source = session.query(DataSource).filter(DataSource.id == data_source_id).first()
+    data_source = get_data_source(data_source_id)
     if not data_source:
         raise exc.HTTPNotFound(json_body={'message': 'Data Source not found'})
 
@@ -99,10 +104,42 @@ def delete_data_source_view(request):
     :return:
     """
     data_source_id = request.matchdict.get('id')
-    data_source = session.query(DataSource).filter(DataSource.id == data_source_id).first()
+    data_source = get_data_source(data_source_id)
     if not data_source:
         raise exc.HTTPNotFound(json_body={'message': 'No data source found.'})
 
     return session.query(DataSource). \
         filter(DataSource.id == data_source_id). \
         delete(synchronize_session='fetch')
+
+
+@view_config(route_name='data_source_views.load_data_query', renderer='json', permission='view')
+def load_data_query(request):
+    """
+    Get chart data using data source query
+    :param request:
+    :return:
+    """
+
+    data_source_id = request.matchdict.get('id')
+    data_source = get_data_source(data_source_id)
+    if not data_source:
+        raise exc.HTTPNotFound(json_body={'message': 'No data source found.'})
+
+    query = request.params.get('query')
+    parse = urlparse(data_source.url)
+    if parse.scheme == 'https':
+        conn = HTTPSConnection(parse.netloc)
+    else:
+        conn = HTTPConnection(parse.netloc)
+
+    auth = b64encode(b"%s:%s" % (data_source.username.encode('utf-8'),
+                                 data_source.password.encode('utf-8'))).decode("ascii")
+    headers = {'Content-type': 'application/json',
+               'Authorization': 'Basic %s' % auth}
+    conn.request('GET', query, headers=headers)
+    response = conn.getresponse()
+    data = response.read()
+    data = json.loads(data.decode("utf-8"))
+
+    return data

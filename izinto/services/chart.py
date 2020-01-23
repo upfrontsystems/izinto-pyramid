@@ -45,3 +45,21 @@ def list_charts(**kwargs):
         query = query.filter(Chart.dashboard_id == kwargs['dashboard_id'])
 
     return query.order_by(Chart.index).all()
+
+
+def get_chart(chart_id=None, dashboard_id=None):
+    """
+    Get a chart
+    :param chart_id:
+    :param dashboard_id:
+    :return:
+    """
+
+    query = session.query(Chart)
+
+    if chart_id:
+        query = query.filter(Chart.id == chart_id)
+    if dashboard_id:
+        query = query.filter(Chart.dashboard_id == dashboard_id)
+
+    return query.first()

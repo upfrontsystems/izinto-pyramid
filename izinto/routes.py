@@ -198,3 +198,8 @@ def includeme(config):
     config.add_route('data_source_views.edit_data_source',
                      '/data_source/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
+
+    config.add_route('data_source_views.load_data_query',
+                     '/data_source/{id}/query', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+

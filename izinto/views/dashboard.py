@@ -29,6 +29,9 @@ def create_dashboard_view(request):
     session.add(dashboard)
     session.flush()
 
+    if not [user for user in users if user['id'] == request.authenticated_userid]:
+        session.add(UserDashboard(user_id=request.authenticated_userid, dashboard_id=dashboard.id))
+
     for user in users:
         session.add(UserDashboard(user_id=user['id'], dashboard_id=dashboard.id))
 

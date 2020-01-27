@@ -22,6 +22,10 @@ def create_collection(request):
     session.add(collection)
     session.flush()
 
+    # add logged in user to collection
+    if not [user for user in users if user['id'] == request.authenticated_userid]:
+        session.add(UserCollection(user_id=request.authenticated_userid, collection_id=collection.id))
+
     for user in users:
         session.add(UserCollection(user_id=user['id'], collection_id=collection.id))
 

@@ -1,4 +1,4 @@
-from sqlalchemy import (Column, ForeignKey, VARCHAR, Unicode, Integer)
+from sqlalchemy import (Column, ForeignKey, VARCHAR, Unicode, Integer, UniqueConstraint)
 from sqlalchemy.orm import relationship
 
 from izinto.models import Base
@@ -25,6 +25,8 @@ class Chart(Base):
 
     dashboard = relationship('Dashboard')
     data_source = relationship('DataSource')
+
+    __table_args__ = (UniqueConstraint('dashboard_id', 'selector'),)
 
     def as_dict(self):
         return {'id': self.id,

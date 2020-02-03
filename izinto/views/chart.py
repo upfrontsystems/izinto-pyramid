@@ -8,7 +8,6 @@ from izinto.services.chart import create_chart, list_charts, get_chart
 def create_chart_view(request):
     data = request.json_body
     title = data.get('title')
-    selector = data.get('selector')
     unit = data.get('unit')
     color = data.get('color')
     typ = data.get('type')
@@ -26,7 +25,7 @@ def create_chart_view(request):
     if prev:
         index = prev.index + 1
 
-    chart = create_chart(title, selector, unit, color, typ, group_by, query, dashboard_id, data_source_id, index)
+    chart = create_chart(title, unit, color, typ, group_by, query, dashboard_id, data_source_id, index)
     return chart.as_dict()
 
 

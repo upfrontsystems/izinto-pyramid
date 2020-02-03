@@ -1,11 +1,10 @@
 from izinto.models import session, Chart
 
 
-def create_chart(title, selector, unit, color, typ, group_by, query, dashboard_id, data_source_id, index):
+def create_chart(title, unit, color, typ, group_by, query, dashboard_id, data_source_id, index):
     """
     Create chart
     :param title:
-    :param selector:
     :param unit:
     :param color:
     :param typ:
@@ -18,7 +17,6 @@ def create_chart(title, selector, unit, color, typ, group_by, query, dashboard_i
     """
 
     chart = Chart(title=title,
-                  selector=selector,
                   unit=unit,
                   color=color,
                   type=typ,
@@ -29,6 +27,9 @@ def create_chart(title, selector, unit, color, typ, group_by, query, dashboard_i
                   index=index)
     session.add(chart)
     session.flush()
+    # create selector from chart id
+    selector = 'chart-%s' % chart.id
+    chart.selector = selector
 
     return chart
 

@@ -13,7 +13,6 @@ class Chart(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     index = Column(Integer)
-    selector = Column(Unicode(length=100))
     title = Column(Unicode(length=100), nullable=False)
     unit = Column(VARCHAR)
     color = Column(VARCHAR)
@@ -26,13 +25,10 @@ class Chart(Base):
     dashboard = relationship('Dashboard')
     data_source = relationship('DataSource')
 
-    __table_args__ = (UniqueConstraint('dashboard_id', 'selector'),)
-
     def as_dict(self):
         return {'id': self.id,
                 'dashboard_id': self.dashboard_id,
                 'index': self.index,
-                'selector': self.selector,
                 'title': self.title,
                 'unit': self.unit,
                 'color': self.color,

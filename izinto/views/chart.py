@@ -56,7 +56,6 @@ def edit_chart(request):
     data = request.json_body
     chart_id = request.matchdict.get('id')
     index = data.get('index')
-    selector = data.get('selector')
     title = data.get('title')
     unit = data.get('unit')
     color = data.get('color')
@@ -77,7 +76,6 @@ def edit_chart(request):
 
     chart.unit = unit
     chart.index = index
-    chart.selector = selector
     chart.title = title
     chart.color = color
     chart.group_by = group_by

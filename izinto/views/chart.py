@@ -19,6 +19,8 @@ def create_chart_view(request):
     # check vital data
     if not title:
         raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
+    if not data_source_id:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need data source'})
 
     prev = session.query(Chart).filter(Chart.dashboard_id == dashboard_id).order_by(Chart.index.desc()).first()
     index = 0
@@ -132,12 +134,13 @@ def reorder_chart_view(request):
 
     if index > chart.index:
         change = -1
-        reorder = reorder.filter(Chart.index <= index).all()
+        reorder = reorder.filter(Chart.index.between(chart.index, index)).all()
     else:
         change = 1
-        reorder = reorder.filter(Chart.index >= index).all()
+        reorder = reorder.filter(Chart.index.between(index, chart.index)).all()
 
+    for reorder_chart in reorder:
+        reorder_chart.index += change
     chart.index = index
-    for chart in reorder:
-        chart.index += change
+
     return {}

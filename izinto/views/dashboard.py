@@ -162,12 +162,13 @@ def reorder_dashboard_view(request):
 
     if order > dashboard.order:
         change = -1
-        reorder = reorder.filter(Dashboard.order <= order).all()
+        reorder = reorder.filter(Dashboard.order.between(dashboard.order, order)).all()
     else:
         change = 1
-        reorder = reorder.filter(Dashboard.order >= order).all()
+        reorder = reorder.filter(Dashboard.order.between(order, dashboard.order)).all()
 
+    for reorder_dash in reorder:
+        reorder_dash.order += change
     dashboard.order = order
-    for dash in reorder:
-        dash.order += change
+
     return {}

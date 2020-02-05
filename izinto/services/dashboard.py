@@ -72,7 +72,7 @@ def paste_dashboard(dashboard_id, collection_id, title, order):
 
     # copy charts
     for chart in list_charts(dashboard_id=dashboard_id):
-        create_chart(chart.title, chart.selector, chart.unit, chart.color, chart.type, chart.group_by,
+        create_chart(chart.title, chart.unit, chart.color, chart.type, chart.group_by,
                      chart.query, pasted_dashboard.id, chart.data_source_id, chart.index)
 
     return pasted_dashboard

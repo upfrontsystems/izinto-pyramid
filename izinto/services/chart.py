@@ -27,9 +27,6 @@ def create_chart(title, unit, color, typ, group_by, query, dashboard_id, data_so
                   index=index)
     session.add(chart)
     session.flush()
-    # create selector from chart id
-    selector = 'chart-%s' % chart.id
-    chart.selector = selector
 
     return chart
 

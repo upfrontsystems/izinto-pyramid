@@ -39,7 +39,7 @@ def get_chart_view(request):
    :return:
    """
     chart_id = request.matchdict.get('id')
-    if not chart_id:
+    if chart_id is None:
         raise exc.HTTPBadRequest(json_body={'message': 'Need chart id'})
     chart = get_chart(chart_id)
     if not chart:
@@ -67,7 +67,7 @@ def edit_chart(request):
     data_source_id = data.get('data_source_id')
 
     # check vital data
-    if not chart_id:
+    if chart_id is None:
         raise exc.HTTPBadRequest(json_body={'message': 'Need chart id'})
     if not title:
         raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
@@ -109,6 +109,7 @@ def delete_chart(request):
     :param request:
     :return:
     """
+
     chart_id = request.matchdict.get('id')
     chart = get_chart(chart_id)
     if not chart:
@@ -124,7 +125,7 @@ def reorder_chart_view(request):
     data = request.json_body
     chart_id = request.matchdict.get('id')
     dashboard_id = data.get('dashboard_id')
-    index = data.get('index')
+    index = data['index']
 
     chart = get_chart(chart_id)
     if not chart:

@@ -55,7 +55,7 @@ def get_chart(chart_id=None, dashboard_id=None):
 
     query = session.query(Chart)
 
-    if chart_id:
+    if chart_id is not None:
         query = query.filter(Chart.id == chart_id)
     if dashboard_id:
         query = query.filter(Chart.dashboard_id == dashboard_id)

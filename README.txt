@@ -33,7 +33,7 @@ Getting Started
 
 - Load default data into the database using a script.
 
-    venv/bin/initialize_izinto_db development.ini
+    venv/bin/initialize_izinto_db development.ini#izinto-app
 
 - Run your project's tests.
 

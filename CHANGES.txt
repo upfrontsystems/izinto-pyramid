@@ -11,3 +11,6 @@
 * [#17](https://github.com/upfrontsystems/izinto-angular/issues/17) add single stat
 * [#19](https://github.com/upfrontsystems/izinto-angular/issues/19) add reorder to chart
 * [#20](https://github.com/upfrontsystems/izinto-angular/issues/20) add data source
+* [#21](https://github.com/upfrontsystems/izinto-angular/issues/21) add logged in user to dashboard and collection
+* remove chart selector
+* [#29](https://github.com/upfrontsystems/izinto-angular/issues/29) fix reordering of charts and dashboards

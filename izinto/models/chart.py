@@ -21,6 +21,7 @@ class Chart(Base):
     query = Column(VARCHAR)
     dashboard_id = Column(Integer, ForeignKey('dashboard.id', ondelete='CASCADE'))
     data_source_id = Column(Integer, ForeignKey('data_source.id'), nullable=False)
+    decimals = Column(Integer, default=2)
 
     dashboard = relationship('Dashboard')
     data_source = relationship('DataSource')
@@ -36,6 +37,7 @@ class Chart(Base):
                 'group_by': self.group_by,
                 'query': self.query,
                 'data_source_id': self.data_source_id,
+                'decimals': self.decimals,
                 'data_source': self.data_source.as_dict()}
 
     def __repr__(self):

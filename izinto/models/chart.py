@@ -17,7 +17,6 @@ class Chart(Base):
     unit = Column(VARCHAR)
     color = Column(VARCHAR)
     type = Column(VARCHAR)
-    group_by = Column(VARCHAR)
     query = Column(VARCHAR)
     dashboard_id = Column(Integer, ForeignKey('dashboard.id', ondelete='CASCADE'))
     data_source_id = Column(Integer, ForeignKey('data_source.id'), nullable=False)
@@ -34,7 +33,6 @@ class Chart(Base):
                 'unit': self.unit,
                 'color': self.color,
                 'type': self.type,
-                'group_by': self.group_by,
                 'query': self.query,
                 'data_source_id': self.data_source_id,
                 'decimals': self.decimals,

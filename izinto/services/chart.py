@@ -1,7 +1,7 @@
 from izinto.models import session, Chart
 
 
-def create_chart(title, unit, color, decimals, typ, group_by, query, dashboard_id, data_source_id, index):
+def create_chart(title, unit, color, decimals, typ, query, dashboard_id, data_source_id, index):
     """
     Create chart
     :param title:
@@ -9,7 +9,6 @@ def create_chart(title, unit, color, decimals, typ, group_by, query, dashboard_i
     :param color:
     :param decimals:
     :param typ:
-    :param group_by:
     :param query:
     :param dashboard_id:
     :param data_source_id:
@@ -22,7 +21,6 @@ def create_chart(title, unit, color, decimals, typ, group_by, query, dashboard_i
                   color=color,
                   decimals=decimals,
                   type=typ,
-                  group_by=group_by,
                   query=query,
                   dashboard_id=dashboard_id,
                   data_source_id=data_source_id,

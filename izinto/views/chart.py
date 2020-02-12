@@ -12,7 +12,6 @@ def create_chart_view(request):
     color = data.get('color')
     decimals = data.get('decimals', 2)
     typ = data.get('type')
-    group_by = data.get('group_by')
     query = data.get('query')
     dashboard_id = data.get('dashboard_id')
     data_source_id = data.get('data_source_id')
@@ -28,7 +27,7 @@ def create_chart_view(request):
     if prev:
         index = prev.index + 1
 
-    chart = create_chart(title, unit, color, decimals, typ, group_by, query, dashboard_id, data_source_id, index)
+    chart = create_chart(title, unit, color, decimals, typ, query, dashboard_id, data_source_id, index)
     return chart.as_dict()
 
 
@@ -64,7 +63,6 @@ def edit_chart(request):
     color = data.get('color')
     decimals = data.get('decimals')
     typ = data.get('type')
-    group_by = data.get('group_by')
     query = data.get('query')
     data_source_id = data.get('data_source_id')
 
@@ -83,7 +81,6 @@ def edit_chart(request):
     chart.title = title
     chart.color = color
     chart.decimals = decimals
-    chart.group_by = group_by
     chart.type = typ
     chart.query = query
     chart.data_source_id = data_source_id

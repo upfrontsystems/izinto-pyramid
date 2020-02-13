@@ -24,8 +24,13 @@ class Chart(Base):
 
     dashboard = relationship('Dashboard')
     data_source = relationship('DataSource')
+    group_by = relationship('ChartGroupBy')
 
     def as_dict(self):
+        group_by_data = {}
+        for group in self.group_by:
+            group_by_data[group.dashboard_view_id] = group.as_dict()
+
         return {'id': self.id,
                 'dashboard_id': self.dashboard_id,
                 'index': self.index,
@@ -36,7 +41,8 @@ class Chart(Base):
                 'query': self.query,
                 'data_source_id': self.data_source_id,
                 'decimals': self.decimals,
-                'data_source': self.data_source.as_dict()}
+                'data_source': self.data_source.as_dict(),
+                'group_by': [group.as_dict() for group in self.group_by]}
 
     def __repr__(self):
         return "Chart<id: %s, title: '%s'>" % (self.id, self.title)

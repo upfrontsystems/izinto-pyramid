@@ -1,6 +1,6 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Chart
+from izinto.models import session, Chart, ChartGroupBy
 from izinto.services.chart import create_chart, list_charts, get_chart
 
 
@@ -15,6 +15,7 @@ def create_chart_view(request):
     query = data.get('query')
     dashboard_id = data.get('dashboard_id')
     data_source_id = data.get('data_source_id')
+    group_by = data.get('group_by', [])
 
     # check vital data
     if not title:
@@ -27,7 +28,7 @@ def create_chart_view(request):
     if prev:
         index = prev.index + 1
 
-    chart = create_chart(title, unit, color, decimals, typ, query, dashboard_id, data_source_id, index)
+    chart = create_chart(title, unit, color, decimals, typ, query, dashboard_id, data_source_id, group_by, index)
     return chart.as_dict()
 
 
@@ -65,6 +66,7 @@ def edit_chart(request):
     typ = data.get('type')
     query = data.get('query')
     data_source_id = data.get('data_source_id')
+    group_by = data.get('group_by', [])
 
     # check vital data
     if chart_id is None:
@@ -84,6 +86,12 @@ def edit_chart(request):
     chart.type = typ
     chart.query = query
     chart.data_source_id = data_source_id
+
+    chart.group_by[:] = []
+    for group in group_by:
+        session.add(ChartGroupBy(chart_id=chart.id,
+                                 dashboard_view_id=group['dashboard_view_id'],
+                                 value=group['value']))
 
     chart_data = chart.as_dict()
     return chart_data

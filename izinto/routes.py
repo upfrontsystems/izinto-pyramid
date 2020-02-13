@@ -111,6 +111,10 @@ def includeme(config):
                      '/dashboard/{id}/reorder', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
+    config.add_route('dashboard_views.list_dashboard_view_items',
+                     '/dashboard_views', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
     # collection views
     config.add_route('collection_views.list_collections',
                      '/collections', request_method='GET',

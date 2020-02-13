@@ -1,6 +1,6 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Dashboard, UserDashboard
+from izinto.models import session, Dashboard, UserDashboard, DashboardView
 from izinto.services.user import get_user
 from izinto.services.dashboard import get_dashboard, list_dashboards, paste_dashboard, build_copied_dashboard_title
 
@@ -172,3 +172,10 @@ def reorder_dashboard_view(request):
     dashboard.order = order
 
     return {}
+
+
+@view_config(route_name='dashboard_views.list_dashboard_view_items', renderer='json', permission='edit')
+def list_dashboard_view_items(request):
+
+    dashboard_views = session.query(DashboardView).all()
+    return [view.as_dict() for view in dashboard_views]

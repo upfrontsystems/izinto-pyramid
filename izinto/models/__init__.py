@@ -26,8 +26,10 @@ def initialize_sql(engine):
 # import or define all models here to ensure they are attached to the
 # Base.metadata prior to any initialization routines
 from izinto.models.chart import Chart
+from izinto.models.chart_group_by import ChartGroupBy
 from izinto.models.collection import Collection
 from izinto.models.dashboard import Dashboard
+from izinto.models.dashboard_view import DashboardView
 from izinto.models.data_source import DataSource
 from izinto.models.otp import OTP
 from izinto.models.permission import Permission

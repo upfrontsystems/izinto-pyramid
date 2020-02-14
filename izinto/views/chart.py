@@ -87,11 +87,11 @@ def edit_chart(request):
     chart.query = query
     chart.data_source_id = data_source_id
 
-    chart.group_by[:] = []
-    for group in group_by:
-        session.add(ChartGroupBy(chart_id=chart.id,
-                                 dashboard_view_id=group['dashboard_view_id'],
-                                 value=group['value']))
+    for group in chart.group_by:
+        for data in group_by:
+            if data['dashboard_view_id'] == group.dashboard_view_id:
+                group.value = data['value']
+                break
 
     chart_data = chart.as_dict()
     return chart_data

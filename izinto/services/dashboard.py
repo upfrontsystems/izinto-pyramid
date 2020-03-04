@@ -27,19 +27,16 @@ def list_dashboards(**kwargs):
     """
     query = session.query(Dashboard)
 
+    # filter dashboards either by collection or users
     if 'collection_id' in kwargs:
         # filter for dashboards in a collection, and dashboard not in a collection
         if kwargs['collection_id']:
             query = query.filter(Dashboard.collection_id == kwargs['collection_id']).order_by(Dashboard.order)
         else:
             query = query.filter(Dashboard.collection_id == None).order_by(Dashboard.order)
-    # filter by users that can view the dashboards
-    # filter by users that have access to the collection of the dashboard
-    if 'user_id' in kwargs:
-        user_query = query.join(Dashboard.users).filter(User.id == kwargs['user_id'])
-        collection_query = query.join(Dashboard.collections). \
-            join(Collection.users).filter(User.id == kwargs['user_id'])
-        query = user_query.union(collection_query).order_by(Dashboard.title)
+    elif 'user_id' in kwargs:
+        # filter by users that can view the dashboards
+        query = query.join(Dashboard.users).filter(User.id == kwargs['user_id'])
 
     return query.all()
 
@@ -72,8 +69,9 @@ def paste_dashboard(dashboard_id, collection_id, title, order):
 
     # copy charts
     for chart in list_charts(dashboard_id=dashboard_id):
-        create_chart(chart.title, chart.selector, chart.unit, chart.color, chart.type, chart.group_by,
-                     chart.query, pasted_dashboard.id, chart.data_source_id, chart.index)
+        group_by = [group.as_dict() for group in chart.group_by]
+        create_chart(chart.title, chart.unit, chart.color, chart.decimals, chart.type,
+                     chart.query, pasted_dashboard.id, chart.data_source_id, group_by, chart.index)
 
     return pasted_dashboard
 

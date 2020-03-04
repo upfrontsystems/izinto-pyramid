@@ -10,8 +10,8 @@ def create_single_stat_view(request):
     query = data.get('query')
     decimals = data.get('decimals', 0)
     frmat = data.get('format', '')
-    thresholds = data.get('thresholds', '')
-    colors = data.get('colors', '')
+    thresholds = data.get('thresholds')
+    colors = data.get('colors')
     dashboard_id = data.get('dashboard_id')
     data_source_id = data.get('data_source_id')
 
@@ -19,7 +19,12 @@ def create_single_stat_view(request):
     if not (title and query):
         raise exc.HTTPBadRequest(json_body={'message': 'Need title and query'})
     # check threshold and colors values
-    if len(thresholds.split(',')) != len(colors.split(',')) - 1:
+    if not colors:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need a color'})
+    if not thresholds:
+        if len(colors.split(',')) != 1:
+            raise exc.HTTPBadRequest(json_body={'message': 'Need one more color than thresholds'})
+    elif len(thresholds.split(',')) != len(colors.split(',')) - 1:
         raise exc.HTTPBadRequest(json_body={'message': 'Need one more color than thresholds'})
 
     single_stat = SingleStat(title=title,

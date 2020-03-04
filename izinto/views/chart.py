@@ -1,6 +1,6 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Chart
+from izinto.models import session, Chart, ChartGroupBy
 from izinto.services.chart import create_chart, list_charts, get_chart
 
 
@@ -8,25 +8,27 @@ from izinto.services.chart import create_chart, list_charts, get_chart
 def create_chart_view(request):
     data = request.json_body
     title = data.get('title')
-    selector = data.get('selector')
     unit = data.get('unit')
     color = data.get('color')
+    decimals = data.get('decimals', 2)
     typ = data.get('type')
-    group_by = data.get('group_by')
     query = data.get('query')
     dashboard_id = data.get('dashboard_id')
     data_source_id = data.get('data_source_id')
+    group_by = data.get('group_by', [])
 
     # check vital data
     if not title:
         raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
+    if not data_source_id:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need data source'})
 
     prev = session.query(Chart).filter(Chart.dashboard_id == dashboard_id).order_by(Chart.index.desc()).first()
     index = 0
     if prev:
         index = prev.index + 1
 
-    chart = create_chart(title, selector, unit, color, typ, group_by, query, dashboard_id, data_source_id, index)
+    chart = create_chart(title, unit, color, decimals, typ, query, dashboard_id, data_source_id, group_by, index)
     return chart.as_dict()
 
 
@@ -38,7 +40,7 @@ def get_chart_view(request):
    :return:
    """
     chart_id = request.matchdict.get('id')
-    if not chart_id:
+    if chart_id is None:
         raise exc.HTTPBadRequest(json_body={'message': 'Need chart id'})
     chart = get_chart(chart_id)
     if not chart:
@@ -57,17 +59,17 @@ def edit_chart(request):
     data = request.json_body
     chart_id = request.matchdict.get('id')
     index = data.get('index')
-    selector = data.get('selector')
     title = data.get('title')
     unit = data.get('unit')
     color = data.get('color')
+    decimals = data.get('decimals')
     typ = data.get('type')
-    group_by = data.get('group_by')
     query = data.get('query')
     data_source_id = data.get('data_source_id')
+    group_by = data.get('group_by', [])
 
     # check vital data
-    if not chart_id:
+    if chart_id is None:
         raise exc.HTTPBadRequest(json_body={'message': 'Need chart id'})
     if not title:
         raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
@@ -78,13 +80,18 @@ def edit_chart(request):
 
     chart.unit = unit
     chart.index = index
-    chart.selector = selector
     chart.title = title
     chart.color = color
-    chart.group_by = group_by
+    chart.decimals = decimals
     chart.type = typ
     chart.query = query
     chart.data_source_id = data_source_id
+
+    for group in chart.group_by:
+        for data in group_by:
+            if data['dashboard_view_id'] == group.dashboard_view_id:
+                group.value = data['value']
+                break
 
     chart_data = chart.as_dict()
     return chart_data
@@ -110,6 +117,7 @@ def delete_chart(request):
     :param request:
     :return:
     """
+
     chart_id = request.matchdict.get('id')
     chart = get_chart(chart_id)
     if not chart:
@@ -125,7 +133,7 @@ def reorder_chart_view(request):
     data = request.json_body
     chart_id = request.matchdict.get('id')
     dashboard_id = data.get('dashboard_id')
-    index = data.get('index')
+    index = data['index']
 
     chart = get_chart(chart_id)
     if not chart:
@@ -135,12 +143,13 @@ def reorder_chart_view(request):
 
     if index > chart.index:
         change = -1
-        reorder = reorder.filter(Chart.index <= index).all()
+        reorder = reorder.filter(Chart.index.between(chart.index, index)).all()
     else:
         change = 1
-        reorder = reorder.filter(Chart.index >= index).all()
+        reorder = reorder.filter(Chart.index.between(index, chart.index)).all()
 
+    for reorder_chart in reorder:
+        reorder_chart.index += change
     chart.index = index
-    for chart in reorder:
-        chart.index += change
+
     return {}

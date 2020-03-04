@@ -1,34 +1,38 @@
-from izinto.models import session, Chart
+from izinto.models import session, Chart, ChartGroupBy
 
 
-def create_chart(title, selector, unit, color, typ, group_by, query, dashboard_id, data_source_id, index):
+def create_chart(title, unit, color, decimals, typ, query, dashboard_id, data_source_id, group_by, index):
     """
     Create chart
     :param title:
-    :param selector:
     :param unit:
     :param color:
+    :param decimals:
     :param typ:
-    :param group_by:
     :param query:
     :param dashboard_id:
     :param data_source_id:
+    :param group_by:
     :param index:
     :return:
     """
 
     chart = Chart(title=title,
-                  selector=selector,
                   unit=unit,
                   color=color,
+                  decimals=decimals,
                   type=typ,
-                  group_by=group_by,
                   query=query,
                   dashboard_id=dashboard_id,
                   data_source_id=data_source_id,
                   index=index)
     session.add(chart)
     session.flush()
+
+    for group in group_by:
+        session.add(ChartGroupBy(chart_id=chart.id,
+                                 dashboard_view_id=group['dashboard_view_id'],
+                                 value=group['value']))
 
     return chart
 
@@ -57,7 +61,7 @@ def get_chart(chart_id=None, dashboard_id=None):
 
     query = session.query(Chart)
 
-    if chart_id:
+    if chart_id is not None:
         query = query.filter(Chart.id == chart_id)
     if dashboard_id:
         query = query.filter(Chart.dashboard_id == dashboard_id)

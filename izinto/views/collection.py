@@ -2,6 +2,7 @@ import re
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, Collection, User, UserCollection
+from izinto.security import Administrator
 from izinto.services.user import get_user
 from izinto.services.dashboard import list_dashboards, paste_dashboard
 
@@ -105,10 +106,18 @@ def list_collections(request):
     filters = request.params
     query = session.query(Collection)
 
-    if 'user_id' in filters:
+    user = get_user(request.authenticated_userid)
+    if not user.has_role(Administrator):
         query = query.join(Collection.users).filter(User.id == request.authenticated_userid)
 
-    return [collection.as_dict() for collection in query.order_by(Collection.title).all()]
+    collections = []
+    for collection in query.order_by(Collection.title).all():
+        cdata = collection.as_dict()
+        if 'list_dashboards' in filters:
+            cdata['dashboards'] = [dash.as_dict() for dash in list_dashboards(collection_id=collection.id)]
+        collections.append(cdata)
+
+    return collections
 
 
 @view_config(route_name='collection_views.delete_collection', renderer='json', permission='delete')

@@ -124,6 +124,16 @@ def edit_user(request):
     user.address = address
     user.inactive = inactive
 
+    # update user role
+    existing_role = session.query(Role).filter(Role.name == role).first()
+    user_role = session.query(UserRole).filter(
+        UserRole.user_id == user_id,
+        UserRole.role_id == existing_role.id
+    ).first()
+    if not user_role:
+        user.roles = []
+        user.roles.append(existing_role)
+
     user_data = user.as_dict()
     return user_data
 

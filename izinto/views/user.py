@@ -84,6 +84,7 @@ def edit_user(request):
     surname = data.get('surname', None)
     telephone = data.get('telephone')
     address = data.get('address')
+    password = data.get('password')
     role = data.get('role', None)
     inactive = data.get('inactive')
 
@@ -123,6 +124,9 @@ def edit_user(request):
     user.surname = surname
     user.address = address
     user.inactive = inactive
+
+    if password:
+        user.set_password(password)
 
     # update user role
     existing_role = session.query(Role).filter(Role.name == role).first()

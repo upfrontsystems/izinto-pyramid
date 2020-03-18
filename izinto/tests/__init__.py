@@ -43,8 +43,8 @@ class BaseTest(unittest.TestCase):
         transaction.abort()
 
 
-def add_user(session, role='User', telephone=None, password='password', email='testuser@email.com', firstname='Test',
-             confirmed_registration=True):
+def add_user(session, role='User', telephone=None, password='password', email='testuser@email.com',
+             firstname='Test', surname='Test', address='Address', confirmed_registration=True):
     """
     Adds a user for testing
     :param session:
@@ -53,6 +53,8 @@ def add_user(session, role='User', telephone=None, password='password', email='t
     :param role:
     :param email:
     :param firstname:
+    :param surname:
+    :param address:
     :param confirmed_registration:
     :return:
     """
@@ -61,9 +63,9 @@ def add_user(session, role='User', telephone=None, password='password', email='t
     if not telephone:
         telephone = random.randint(1, 10000)
     user = User(firstname=firstname,
-                surname='User',
+                surname=surname,
                 telephone=telephone,
-                address='1 Road',
+                address=address,
                 email=email,
                 confirmed_registration=confirmed_registration)
     if password:

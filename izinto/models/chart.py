@@ -21,6 +21,10 @@ class Chart(Base):
     dashboard_id = Column(Integer, ForeignKey('dashboard.id', ondelete='CASCADE'))
     data_source_id = Column(Integer, ForeignKey('data_source.id'), nullable=False)
     decimals = Column(Integer, default=2)
+    labels = Column(VARCHAR)
+    min = Column(Integer)
+    max = Column(Integer)
+    height = Column(Integer)
 
     dashboard = relationship('Dashboard')
     data_source = relationship('DataSource')
@@ -41,6 +45,10 @@ class Chart(Base):
                 'query': self.query,
                 'data_source_id': self.data_source_id,
                 'decimals': self.decimals,
+                'labels': self.labels,
+                'min': self.min,
+                'max': self.max,
+                'height': self.height,
                 'data_source': self.data_source.as_dict(),
                 'group_by': [group.as_dict() for group in self.group_by]}
 

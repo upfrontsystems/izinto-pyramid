@@ -16,6 +16,10 @@ def create_chart_view(request):
     dashboard_id = data.get('dashboard_id')
     data_source_id = data.get('data_source_id')
     group_by = data.get('group_by', [])
+    labels = data.get('labels', None)
+    min_value = data.get('min', None)
+    max_value = data.get('max', None)
+    height = data.get('height', None)
 
     # check vital data
     if not title:
@@ -28,7 +32,8 @@ def create_chart_view(request):
     if prev:
         index = prev.index + 1
 
-    chart = create_chart(title, unit, color, decimals, typ, query, dashboard_id, data_source_id, group_by, index)
+    chart = create_chart(title, unit, color, decimals, typ, query, dashboard_id, data_source_id, group_by,
+                         index, labels, min_value, max_value, height)
     return chart.as_dict()
 
 
@@ -67,6 +72,10 @@ def edit_chart(request):
     query = data.get('query')
     data_source_id = data.get('data_source_id')
     group_by = data.get('group_by', [])
+    labels = data.get('labels', None)
+    min_value = data.get('min', None)
+    max_value = data.get('max', None)
+    height = data.get('height', None)
 
     # check vital data
     if chart_id is None:
@@ -86,6 +95,10 @@ def edit_chart(request):
     chart.type = typ
     chart.query = query
     chart.data_source_id = data_source_id
+    chart.labels = labels
+    chart.min = min_value
+    chart.max = max_value
+    chart.height = height
 
     for group in chart.group_by:
         for data in group_by:

@@ -1,0 +1,28 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/circleci-dashtweak
+    docker:
+      - image: circleci/python:3.7.4
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements -e ".[testing]"
+            pip install nose
+            pip freeze
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            nosetests izinto/tests

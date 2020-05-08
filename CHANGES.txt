@@ -19,4 +19,5 @@
 * [#38](https://github.com/upfrontsystems/izinto-angular/issues/38) remove group by from chart
 * [#57](https://github.com/upfrontsystems/izinto-angular/issues/38) can't update user role
 * [#63](https://github.com/upfrontsystems/izinto-angular/issues/38) optionally include dashboards in collections list
+* [#83](https://github.com/upfrontsystems/izinto-angular/issues/83) filter dashboards by user_id
 * [#110](https://github.com/upfrontsystems/izinto-angular/issues/110) include database name in influxdb query

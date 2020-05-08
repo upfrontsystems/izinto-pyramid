@@ -34,7 +34,8 @@ def list_dashboards(**kwargs):
             query = query.filter(Dashboard.collection_id == kwargs['collection_id']).order_by(Dashboard.order)
         else:
             query = query.filter(Dashboard.collection_id == None).order_by(Dashboard.order)
-    elif 'user_id' in kwargs:
+
+    if 'user_id' in kwargs:
         # filter by users that can view the dashboards
         query = query.join(Dashboard.users).filter(User.id == kwargs['user_id'])
 

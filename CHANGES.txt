@@ -18,4 +18,5 @@
 * [#35](https://github.com/upfrontsystems/izinto-angular/issues/35) add decimals for rounding chart labels
 * [#38](https://github.com/upfrontsystems/izinto-angular/issues/38) remove group by from chart
 * [#57](https://github.com/upfrontsystems/izinto-angular/issues/38) can't update user role
-( [#63](https://github.com/upfrontsystems/izinto-angular/issues/38) optionally include dashboards in collections list
+* [#63](https://github.com/upfrontsystems/izinto-angular/issues/38) optionally include dashboards in collections list
+* [#110](https://github.com/upfrontsystems/izinto-angular/issues/110) include database name in influxdb query

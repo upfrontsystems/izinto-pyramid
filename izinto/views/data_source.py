@@ -1,7 +1,7 @@
 import json
 from base64 import b64encode
 from http.client import HTTPSConnection, HTTPConnection
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlencode
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, DataSource
@@ -126,7 +126,10 @@ def load_data_query(request):
     if not data_source:
         raise exc.HTTPNotFound(json_body={'message': 'No data source found.'})
 
-    query = request.params.get('query')
+    query = {
+        'q':  request.json_body.get('query'),
+        'db': data_source.database
+    }
     parse = urlparse(data_source.url)
     if parse.scheme == 'https':
         conn = HTTPSConnection(parse.netloc)
@@ -135,9 +138,11 @@ def load_data_query(request):
 
     auth = b64encode(b"%s:%s" % (data_source.username.encode('utf-8'),
                                  data_source.password.encode('utf-8'))).decode("ascii")
-    headers = {'Content-type': 'application/json',
-               'Authorization': 'Basic %s' % auth}
-    conn.request('GET', query, headers=headers)
+    headers = {"Content-type": "application/x-www-form-urlencoded",
+               "Accept": "application/json",
+               "Authorization": "Basic %s" % auth}
+    params = urlencode(query)
+    conn.request('POST', "/query", params, headers=headers)
     response = conn.getresponse()
     data = response.read()
     data = json.loads(data.decode("utf-8"))

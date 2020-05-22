@@ -72,7 +72,8 @@ def paste_dashboard(dashboard_id, collection_id, title, order):
     for chart in list_charts(dashboard_id=dashboard_id):
         group_by = [group.as_dict() for group in chart.group_by]
         create_chart(chart.title, chart.unit, chart.color, chart.decimals, chart.type,
-                     chart.query, pasted_dashboard.id, chart.data_source_id, group_by, chart.index)
+                 chart.query, pasted_dashboard.id, chart.data_source_id, group_by, chart.index, chart.labels,
+                     chart.min, chart.max, chart.height)
 
     return pasted_dashboard
 

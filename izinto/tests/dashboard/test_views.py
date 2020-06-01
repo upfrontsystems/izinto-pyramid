@@ -1,6 +1,8 @@
 from pyramid import testing as pyramid_testing
 import pyramid.httpexceptions as exc
-from izinto.tests import BaseTest, dummy_request, add_dashboard
+
+from izinto.models import Collection, Variable, Chart, DataSource, SingleStat
+from izinto.tests import BaseTest, dummy_request, add_dashboard, add_user
 from izinto.views.dashboard import (create_dashboard_view, get_dashboard_view, edit_dashboard_view,
                                     list_dashboards_view, delete_dashboard_view, paste_dashboard_view,
                                     reorder_dashboard_view)
@@ -35,3 +37,41 @@ class TestDashboardViews(BaseTest):
         req.matchdict = {'id': dashboard.id}
         dashboard = get_dashboard_view(req)
         self.assertEqual(dashboard['title'], 'Test title')
+
+    def test_paste_dashboard_view(self):
+        collection = Collection(title='Collection 1')
+        self.session.add(collection)
+        self.session.flush()
+        collection_id = collection.id
+        collection2 = Collection(title='Collection 2')
+        self.session.add(collection2)
+        self.session.flush()
+        collection2_id = collection2.id
+        data_source = DataSource(name='Data source')
+        self.session.add(data_source)
+        self.session.flush()
+
+        user = add_user(self.session)
+        dashboard = add_dashboard(self.session, title='Test title', collection_id=collection.id, users=[user])
+        dashboard_id = dashboard.id
+        self.session.add(Variable(name='Variable', value='V', dashboard_id=dashboard.id))
+        self.session.add(Chart(title='Chart', data_source_id=data_source.id, dashboard_id=dashboard.id))
+        self.session.add(Chart(title='Chart', data_source_id=data_source.id, dashboard_id=dashboard.id))
+        self.session.add(SingleStat(title='Single stat', data_source_id=data_source.id, dashboard_id=dashboard_id))
+        self.session.flush()
+
+        req = dummy_request(self.session)
+        req.json_body = {}
+        with self.assertRaises(exc.HTTPBadRequest):
+            paste_dashboard_view(req)
+
+        req.json_body = {'id': dashboard_id, 'collection_id': collection_id}
+        dashboard = paste_dashboard_view(req)
+        self.assertEqual(dashboard['title'], 'Copy of Test title')
+        self.assertEqual(len(dashboard['variables']), 1)
+
+        req.json_body = {'id': dashboard_id, 'collection_id': collection2_id}
+        dashboard = paste_dashboard_view(req)
+        self.assertEqual(dashboard['title'], 'Test title')
+
+

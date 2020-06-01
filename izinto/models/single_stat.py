@@ -36,4 +36,4 @@ class SingleStat(Base):
                 'data_source': self.data_source.as_dict()}
 
     def __repr__(self):
-        return 'SingleStat<id: %s, title: %s>' % (self.id, self.title)
+        return 'SingleStat<id: %s, title: "%s">' % (self.id, self.title)

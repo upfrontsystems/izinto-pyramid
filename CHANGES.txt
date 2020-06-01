@@ -21,3 +21,4 @@
 * [#63](https://github.com/upfrontsystems/izinto-angular/issues/38) optionally include dashboards in collections list
 * [#83](https://github.com/upfrontsystems/izinto-angular/issues/83) filter dashboards by user_id
 * [#110](https://github.com/upfrontsystems/izinto-angular/issues/110) include database name in influxdb query
+* [#111](https://github.com/upfrontsystems/izinto-angular/issues/111) add script model and api views

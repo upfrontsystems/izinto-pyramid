@@ -1,6 +1,6 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Chart, ChartGroupBy
+from izinto.models import session, Chart
 from izinto.services.chart import create_chart, list_charts, get_chart
 
 

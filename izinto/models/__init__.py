@@ -41,3 +41,4 @@ from izinto.models.user import User
 from izinto.models.user_collection import UserCollection
 from izinto.models.user_dashboard import UserDashboard
 from izinto.models.variable import Variable
+from izinto.models.script import Script

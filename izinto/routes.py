@@ -82,6 +82,10 @@ def includeme(config):
                      '/chart/{id}/reorder', request_method='PUT',
                      factory=make_protected_function(Administrator))
 
+    config.add_route('chart_views.paste_chart',
+                     '/charts/paste', request_method='POST',
+                     factory=make_protected_function(*all_roles))
+
     # dashboard views
     config.add_route('dashboard_views.list_dashboards',
                      '/dashboards', request_method='GET',

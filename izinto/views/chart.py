@@ -1,7 +1,7 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Chart, ChartGroupBy
-from izinto.services.chart import create_chart, list_charts, get_chart
+from izinto.models import session, Chart
+from izinto.services.chart import create_chart, list_charts, get_chart, build_copied_chart_title, paste_chart
 
 
 @view_config(route_name='chart_views.create_chart', renderer='json', permission='add')
@@ -166,3 +166,28 @@ def reorder_chart_view(request):
     chart.index = index
 
     return {}
+
+
+@view_config(route_name='chart_views.paste_chart', renderer='json', permission='add')
+def paste_chart_view(request):
+    data = request.json_body
+    chart_id = data.get('id')
+    dashboard_id = data.get('dashboard_id')
+
+    # check vital data
+    if not chart_id:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need copied chart'})
+
+    chart = get_chart(chart_id)
+    title = chart.title
+    # make "Copy of" title
+    if dashboard_id == chart.dashboard_id:
+        title = build_copied_chart_title(title, dashboard_id)
+
+    index = 1
+    charts = list_charts(dashboard_id=dashboard_id)
+    if len(charts):
+        index = charts[-1].index + 1
+
+    chart = paste_chart(chart_id, dashboard_id, title, index)
+    return chart.as_dict()

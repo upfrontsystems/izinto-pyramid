@@ -1,4 +1,4 @@
-from sqlalchemy import (Column, ForeignKey, VARCHAR, Unicode, Integer, UniqueConstraint)
+from sqlalchemy import (Column, ForeignKey, VARCHAR, Unicode, Integer)
 from sqlalchemy.orm import relationship
 
 from izinto.models import Base

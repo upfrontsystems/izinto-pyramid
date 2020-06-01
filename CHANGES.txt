@@ -1,3 +1,10 @@
+0.5
+---
+
+### Issue Fixes
+* [#68](https://github.com/upfrontsystems/izinto-angular/issues/68) Copy / Paste Chart
+
+
 0.0
 ---
 

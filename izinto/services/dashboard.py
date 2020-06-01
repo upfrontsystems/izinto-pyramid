@@ -1,5 +1,5 @@
 import re
-from izinto.models import session, Collection, Dashboard, User, UserDashboard
+from izinto.models import session, Dashboard, User, UserDashboard
 from izinto.services.variable import create_variable
 from izinto.services.chart import create_chart, list_charts
 

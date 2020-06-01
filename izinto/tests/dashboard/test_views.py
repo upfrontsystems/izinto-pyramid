@@ -9,6 +9,11 @@ from izinto.views.dashboard import (create_dashboard_view, get_dashboard_view, e
 class TestDashboardViews(BaseTest):
     """ Class for testing dashboard views """
 
+    def setUp(self):
+        super(TestDashboardViews, self).setUp()
+        self.config = pyramid_testing.setUp()
+        self.config.testing_securitypolicy(userid=u'admin', permissive=True)
+
     def test_create_dashboard(self):
         req = dummy_request(self.session)
         req.json_body = {'description': 'Description'}

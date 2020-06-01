@@ -1,9 +1,9 @@
 import pyramid.httpexceptions as exc
 
-from izinto.models import Dashboard, DataSource
+from izinto.models import Dashboard, DataSource, DashboardView
 from izinto.tests import BaseTest, dummy_request
 from izinto.views.chart import (create_chart_view, get_chart_view, edit_chart, list_charts_view, delete_chart,
-                                reorder_chart_view)
+                                reorder_chart_view, paste_chart_view)
 
 
 class TestChartViews(BaseTest):
@@ -226,3 +226,49 @@ class TestChartViews(BaseTest):
         self.assertEqual(charts[1]['index'], 1)
         self.assertEqual(charts[0]['index'], 0)
 
+    def test_copy_chart(self):
+        req = dummy_request(self.session)
+        dashboard_view = DashboardView(name='Dashboard View', icon='icon')
+        self.session.add(dashboard_view)
+        dashboard1 = Dashboard(title='Dashboard Title 1')
+        self.session.add(dashboard1)
+        dashboard2 = Dashboard(title='Dashboard Title 2')
+        self.session.add(dashboard2)
+        data_source = DataSource(name='Datasource')
+        self.session.add(data_source)
+        self.session.flush()
+
+        req.json_body = {
+            'title': 'Title',
+            'dashboard_id': dashboard1.id,
+            'data_source_id': data_source.id,
+            'unit': 'U',
+            'group_by': [{'dashboard_view_id': dashboard_view.id, 'value': 1}]
+        }
+
+        chart = create_chart_view(req)
+        chart_id = chart['id']
+
+        req.json_body = {}
+        with self.assertRaises(exc.HTTPBadRequest):
+            paste_chart_view(req)
+
+        req.json_body = {
+            'id': chart_id,
+            'dashboard_id': dashboard1.id
+        }
+        chart = paste_chart_view(req)
+
+        req.matchdict = {'id': chart['id']}
+        chart = get_chart_view(req)
+        self.assertEqual(chart['title'], 'Copy of Title')
+
+        req.json_body = {
+            'id': chart_id,
+            'dashboard_id': dashboard2.id
+        }
+        chart = paste_chart_view(req)
+
+        req.matchdict = {'id': chart['id']}
+        chart = get_chart_view(req)
+        self.assertEqual(chart['title'], 'Title')

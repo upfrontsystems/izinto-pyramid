@@ -1,7 +1,8 @@
 import re
 from izinto.models import session, Dashboard, User, UserDashboard
-from izinto.services.variable import create_variable
 from izinto.services.chart import create_chart, list_charts
+from izinto.services.single_stat import list_single_stats, create_single_stat
+from izinto.services.variable import create_variable
 
 
 def get_dashboard(dashboard_id=None):
@@ -72,8 +73,13 @@ def paste_dashboard(dashboard_id, collection_id, title, order):
     for chart in list_charts(dashboard_id=dashboard_id):
         group_by = [group.as_dict() for group in chart.group_by]
         create_chart(chart.title, chart.unit, chart.color, chart.decimals, chart.type,
-                 chart.query, pasted_dashboard.id, chart.data_source_id, group_by, chart.index, chart.labels,
+                     chart.query, pasted_dashboard.id, chart.data_source_id, group_by, chart.index, chart.labels,
                      chart.min, chart.max, chart.height)
+
+    # copy single stats
+    for stat in list_single_stats(dashboard_id=dashboard_id):
+        create_single_stat(stat.title, stat.query, stat.decimals, stat.format, stat.thresholds, stat.colors,
+                           pasted_dashboard.id, stat.data_source_id)
 
     return pasted_dashboard
 

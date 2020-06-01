@@ -1,6 +1,7 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, SingleStat
+from izinto.services.single_stat import create_single_stat, list_single_stats
 
 
 @view_config(route_name='single_stat_views.create_single_stat', renderer='json', permission='add')
@@ -9,7 +10,7 @@ def create_single_stat_view(request):
     title = data.get('title')
     query = data.get('query')
     decimals = data.get('decimals', 0)
-    frmat = data.get('format', '')
+    stat_format = data.get('format', '')
     thresholds = data.get('thresholds')
     colors = data.get('colors')
     dashboard_id = data.get('dashboard_id')
@@ -27,17 +28,14 @@ def create_single_stat_view(request):
     elif len(thresholds.split(',')) != len(colors.split(',')) - 1:
         raise exc.HTTPBadRequest(json_body={'message': 'Need one more color than thresholds'})
 
-    single_stat = SingleStat(title=title,
-                             query=query,
-                             decimals=decimals,
-                             format=frmat,
-                             thresholds=thresholds,
-                             colors=colors,
-                             dashboard_id=dashboard_id,
-                             data_source_id=data_source_id)
-    session.add(single_stat)
-    session.flush()
-
+    single_stat = create_single_stat(title,
+                                     query,
+                                     decimals,
+                                     stat_format,
+                                     thresholds,
+                                     colors,
+                                     dashboard_id,
+                                     data_source_id)
     return single_stat.as_dict()
 
 
@@ -109,11 +107,9 @@ def list_single_stats_view(request):
     :return:
     """
     filters = request.params
-    query = session.query(SingleStat)
-    for column, value in filters.items():
-        query = query.filter(getattr(SingleStat, column) == value)
+    stats = list_single_stats(**filters)
 
-    return [single_stat.as_dict() for single_stat in query.order_by(SingleStat.title).all()]
+    return [single_stat.as_dict() for single_stat in stats]
 
 
 @view_config(route_name='single_stat_views.delete_single_stat', renderer='json', permission='delete')

@@ -3,6 +3,7 @@
 
 ### Issue Fixes
 * [#68](https://github.com/upfrontsystems/izinto-angular/issues/68) Copy / Paste Chart
+* [#114](https://github.com/upfrontsystems/izinto-angular/issues/144) Copy Single Stats with Dashboard
 
 
 0.0

@@ -222,6 +222,7 @@ class TestScriptViews(BaseTest):
         scripts = list_scripts_view(req)
         self.assertEqual(scripts[0]['id'], script1['id'])
 
+        # move first script one down
         req.matchdict = {'id': script1['id']}
         req.json_body = {'dashboard_id': dashboard.id,
                          'index': 1}
@@ -232,3 +233,13 @@ class TestScriptViews(BaseTest):
         self.assertEqual(scripts[0]['index'], 0)
         self.assertEqual(scripts[1]['index'], 1)
 
+        # move first script back to first position
+        req.matchdict = {'id': script1['id']}
+        req.json_body = {'dashboard_id': dashboard.id,
+                         'index': 0}
+        reorder_script_view(req)
+        scripts = list_scripts_view(req)
+        self.assertEqual(scripts[0]['id'], script1['id'])
+        self.assertEqual(scripts[1]['id'], script2['id'])
+        self.assertEqual(scripts[0]['index'], 0)
+        self.assertEqual(scripts[1]['index'], 1)

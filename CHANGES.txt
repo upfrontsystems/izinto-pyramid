@@ -1,14 +1,6 @@
 0.5
 ---
 
-### Issue Fixes
-* [#68](https://github.com/upfrontsystems/izinto-angular/issues/68) Copy / Paste Chart
-* [#114](https://github.com/upfrontsystems/izinto-angular/issues/144) Copy Single Stats with Dashboard
-
-
-0.0
----
-
 - Initial version.
 
 ### Issue Fixes
@@ -20,7 +12,6 @@
 * [#19](https://github.com/upfrontsystems/izinto-angular/issues/19) add reorder to chart
 * [#20](https://github.com/upfrontsystems/izinto-angular/issues/20) add data source
 * [#21](https://github.com/upfrontsystems/izinto-angular/issues/21) add logged in user to dashboard and collection
-* remove chart selector
 * [#29](https://github.com/upfrontsystems/izinto-angular/issues/29) fix reordering of charts and dashboards
 * [#24](https://github.com/upfrontsystems/izinto-angular/issues/24) do not filter dashboards in collection by user
 * [#35](https://github.com/upfrontsystems/izinto-angular/issues/35) add decimals for rounding chart labels
@@ -28,4 +19,7 @@
 * [#57](https://github.com/upfrontsystems/izinto-angular/issues/38) can't update user role
 * [#63](https://github.com/upfrontsystems/izinto-angular/issues/38) optionally include dashboards in collections list
 * [#83](https://github.com/upfrontsystems/izinto-angular/issues/83) filter dashboards by user_id
+* [#68](https://github.com/upfrontsystems/izinto-angular/issues/68) Copy / Paste Chart
+* [#114](https://github.com/upfrontsystems/izinto-angular/issues/144) Copy Single Stats with Dashboard
 * [#110](https://github.com/upfrontsystems/izinto-angular/issues/110) include database name in influxdb query
+* [#111](https://github.com/upfrontsystems/izinto-angular/issues/111) add script model and api views

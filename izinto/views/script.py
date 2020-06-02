@@ -42,18 +42,10 @@ def edit_script_view(request):
 
 @view_config(route_name='script_views.reorder_script', renderer='json', permission='edit')
 def reorder_script_view(request):
-    data = request.json_body
-    script_id = request.matchdict.get('id', None)
-    index = data.get('index', None)
-    if script_id is None:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need record id'})
-    if index is None:
-        raise exc.HTTPBadRequest(json_body={'message': 'index of new position not found'})
-    script = session.query(Script).filter(Script.id == script_id).first()
-    if not script:
-        raise exc.HTTPNotFound(json_body={'message': 'Script not found'})
+    script = get(request, Script, as_dict=False)
+    data = get_values(request, ['index'], ['index'])
     dashboard_scripts = session.query(Script).filter(Script.dashboard_id == script.dashboard_id)
-    reorder(index, script, Script, dashboard_scripts)
+    reorder(data.get('index'), script, Script, dashboard_scripts)
     return {}
 
 

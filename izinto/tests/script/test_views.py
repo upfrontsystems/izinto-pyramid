@@ -206,7 +206,7 @@ class TestScriptViews(BaseTest):
             reorder_script_view(req)
         # need index of new position
         with self.assertRaises(exc.HTTPBadRequest):
-            req.matchdict = {'id': 10}
+            req.matchdict = {'id': 1}
             req.json_body = {'dashboard_id': dashboard.id}
             reorder_script_view(req)
         # record not found

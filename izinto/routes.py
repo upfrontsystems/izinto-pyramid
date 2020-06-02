@@ -211,3 +211,27 @@ def includeme(config):
                      '/data_source/{id}/query', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
+    # single_stat views
+    config.add_route('script_views.list_scripts',
+                     '/scripts', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('script_views.create_script',
+                     '/scripts', request_method='POST',
+                     factory=make_protected_function(Administrator))
+
+    config.add_route('script_views.delete_script',
+                     '/script/{id}', request_method='DELETE',
+                     factory=make_protected_function(Administrator))
+
+    config.add_route('script_views.get_script',
+                     '/script/{id}', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('script_views.edit_script',
+                     '/script/{id}', request_method='PUT',
+                     factory=make_protected_function(Administrator))
+
+    config.add_route('script_views.reorder_script',
+                     '/script/{id}/reorder', request_method='PUT',
+                     factory=make_protected_function(Administrator))

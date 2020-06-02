@@ -185,6 +185,10 @@ def includeme(config):
     config.add_route('single_stat_views.edit_single_stat',
                      '/single_stat/{id}', request_method='PUT',
                      factory=make_protected_function(Administrator))
+    
+    config.add_route('single_stat_views.paste_single_stat',
+                     '/single_stats/paste', request_method='POST',
+                     factory=make_protected_function(Administrator))
 
     # data_source views
     config.add_route('data_source_views.list_data_sources',

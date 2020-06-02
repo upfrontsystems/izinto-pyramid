@@ -1,7 +1,8 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, SingleStat
-from izinto.services.single_stat import create_single_stat, list_single_stats
+from izinto.services.single_stat import create_single_stat, list_single_stats, build_copied_stat_title, \
+    paste_single_stat
 
 
 @view_config(route_name='single_stat_views.create_single_stat', renderer='json', permission='add')
@@ -127,3 +128,25 @@ def delete_single_stat_view(request):
     return session.query(SingleStat). \
         filter(SingleStat.id == single_stat_id). \
         delete(synchronize_session='fetch')
+
+
+@view_config(route_name='single_stat_views.paste_single_stat', renderer='json', permission='add')
+def paste_single_stat_view(request):
+    data = request.json_body
+    single_stat_id = data.get('id')
+    dashboard_id = data.get('dashboard_id')
+
+    # check vital data
+    if not single_stat_id:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need copied single stat'})
+    if not dashboard_id:
+        raise exc.HTTPBadRequest(json_body={'message': 'Need destination dashboard'})
+
+    single_stat = session.query(SingleStat).filter(SingleStat.id == single_stat_id).first()
+    title = single_stat.title
+    # make "Copy of" title
+    if dashboard_id == single_stat.dashboard_id:
+        title = build_copied_stat_title(title, dashboard_id)
+        
+    single_stat = paste_single_stat(single_stat_id, dashboard_id, title)
+    return single_stat.as_dict()

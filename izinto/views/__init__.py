@@ -3,7 +3,31 @@ import pyramid.httpexceptions as exc
 from izinto.models import session
 
 
-def get(request, model):
+def get_values(request, attrs, required_attrs):
+    data = request.json_body
+    values = {}
+    for attr in attrs:
+        value = data.get(attr, None)
+        if value is None and attr in required_attrs:
+            raise exc.HTTPBadRequest(json_body={'message': '%s required' % attr})
+        values[attr] = value
+    return values
+
+
+def create(model, **kwargs):
+    obj = model(**kwargs)
+    session.add(obj)
+    session.flush()
+    return obj
+
+
+def edit(obj, **kwargs):
+    for key, value in kwargs.items():
+        setattr(obj, key, value)
+    session.flush()
+
+
+def get(request, model, as_dict=True):
     """
     Get a record
     :param request: HTTP Request
@@ -16,8 +40,10 @@ def get(request, model):
     record = session.query(model).filter(model.id == record_id).first()
     if not record:
         raise exc.HTTPNotFound(json_body={'message': 'record not found'})
-    record_data = record.as_dict()
-    return record_data
+    if as_dict:
+        return record.as_dict()
+    else:
+        return record
 
 
 def filtered_list(request, model, order_by):

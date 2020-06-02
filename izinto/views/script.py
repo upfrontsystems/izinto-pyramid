@@ -3,31 +3,24 @@ from pyramid.view import view_config
 from sqlalchemy import func
 
 from izinto.models import session, Script
-from izinto.views import reorder, delete, filtered_list, get
+from izinto.views import create, edit, reorder, delete, filtered_list, get, get_values
 
 
 @view_config(route_name='script_views.create_script', renderer='json', permission='add')
 def create_script_view(request):
-    data = request.json_body
-    title = data.get('title')
-    dashboard_id = data.get('dashboard_id')
-    index = data.get('index', None)
-    content = data.get('content')
+    """
+    Create Script
+    :param request:
+    :return:
+    """
+    attrs = required_attrs = ['dashboard_id', 'title', 'content']
+    data = get_values(request, attrs, required_attrs)
 
-    if index is None:
-        result = session.query(func.count(Script.id)).filter(Script.dashboard_id == dashboard_id).first()
-        index = result[0]
+    if data.get('index') is None:
+        result = session.query(func.count(Script.id)).filter(Script.dashboard_id == data.get('dashboard_id')).first()
+        data['index'] = result[0]
 
-    # check required data
-    if not (title and content):
-        raise exc.HTTPBadRequest(json_body={'message': 'Need title and script content'})
-
-    script = Script(title=title,
-                    dashboard_id=dashboard_id,
-                    index=index,
-                    content=content)
-    session.add(script)
-    session.flush()
+    script = create(Script, **data)
 
     return script.as_dict()
 
@@ -35,29 +28,14 @@ def create_script_view(request):
 @view_config(route_name='script_views.edit_script', renderer='json', permission='edit')
 def edit_script_view(request):
     """
-    Edit script
+    Edit Script
     :param request:
     :return:
     """
-    data = request.json_body
-    script_id = request.matchdict.get('id')
-    title = data.get('title')
-    content = data.get('content')
-
-    # check vital data
-    if not script_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need script id'})
-    if not title:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
-    if not content:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need script content'})
-
-    script = session.query(Script).filter(Script.id == script_id).first()
-    if not script:
-        raise exc.HTTPNotFound(json_body={'message': 'Script not found'})
-
-    script.title = title
-    script.content = content
+    script = get(request, Script, as_dict=False)
+    attrs = required_attrs = ['title', 'content']
+    data = get_values(request, attrs, required_attrs)
+    edit(script, **data)
 
     return script.as_dict()
 

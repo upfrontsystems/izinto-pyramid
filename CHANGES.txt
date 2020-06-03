@@ -23,3 +23,4 @@
 * [#114](https://github.com/upfrontsystems/izinto-angular/issues/144) Copy Single Stats with Dashboard
 * [#110](https://github.com/upfrontsystems/izinto-angular/issues/110) include database name in influxdb query
 * [#111](https://github.com/upfrontsystems/izinto-angular/issues/111) add script model and api views
+* [#115](https://github.com/upfrontsystems/izinto-angular/issues/115) Add copy and paste single stat function

@@ -21,6 +21,7 @@ class UserTestModels(BaseTest):
         self.session.flush()
         self.assertIsNotNone(user.id)
         self.assertEqual(user.password, 'new password')
+        self.assertEqual(user.__repr__(), 'User<id: %s, firstname: Henry, surname: Jones>' % user.id)
 
     def test_add_user_role(self):
         """ Test add a user with a role """

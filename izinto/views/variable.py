@@ -12,7 +12,7 @@ def create_variable_view(request):
     dashboard_id = data.get('dashboard_id')
 
     # check vital data
-    if not name and value:
+    if not name or not value:
         raise exc.HTTPBadRequest(json_body={'message': 'Need name and value'})
     # check duplicates
     existing = get_variable(name=name, dashboard_id=dashboard_id)
@@ -58,7 +58,7 @@ def edit_variable_view(request):
     if not value:
         raise exc.HTTPBadRequest(json_body={'message': 'Need value'})
     if not name:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need variable id'})
+        raise exc.HTTPBadRequest(json_body={'message': 'Need variable name'})
 
     variable = get_variable(variable_id=variable_id)
     if not variable:

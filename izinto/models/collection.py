@@ -26,4 +26,4 @@ class Collection(Base):
                 'users': [user.as_dict() for user in self.users]}
 
     def __repr__(self):
-        return 'Collection<title: %s>' % self.title
+        return 'Collection<id: %s, title: "%s">' % (self.id, self.title)

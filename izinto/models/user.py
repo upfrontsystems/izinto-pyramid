@@ -76,7 +76,7 @@ class User(Base):
         self.password = h
 
     def __repr__(self):
-        return 'User<firstname: %s, surname: %s>' % (self.firstname, self.surname)
+        return 'User<id: %s, firstname: %s, surname: %s>' % (self.id, self.firstname, self.surname)
 
     def has_role(self, rolename):
         for role in self.roles:

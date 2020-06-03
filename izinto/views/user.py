@@ -104,6 +104,10 @@ def edit_user(request):
         if not admin_user:
             raise exc.HTTPForbidden()
 
+    user = get_user(user_id=user_id, inactive=None)
+    if not user:
+        raise exc.HTTPNotFound(json_body={'message': 'User not found'})
+
     if telephone:
         usr = get_user(telephone=telephone)
         if usr and (usr.id != user_id):
@@ -113,10 +117,6 @@ def edit_user(request):
         usr = get_user(email=email)
         if usr and (usr.id != user_id):
             raise exc.HTTPBadRequest(json_body={'message': 'User with email %s already exists' % email})
-
-    user = get_user(user_id=user_id, inactive=None)
-    if not user:
-        raise exc.HTTPNotFound(json_body={'message': 'User not found'})
 
     user.telephone = telephone
     user.email = email

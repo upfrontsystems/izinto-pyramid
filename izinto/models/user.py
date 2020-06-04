@@ -45,7 +45,7 @@ class User(Base):
         space = ''
         if cls.firstname and cls.surname:
             space = ' '
-        return func.concat(cls.firstname, space, cls.surname)
+        return cls.firstname + space + cls.surname
 
     def as_dict(self):
 

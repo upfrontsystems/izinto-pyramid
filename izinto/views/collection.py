@@ -173,6 +173,6 @@ def paste_collection_view(request):
 
     # copy dashboards in collection
     for dashboard in collection.dashboards:
-        paste_dashboard(dashboard.id, pasted_collection.id, dashboard.title, dashboard.order)
+        paste_dashboard(dashboard.id, pasted_collection.id, dashboard.title, dashboard.index)
 
     return pasted_collection.as_dict()

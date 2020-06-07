@@ -1,5 +1,9 @@
 # Views package
+import re
+
 import pyramid.httpexceptions as exc
+from sqlalchemy import func
+
 from izinto.models import session
 
 
@@ -85,13 +89,49 @@ def reorder(new_position, record, model, query):
     column = getattr(model, 'index')
     if new_position > current_position:
         change = -1
-        records = query.filter(column.between(current_position+1, new_position)).all()
+        records = query.filter(column.between(current_position + 1, new_position)).all()
     else:
         change = 1
-        records = query.filter(column.between(new_position, current_position-1)).all()
+        records = query.filter(column.between(new_position, current_position - 1)).all()
     for r in records:
         new_index = getattr(r, column.name) + change
         setattr(r, column.name, new_index)
     setattr(record, column.name, new_position)
     session.flush()
+
+
+def paste(request, model, copied_data, parent_id_attribute, name_attribute):
+    """ Create a copy of the record """
+
+    data = request.json_body
+    parent_id = data.get(parent_id_attribute)
+    record = get(request, model, as_dict=False)
+    name = getattr(record, name_attribute)
+
+    # make "Copy of" name when pasting in same parent
+    if parent_id == getattr(record, parent_id_attribute):
+        name = 'Copy of %s' % name
+        search_str = '%s%s' % (name, '%')
+        query = session.query(model).filter(getattr(model, parent_id_attribute) == parent_id,
+                                            getattr(model, name_attribute).ilike(search_str)) \
+            .order_by(getattr(model, name_attribute).desc()).all()
+        if query:
+            number = re.search(r'\((\d+)\)', getattr(query[0], name_attribute))
+            if number and number.group(1):
+                name = '%s (%s)' % (name, (int(number.group(1)) + 1))
+            else:
+                name = '%s (2)' % name
+
+    # set new record index value if it has one
+    if hasattr(model, 'index'):
+        result = session.query(func.count(getattr(model, 'id'))). \
+            filter(getattr(model, parent_id_attribute) == parent_id).first()
+        data['index'] = result[0]
+
+    copied_data[name_attribute] = name
+    copied_data[parent_id_attribute] = parent_id
+
+    record = create(model, **copied_data)
+    return record.as_dict()
+
 

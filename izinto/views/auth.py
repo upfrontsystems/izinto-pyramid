@@ -4,8 +4,8 @@ from pyramid.security import remember
 from pyramid.view import view_config
 from izinto import security
 from izinto.models import session, User, Role
-from izinto.services.user import get_user
 from izinto.services import otp as services
+from izinto.views import get_user
 
 log = logging.getLogger(__name__)
 

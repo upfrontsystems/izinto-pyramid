@@ -1,10 +1,11 @@
-from pyramid import testing as pyramid_testing
 import pyramid.httpexceptions as exc
-from izinto.tests import BaseTest, add_user, add_roles_and_permissions, dummy_request, mock_otp
-from izinto.views.auth import register_user, confirm_otp_registration, set_new_password, login, reset_password
-from izinto.services import user as services
-from izinto.services.otp import generate_and_send_otp
+from pyramid import testing as pyramid_testing
+
 from izinto.models import OTP
+from izinto.services.otp import generate_and_send_otp
+from izinto.tests import BaseTest, add_user, add_roles_and_permissions, dummy_request, mock_otp
+from izinto.views import get_user
+from izinto.views.auth import register_user, confirm_otp_registration, set_new_password, login, reset_password
 
 
 class TestAuthViews(BaseTest):
@@ -82,7 +83,7 @@ class TestAuthViews(BaseTest):
         secrets = register_user(req)
         self.assertIsNotNone(secrets.get('emailsecret'))
 
-        user = services.get_user(email='test@test.com').as_dict()
+        user = get_user(email='test@test.com').as_dict()
         self.assertEqual(user.get('firstname'), 'Julius')
         self.assertEqual(user.get('surname'), 'Jones')
         self.assertEqual(user.get('email'), 'test@test.com')
@@ -108,12 +109,12 @@ class TestAuthViews(BaseTest):
         secrets = register_user(req)
         self.assertIsNotNone(secrets.get('emailsecret'))
 
-        user = services.get_user(email='test@test.com')
+        user = get_user(email='test@test.com')
         otp = self.session.query(OTP).filter(OTP.user_id == user.id).first()
 
         req.json_body = {'otp': otp.otp, 'secret': secrets['emailsecret']}
         response = confirm_otp_registration(req)
-        user = services.get_user(user_id=response.get('user_id'))
+        user = get_user(user_id=response.get('user_id'))
         self.assertEqual(user.confirmed_registration, True)
 
     def test_set_new_password(self):
@@ -134,7 +135,7 @@ class TestAuthViews(BaseTest):
         }
 
         response = set_new_password(req)
-        user = services.get_user(user_id=response.get('id'))
+        user = get_user(user_id=response.get('id'))
         self.assertTrue(user.validate_password('new_password'))
 
     def test_user_login(self):
@@ -187,7 +188,7 @@ class TestAuthViews(BaseTest):
         req.json_body = {'otp': otp.otp, 'secret': response.get('secrets').get('emailsecret')}
         response = confirm_otp_registration(req)
         self.assertIsNotNone(response.get('id'))
-        user3 = services.get_user(user_id=response.get('id'))
+        user3 = get_user(user_id=response.get('id'))
         self.assertEqual(user3.confirmed_registration, True)
 
         # Attempt missing password login
@@ -227,6 +228,7 @@ class TestAuthViews(BaseTest):
 
 class TestResetPassword(BaseTest):
     """ Test resetting password """
+
     def setUp(self):
         super(TestResetPassword, self).setUp()
         self.config = pyramid_testing.setUp()
@@ -265,19 +267,19 @@ class TestResetPassword(BaseTest):
         }
 
         register_user(self.request)
-        user = services.get_user(email='test@test.com')
+        user = get_user(email='test@test.com')
         self.request.json_body = {'email': user.email, 'application_url': '/'}
         response = reset_password(self.request)
         secret = response['secrets']['emailsecret']
         otp = self.session.query(OTP).filter(OTP.user_id == user.id).first()
         self.request.method = 'POST'
         self.request.json_body = {'secret': secret,
-                             'otp': otp.otp,
-                             'user_id': user.id,
-                             'password': 'new_password'}
+                                  'otp': otp.otp,
+                                  'user_id': user.id,
+                                  'password': 'new_password'}
         response = set_new_password(self.request)
         self.assertIn('email', list(response.keys()))
-        user = services.get_user(user_id=user.id)
+        user = get_user(user_id=user.id)
         self.assertTrue(user.validate_password('new_password'))
 
         # test forgetting password with case insensitive email
@@ -287,8 +289,8 @@ class TestResetPassword(BaseTest):
         otp = self.session.query(OTP).filter(OTP.user_id == user.id).first()
         self.request.method = 'POST'
         self.request.json_body = {'secret': secret,
-                             'otp': otp.otp,
-                             'user_id': user.id,
-                             'password': 'new_password'}
+                                  'otp': otp.otp,
+                                  'user_id': user.id,
+                                  'password': 'new_password'}
         response = set_new_password(self.request)
         self.assertEqual(response['email'], user.email)

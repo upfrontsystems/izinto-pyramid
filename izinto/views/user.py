@@ -3,49 +3,33 @@ from pyramid.view import view_config
 from sqlalchemy import or_
 from izinto.models import session, User, Role, UserRole
 from izinto.security import Administrator
-from izinto.services.user import get_user
+from izinto.views import get_values, create, get, edit, get_user
+
+attrs = ['email', 'telephone', 'firstname', 'surname', 'address', 'confirmed_registration', 'inactive']
+required_attrs = ['email', 'firstname', 'surname', 'role']
 
 
 @view_config(route_name='user_views.create_user', renderer='json', permission='add')
 def create_user(request):
+    """
+    Create User
+    :param request:
+    :return User:
+    """
 
-    data = request.json_body
-    email = data.get('email')
-    telephone = data.get('telephone')
-    firstname = data.get('firstname')
-    surname = data.get('surname')
-    address = data.get('address')
-    role = data.get('role')
-    password = data.get('password')
-    confirmed_registration = data.get('confirmed_registration', False)
-    inactive = data.get('inactive')
+    data = get_values(request, attrs, required_attrs)
+    role = request.json_body.get('role')
+    password = request.json_body.get('password')
 
-    # check vital data
-    if not email:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need email'})
-    if not firstname or not surname:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need first name and surname'})
-    if not role:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need role'})
+    user = create(User, **data)
 
-    user = User(firstname=firstname,
-                surname=surname,
-                address=address,
-                telephone=telephone,
-                email=email,
-                confirmed_registration=confirmed_registration,
-                inactive=inactive)
     user.set_password(password)
-    session.add(user)
-    session.flush()
-
     user_role = session.query(Role).filter(Role.name == role).first()
     user.roles.append(user_role)
     session.add(user)
     session.flush()
 
-    user_data = user.as_dict()
-    return user_data
+    return user.as_dict()
 
 
 @view_config(route_name='user_views.get_user', renderer='json', permission='view')
@@ -56,18 +40,14 @@ def get_user_view(request):
    :return:
    """
     user_id = request.matchdict.get('id')
-    if not user_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need user id'})
+
     # only admin can load other users
     if user_id != request.authenticated_userid:
         admin_user = get_user(request.authenticated_userid, role=Administrator)
         if not admin_user:
             raise exc.HTTPForbidden()
-    user = get_user(user_id)
-    if not user:
-        raise exc.HTTPNotFound(json_body={'message': 'User not found'})
-    user_data = user.as_dict()
-    return user_data
+
+    return get(request, User)
 
 
 @view_config(route_name='user_views.edit_user', renderer='json', permission='edit')
@@ -77,36 +57,18 @@ def edit_user(request):
     :param request:
     :return:
     """
-    data = request.json_body
-    user_id = request.matchdict.get('id')
-    email = data.get('email', None)
-    firstname = data.get('firstname', None)
-    surname = data.get('surname', None)
-    telephone = data.get('telephone')
-    address = data.get('address')
-    password = data.get('password')
-    role = data.get('role', None)
-    inactive = data.get('inactive')
 
-    # check vital data
-    if not user_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need user id'})
-    if not email:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need email'})
-    if not firstname or not surname:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need first name and surname'})
-    if not role:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need role'})
+    user_id = request.matchdict.get('id')
+    email = request.json_body.get('email')
+    telephone = request.json_body.get('telephone')
+    password = request.json_body.get('password')
+    role = request.json_body.get('role')
 
     # only admin or owner of user profile can edit profile
     if user_id != request.authenticated_userid:
         admin_user = get_user(user_id=request.authenticated_userid, role=Administrator)
         if not admin_user:
             raise exc.HTTPForbidden()
-
-    user = get_user(user_id=user_id, inactive=None)
-    if not user:
-        raise exc.HTTPNotFound(json_body={'message': 'User not found'})
 
     if telephone:
         usr = get_user(telephone=telephone)
@@ -118,28 +80,21 @@ def edit_user(request):
         if usr and (usr.id != user_id):
             raise exc.HTTPBadRequest(json_body={'message': 'User with email %s already exists' % email})
 
-    user.telephone = telephone
-    user.email = email
-    user.firstname = firstname
-    user.surname = surname
-    user.address = address
-    user.inactive = inactive
+    user = get(request, User, as_dict=False)
+    data = get_values(request, attrs, required_attrs)
+    edit(user, **data)
 
     if password:
         user.set_password(password)
 
     # update user role
     existing_role = session.query(Role).filter(Role.name == role).first()
-    user_role = session.query(UserRole).filter(
-        UserRole.user_id == user_id,
-        UserRole.role_id == existing_role.id
-    ).first()
+    user_role = session.query(UserRole).filter(UserRole.user_id == user_id, UserRole.role_id == existing_role.id).first()
     if not user_role:
         user.roles = []
         user.roles.append(existing_role)
 
-    user_data = user.as_dict()
-    return user_data
+    return user.as_dict()
 
 
 @view_config(route_name='user_views.list_users', renderer='json', permission='view')

@@ -1,7 +1,7 @@
 import pyramid.httpexceptions as exc
 from izinto.models import Variable
 from izinto.tests import BaseTest, dummy_request, add_dashboard
-from izinto.views.variable import (create_variable_view, get_variable_view, list_variables_view, delete_variable,
+from izinto.views.variable import (create_variable_view, get_variable_view, list_variables_view, delete_variable_view,
                                    edit_variable_view, delete_variable_view)
 
 

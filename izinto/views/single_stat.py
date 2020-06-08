@@ -1,43 +1,36 @@
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, SingleStat
-from izinto.services.single_stat import create_single_stat, list_single_stats, build_copied_stat_title, \
-    paste_single_stat
+from izinto.models import SingleStat
+from izinto.views import get_values, create, get, edit, filtered_list, delete, paste
+
+attrs = ['title', 'query', 'decimals', 'format', 'thresholds', 'colors', 'dashboard_id', 'data_source_id']
+required_attrs = ['title', 'query', 'colors']
 
 
 @view_config(route_name='single_stat_views.create_single_stat', renderer='json', permission='add')
 def create_single_stat_view(request):
-    data = request.json_body
-    title = data.get('title')
-    query = data.get('query')
-    decimals = data.get('decimals', 0)
-    stat_format = data.get('format', '')
-    thresholds = data.get('thresholds')
-    colors = data.get('colors')
-    dashboard_id = data.get('dashboard_id')
-    data_source_id = data.get('data_source_id')
+    """
+    Create SingleStat
+    :param request:
+    :return SingleStat:
+    """
 
-    # check vital data
-    if not (title and query):
-        raise exc.HTTPBadRequest(json_body={'message': 'Need title and query'})
-    # check threshold and colors values
-    if not colors:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need a color'})
+    data = get_values(request, attrs, required_attrs)
+
+    thresholds = request.json_body.get('thresholds')
+    colors = request.json_body.get('colors')
     if not thresholds:
         if len(colors.split(',')) != 1:
             raise exc.HTTPBadRequest(json_body={'message': 'Need one more color than thresholds'})
     elif len(thresholds.split(',')) != len(colors.split(',')) - 1:
         raise exc.HTTPBadRequest(json_body={'message': 'Need one more color than thresholds'})
+    if data.get('decimals') is None:
+        data['decimals'] = 0
+    if data.get('format') is None:
+        data['format'] = ''
 
-    single_stat = create_single_stat(title,
-                                     query,
-                                     decimals,
-                                     stat_format,
-                                     thresholds,
-                                     colors,
-                                     dashboard_id,
-                                     data_source_id)
-    return single_stat.as_dict()
+    stat = create(SingleStat, **data)
+    return stat.as_dict()
 
 
 @view_config(route_name='single_stat_views.get_single_stat', renderer='json', permission='view')
@@ -47,14 +40,7 @@ def get_single_stat_view(request):
     :param request:
     :return:
     """
-    single_stat_id = request.matchdict.get('id')
-    if not single_stat_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need single_stat id'})
-    single_stat = session.query(SingleStat).filter(SingleStat.id == single_stat_id).first()
-    if not single_stat:
-        raise exc.HTTPNotFound(json_body={'message': 'Single Stat not found'})
-    single_stat_data = single_stat.as_dict()
-    return single_stat_data
+    return get(request, SingleStat)
 
 
 @view_config(route_name='single_stat_views.edit_single_stat', renderer='json', permission='edit')
@@ -64,38 +50,17 @@ def edit_single_stat_view(request):
     :param request:
     :return:
     """
-    data = request.json_body
-    single_stat_id = request.matchdict.get('id')
-    title = data.get('title')
-    query = data.get('query')
-    decimals = data.get('decimals', 0)
-    frmat = data.get('format', '')
-    thresholds = data.get('thresholds', '')
-    colors = data.get('colors', '')
-    data_source_id = data.get('data_source_id')
 
-    # check vital data
-    if not single_stat_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need single stat id'})
-    if not title:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
-    if not query:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need query'})
+    single_stat = get(request, SingleStat, as_dict=False)
+    thresholds = request.json_body.get('thresholds', '')
+    colors = request.json_body.get('colors', '')
+
     # check threshold and colors values
     if len(thresholds.split(',')) != len(colors.split(',')) - 1:
         raise exc.HTTPBadRequest(json_body={'message': 'Need one more color than thresholds'})
 
-    single_stat = session.query(SingleStat).filter(SingleStat.id == single_stat_id).first()
-    if not single_stat:
-        raise exc.HTTPNotFound(json_body={'message': 'Single Stat not found'})
-
-    single_stat.title = title
-    single_stat.query = query
-    single_stat.decimals = decimals
-    single_stat.format = frmat
-    single_stat.thresholds = thresholds
-    single_stat.colors = colors
-    single_stat.data_source_id = data_source_id
+    data = get_values(request, attrs, required_attrs)
+    edit(single_stat, **data)
 
     return single_stat.as_dict()
 
@@ -107,10 +72,7 @@ def list_single_stats_view(request):
     :param request:
     :return:
     """
-    filters = request.params
-    stats = list_single_stats(**filters)
-
-    return [single_stat.as_dict() for single_stat in stats]
+    return filtered_list(request, SingleStat, SingleStat.title)
 
 
 @view_config(route_name='single_stat_views.delete_single_stat', renderer='json', permission='delete')
@@ -120,33 +82,18 @@ def delete_single_stat_view(request):
     :param request:
     :return:
     """
-    single_stat_id = request.matchdict.get('id')
-    single_stat = session.query(SingleStat).filter(SingleStat.id == single_stat_id).first()
-    if not single_stat:
-        raise exc.HTTPNotFound(json_body={'message': 'No single stat found.'})
-
-    return session.query(SingleStat). \
-        filter(SingleStat.id == single_stat_id). \
-        delete(synchronize_session='fetch')
+    return delete(request, SingleStat)
 
 
 @view_config(route_name='single_stat_views.paste_single_stat', renderer='json', permission='add')
 def paste_single_stat_view(request):
-    data = request.json_body
-    single_stat_id = data.get('id')
-    dashboard_id = data.get('dashboard_id')
+    """
+    Paste a SingleStat view
+    :param request:
+    :return SingleStat:
+    """
+    single_stat = get(request, SingleStat, as_dict=False)
+    data = {attr: getattr(single_stat, attr) for attr in attrs}
 
-    # check vital data
-    if not single_stat_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need copied single stat'})
-    if not dashboard_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need destination dashboard'})
-
-    single_stat = session.query(SingleStat).filter(SingleStat.id == single_stat_id).first()
-    title = single_stat.title
-    # make "Copy of" title
-    if dashboard_id == single_stat.dashboard_id:
-        title = build_copied_stat_title(title, dashboard_id)
-        
-    single_stat = paste_single_stat(single_stat_id, dashboard_id, title)
-    return single_stat.as_dict()
+    pasted_chart = paste(request, SingleStat, data, 'dashboard_id', 'title')
+    return pasted_chart.as_dict()

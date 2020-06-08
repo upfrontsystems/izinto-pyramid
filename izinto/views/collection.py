@@ -4,8 +4,7 @@ from pyramid.view import view_config
 from izinto.models import session, Collection, User, UserCollection, Dashboard, UserDashboard, Variable, Chart, \
     ChartGroupBy, SingleStat
 from izinto.security import Administrator
-from izinto.services.user import get_user
-from izinto.views import paste, create
+from izinto.views import paste, create, get_user
 
 
 @view_config(route_name='collection_views.create_collection', renderer='json', permission='add')

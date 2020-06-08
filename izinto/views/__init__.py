@@ -4,7 +4,7 @@ import re
 import pyramid.httpexceptions as exc
 from sqlalchemy import func
 
-from izinto.models import session
+from izinto.models import session, User, Role
 
 
 def get_values(request, attrs, required_attrs):
@@ -135,3 +135,33 @@ def paste(request, model, copied_data, parent_id_attribute, name_attribute):
     return record.as_dict()
 
 
+def get_user(user_id=None, telephone=None, email=None, role=None, inactive=None):
+    """
+    Get a user
+    :param user_id:
+    :param telephone:
+    :param email:
+    :param role:
+    :param inactive:
+    :return:
+    """
+
+    query = session.query(User)
+
+    if inactive is not None:
+        query = query.filter(User.inactive == inactive)
+
+    if user_id:
+        query = query.filter(User.id == user_id)
+
+    if telephone:
+        query = query.filter(User.telephone == telephone)
+
+    # case insensitive match by email
+    if email:
+        query = query.filter(User.email.ilike(email))
+
+    if role:
+        query = query.join(User.roles).filter(Role.name == role)
+
+    return query.first()

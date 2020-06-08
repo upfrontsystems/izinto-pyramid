@@ -1,8 +1,7 @@
 from pyramid.view import view_config
 from sqlalchemy import func
 from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat
-from izinto.services.user import get_user
-from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder
+from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder, get_user
 
 attrs = ['title', 'description', 'collection_id']
 required_attrs = ['title']

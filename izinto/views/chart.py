@@ -63,8 +63,7 @@ def edit_chart(request):
                 group.value = data['value']
                 break
 
-    chart_data = chart.as_dict()
-    return chart_data
+    return chart.as_dict()
 
 
 @view_config(route_name='chart_views.list_charts', renderer='json', permission='view')
@@ -103,6 +102,11 @@ def reorder_chart_view(request):
 
 @view_config(route_name='chart_views.paste_chart', renderer='json', permission='add')
 def paste_chart_view(request):
+    """
+    Paste a chart view
+    :param request:
+    :return Chart:
+    """
 
     chart = get(request, Chart, as_dict=False)
     data = {attr: getattr(chart, attr) for attr in attrs}
@@ -110,8 +114,6 @@ def paste_chart_view(request):
     pasted_chart = paste(request, Chart, data, 'dashboard_id', 'title')
 
     for group in chart.group_by:
-        session.add(ChartGroupBy(chart_id=pasted_chart.id,
-                                 dashboard_view_id=group.dashboard_view_id,
-                                 value=group.value))
+        create(ChartGroupBy, chart_id=pasted_chart.id, dashboard_view_id=group.dashboard_view_id, value=group.value)
 
     return pasted_chart.as_dict()

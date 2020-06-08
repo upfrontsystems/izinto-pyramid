@@ -1,10 +1,11 @@
 import re
 import pyramid.httpexceptions as exc
 from pyramid.view import view_config
-from izinto.models import session, Collection, User, UserCollection
+from izinto.models import session, Collection, User, UserCollection, Dashboard, UserDashboard, Variable, Chart, \
+    ChartGroupBy, SingleStat
 from izinto.security import Administrator
 from izinto.services.user import get_user
-from izinto.services.dashboard import list_dashboards, paste_dashboard
+from izinto.views import paste, create
 
 
 @view_config(route_name='collection_views.create_collection', renderer='json', permission='add')
@@ -48,7 +49,8 @@ def get_collection_view(request):
         raise exc.HTTPNotFound(json_body={'message': 'Collection not found'})
 
     collection_data = collection.as_dict()
-    collection_data['dashboards'] = [dash.as_dict() for dash in list_dashboards(collection_id=collection_id)]
+    dashboards = session.query(Dashboard).filter(Dashboard.collection_id == collection_id).all()
+    collection_data['dashboards'] = [dash.as_dict() for dash in dashboards]
     return collection_data
 
 
@@ -114,7 +116,8 @@ def list_collections(request):
     for collection in query.order_by(Collection.title).all():
         cdata = collection.as_dict()
         if 'list_dashboards' in filters:
-            cdata['dashboards'] = [dash.as_dict() for dash in list_dashboards(collection_id=collection.id)]
+            dashboards = session.query(Dashboard).filter(Dashboard.collection_id == collection.id).all()
+            cdata['dashboards'] = [dash.as_dict() for dash in dashboards]
         collections.append(cdata)
 
     return collections
@@ -173,6 +176,30 @@ def paste_collection_view(request):
 
     # copy dashboards in collection
     for dashboard in collection.dashboards:
-        paste_dashboard(dashboard.id, pasted_collection.id, dashboard.title, dashboard.index)
+        data = dashboard.as_dict()
+        pasted_dashboard = paste(request, Dashboard, data, 'collection', 'title')
+
+        # copy list of users
+        for user in dashboard.users:
+            create(UserDashboard, user_id=user['id'], dashboard_id=dashboard.id)
+
+        # copy list of variables
+        for variable in dashboard.variables:
+            create(Variable, name=variable, value=variable.value, dashboard_id=pasted_dashboard.id)
+
+        # copy charts
+        for chart in session.query(Chart).filter(Chart.dashboard_id == dashboard.id).all():
+            data = chart.as_dict()
+            pasted_chart = paste(request, Chart, data, 'dashboard_id', 'title')
+
+            for group in chart.group_by:
+                create(ChartGroupBy, chart_id=pasted_chart.id, dashboard_view_id=group.dashboard_view_id,
+                       value=group.value)
+
+        # copy single stats
+        for stat in session.query(SingleStat).filter(SingleStat.dashboard_id == dashboard.id).all():
+            create(SingleStat, title=stat.title, query=stat.query, decimals=stat.decimals, format=stat.format,
+                   thresholds=stat.thresholds, colors=stat.colors, dashboard_id=pasted_dashboard.id,
+                   data_source_id=stat.data_source_id)
 
     return pasted_collection.as_dict()

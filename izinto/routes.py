@@ -83,7 +83,7 @@ def includeme(config):
                      factory=make_protected_function(Administrator))
 
     config.add_route('chart_views.paste_chart',
-                     '/charts/paste', request_method='POST',
+                     '/chart/{id}/paste', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     # dashboard views
@@ -92,7 +92,7 @@ def includeme(config):
                      factory=make_protected_function(*all_roles))
 
     config.add_route('dashboard_views.paste_dashboard',
-                     '/dashboards/paste', request_method='POST',
+                     '/dashboard/{id}/paste', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('dashboard_views.create_dashboard',
@@ -125,7 +125,7 @@ def includeme(config):
                      factory=make_protected_function(*all_roles))
 
     config.add_route('collection_views.paste_collection',
-                     '/collections/paste', request_method='POST',
+                     '/collection/{id}/paste', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('collection_views.create_collection',
@@ -187,7 +187,7 @@ def includeme(config):
                      factory=make_protected_function(Administrator))
     
     config.add_route('single_stat_views.paste_single_stat',
-                     '/single_stats/paste', request_method='POST',
+                     '/single_stat/{id}/paste', request_method='POST',
                      factory=make_protected_function(Administrator))
 
     # data_source views

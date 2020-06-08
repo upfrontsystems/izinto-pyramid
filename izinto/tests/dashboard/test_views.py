@@ -65,12 +65,14 @@ class TestDashboardViews(BaseTest):
         with self.assertRaises(exc.HTTPBadRequest):
             paste_dashboard_view(req)
 
-        req.json_body = {'id': dashboard_id, 'collection_id': collection_id}
+        req.matchdict = {'id': dashboard_id}
+        req.json_body = {'collection_id': collection_id}
         dashboard = paste_dashboard_view(req)
         self.assertEqual(dashboard['title'], 'Copy of Test title')
         self.assertEqual(len(dashboard['variables']), 1)
 
-        req.json_body = {'id': dashboard_id, 'collection_id': collection2_id}
+        req.matchdict = {'id': dashboard_id}
+        req.json_body = {'collection_id': collection2_id}
         dashboard = paste_dashboard_view(req)
         self.assertEqual(dashboard['title'], 'Test title')
 

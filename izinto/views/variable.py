@@ -18,7 +18,7 @@ def create_variable_view(request):
     dashboard_id = request.json_body.get('dashboard_id')
 
     # check duplicates
-    existing = session.query(Variable).filter(name=name, dashboard_id=dashboard_id).first()
+    existing = session.query(Variable).filter_by(name=name, dashboard_id=dashboard_id).first()
     if existing:
         raise exc.HTTPBadRequest(json_body={'message': 'Variable with same id %s already exists' % name})
 
@@ -47,7 +47,7 @@ def edit_variable_view(request):
     variable_id = request.matchdict.get('id')
     name = request.json_body.get('name')
 
-    existing = session.query(Variable).filter(name=name).first()
+    existing = session.query(Variable).filter_by(name=name).first()
     if existing and existing.id != variable_id:
         raise exc.HTTPBadRequest(json_body={'message': 'Variable with id %s already exists' % id})
 

@@ -2,6 +2,7 @@ from pyramid.view import view_config
 from sqlalchemy import func
 from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat
 from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder, get_user
+from izinto.views.chart import attrs as chart_attrs
 
 attrs = ['title', 'description', 'collection_id']
 required_attrs = ['title']
@@ -95,19 +96,20 @@ def paste_dashboard_view(request):
     dashboard = get(request, Dashboard, as_dict=False)
     data = {attr: getattr(dashboard, attr) for attr in attrs}
 
-    pasted_dashboard = paste(request, Dashboard, data, 'collection', 'title')
+    pasted_dashboard = paste(request, Dashboard, data, 'collection_id', 'title')
 
     # copy list of users
     for user in dashboard.users:
-        create(UserDashboard, user_id=user['id'], dashboard_id=dashboard.id)
+        create(UserDashboard, user_id=user.id, dashboard_id=pasted_dashboard.id)
 
     # copy list of variables
     for variable in dashboard.variables:
-        create(Variable, name=variable, value=variable.value, dashboard_id=pasted_dashboard.id)
+        create(Variable, name=variable.name, value=variable.value, dashboard_id=pasted_dashboard.id)
 
     # copy charts
     for chart in session.query(Chart).filter(Chart.dashboard_id == dashboard.id).all():
-        data = {attr: getattr(chart, attr) for attr in attrs}
+        data = {attr: getattr(chart, attr) for attr in chart_attrs}
+        data['dashboard_id'] = pasted_dashboard.id
         pasted_chart = paste(request, Chart, data, 'dashboard_id', 'title')
 
         for group in chart.group_by:

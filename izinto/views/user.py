@@ -20,6 +20,8 @@ def create_user(request):
     data = get_values(request, attrs, required_attrs)
     role = request.json_body.get('role')
     password = request.json_body.get('password')
+    if not password:
+        raise exc.HTTPBadRequest(json_body={'message': 'Password required'})
 
     user = create(User, **data)
 
@@ -64,6 +66,9 @@ def edit_user(request):
     password = request.json_body.get('password')
     role = request.json_body.get('role')
 
+    user = get(request, User, as_dict=False)
+    data = get_values(request, attrs, required_attrs)
+
     # only admin or owner of user profile can edit profile
     if user_id != request.authenticated_userid:
         admin_user = get_user(user_id=request.authenticated_userid, role=Administrator)
@@ -79,9 +84,11 @@ def edit_user(request):
         usr = get_user(email=email)
         if usr and (usr.id != user_id):
             raise exc.HTTPBadRequest(json_body={'message': 'User with email %s already exists' % email})
+    if not request.json_body.get('role'):
+        raise exc.HTTPBadRequest(json_body={'message': 'User role is required'})
+    if request.json_body.get('confirmed_registration') is None:
+        data['confirmed_registration'] = False
 
-    user = get(request, User, as_dict=False)
-    data = get_values(request, attrs, required_attrs)
     edit(user, **data)
 
     if password:

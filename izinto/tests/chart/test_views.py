@@ -63,7 +63,7 @@ class TestChartViews(BaseTest):
             get_chart_view(req)
 
         with self.assertRaises(exc.HTTPNotFound):
-            req.matchdict = {'id': 0}
+            req.matchdict = {'id': 100}
             get_chart_view(req)
 
         req.json_body = {
@@ -105,7 +105,7 @@ class TestChartViews(BaseTest):
             req.matchdict = {'id': chart_id}
             edit_chart(req)
         with self.assertRaises(exc.HTTPNotFound):
-            req.matchdict = {'id': 0}
+            req.matchdict = {'id': 100}
             req.json_body = {'title': 'Title'}
             edit_chart(req)
 
@@ -207,7 +207,7 @@ class TestChartViews(BaseTest):
         create_chart_view(req)
 
         with self.assertRaises(exc.HTTPNotFound):
-            req.matchdict = {'id': 0}
+            req.matchdict = {'id': 100}
             req.json_body = {'dashboard_id': dashboard.id,
                              'index': 1}
             reorder_chart_view(req)
@@ -218,6 +218,7 @@ class TestChartViews(BaseTest):
         charts = list_charts_view(req)
         self.assertEqual(charts[0]['id'], chart['id'])
 
+        req.matchdict = {'id': chart['id']}
         req.json_body = {'dashboard_id': dashboard.id,
                          'index': 1}
         reorder_chart_view(req)
@@ -253,20 +254,16 @@ class TestChartViews(BaseTest):
         with self.assertRaises(exc.HTTPBadRequest):
             paste_chart_view(req)
 
-        req.json_body = {
-            'id': chart_id,
-            'dashboard_id': dashboard1.id
-        }
+        req.matchdict = {'id': chart_id}
+        req.json_body = {'dashboard_id': dashboard1.id}
         chart = paste_chart_view(req)
 
         req.matchdict = {'id': chart['id']}
         chart = get_chart_view(req)
         self.assertEqual(chart['title'], 'Copy of Title')
 
-        req.json_body = {
-            'id': chart_id,
-            'dashboard_id': dashboard2.id
-        }
+        req.matchdict = {'id': chart_id}
+        req.json_body = {'dashboard_id': dashboard2.id}
         chart = paste_chart_view(req)
 
         req.matchdict = {'id': chart['id']}

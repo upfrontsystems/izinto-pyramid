@@ -109,12 +109,14 @@ def paste(request, model, copied_data, parent_id_attribute, name_attribute):
     name = getattr(record, name_attribute)
 
     # make "Copy of" name when pasting in same parent
-    if parent_id == getattr(record, parent_id_attribute):
+    if not parent_id or (parent_id == getattr(record, parent_id_attribute)):
         name = 'Copy of %s' % name
         search_str = '%s%s' % (name, '%')
-        query = session.query(model).filter(getattr(model, parent_id_attribute) == parent_id,
-                                            getattr(model, name_attribute).ilike(search_str)) \
-            .order_by(getattr(model, name_attribute).desc()).all()
+        query = session.query(model).filter(getattr(model, name_attribute).ilike(search_str)) \
+            .order_by(getattr(model, name_attribute).desc())
+        if parent_id:
+            query = query.filter(getattr(model, parent_id_attribute) == parent_id)
+        query = query.all()
         if query:
             number = re.search(r'\((\d+)\)', getattr(query[0], name_attribute))
             if number and number.group(1):
@@ -124,15 +126,16 @@ def paste(request, model, copied_data, parent_id_attribute, name_attribute):
 
     # set new record index value if it has one
     if hasattr(model, 'index'):
-        result = session.query(func.count(getattr(model, 'id'))). \
-            filter(getattr(model, parent_id_attribute) == parent_id).first()
-        data['index'] = result[0]
+        result = session.query(func.count(getattr(model, 'id')))
+        if parent_id:
+            result = result.filter(getattr(model, parent_id_attribute) == parent_id)
+        data['index'] = result.first()[0]
 
     copied_data[name_attribute] = name
-    copied_data[parent_id_attribute] = parent_id
+    if parent_id:
+        copied_data[parent_id_attribute] = parent_id
 
-    record = create(model, **copied_data)
-    return record.as_dict()
+    return create(model, **copied_data)
 
 
 def get_user(user_id=None, telephone=None, email=None, role=None, inactive=None):

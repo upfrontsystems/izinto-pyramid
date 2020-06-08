@@ -90,6 +90,9 @@ class TestUserViews(BaseTest):
             # 'email': 'newemail@email.com',
             'role': 'Administrator'
         }
+        with self.assertRaises(exc.HTTPNotFound):
+            edit_user(req)
+        req.matchdict = {'id': user.id}
         with self.assertRaises(exc.HTTPBadRequest):
             edit_user(req)
         req.json_body = {
@@ -114,7 +117,6 @@ class TestUserViews(BaseTest):
         }
         with self.assertRaises(exc.HTTPBadRequest):
             edit_user(req)
-        req.matchdict = {'id': 100}
         req.json_body = {
             'firstname': 'Sarah',
             'surname': 'Johnson',
@@ -124,10 +126,7 @@ class TestUserViews(BaseTest):
             'email': 'newemail@email.com',
             'role': 'Administrator'
         }
-        with self.assertRaises(exc.HTTPForbidden):
-            edit_user(req)
 
-        req.matchdict = {'id': user.id}
         req.json_body = {
             'firstname': 'Sarah',
             'surname': 'Johnson',
@@ -137,8 +136,6 @@ class TestUserViews(BaseTest):
             'email': 'newemail@email.com',
             'role': 'Administrator'
         }
-        with self.assertRaises(exc.HTTPBadRequest):
-            edit_user(req)
         req.json_body = {
             'firstname': 'Sarah',
             'surname': 'Johnson',

@@ -1,34 +1,32 @@
-import re
-import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from izinto.models import session, Collection, User, UserCollection, Dashboard, UserDashboard, Variable, Chart, \
     ChartGroupBy, SingleStat
 from izinto.security import Administrator
-from izinto.views import paste, create, get_user
+from izinto.views import paste, create, get_user, get_values, get, edit, delete
+from izinto.views.dashboard import attrs as dashboard_attrs
+from izinto.views.chart import attrs as chart_attrs
+
+attrs = ['title', 'description']
+required_attrs = ['title']
 
 
 @view_config(route_name='collection_views.create_collection', renderer='json', permission='add')
 def create_collection(request):
-    data = request.json_body
-    title = data.get('title')
-    description = data.get('description')
-    users = data.get('users', [])
+    """
+    Create a Collection
+    :param request:
+    :return Collection:
+    """
+    data = get_values(request, attrs, required_attrs)
+    users = request.json_body.get('users', [])
 
-    # check vital data
-    if not title:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
-
-    collection = Collection(title=title,
-                            description=description)
-    session.add(collection)
-    session.flush()
+    collection = create(Collection, **data)
 
     # add logged in user to collection
     if not [user for user in users if user['id'] == request.authenticated_userid]:
-        session.add(UserCollection(user_id=request.authenticated_userid, collection_id=collection.id))
-
+        create(UserCollection, user_id=request.authenticated_userid, collection_id=collection.id)
     for user in users:
-        session.add(UserCollection(user_id=user['id'], collection_id=collection.id))
+        create(UserCollection, user_id=user['id'], collection_id=collection.id)
 
     return collection.as_dict()
 
@@ -40,28 +38,12 @@ def get_collection_view(request):
    :param request:
    :return:
    """
-    collection_id = request.matchdict.get('id')
-    if not collection_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need collection id'})
-    collection = get_collection(collection_id)
-    if not collection:
-        raise exc.HTTPNotFound(json_body={'message': 'Collection not found'})
+    collection = get(request, Collection, as_dict=False)
 
     collection_data = collection.as_dict()
-    dashboards = session.query(Dashboard).filter(Dashboard.collection_id == collection_id).all()
+    dashboards = session.query(Dashboard).filter(Dashboard.collection_id == collection.id).all()
     collection_data['dashboards'] = [dash.as_dict() for dash in dashboards]
     return collection_data
-
-
-def get_collection(collection_id):
-    """
-    Get a collection
-    :param collection_id:
-    :return:
-    """
-
-    query = session.query(Collection).filter(Collection.id == collection_id)
-    return query.first()
 
 
 @view_config(route_name='collection_views.edit_collection', renderer='json', permission='edit')
@@ -71,25 +53,11 @@ def edit_collection(request):
     :param request:
     :return:
     """
-    data = request.json_body
-    collection_id = request.matchdict.get('id')
-    description = data.get('description')
-    title = data.get('title')
-    users = data.get('users', [])
+    collection = get(request, Collection, as_dict=False)
+    data = get_values(request, attrs, required_attrs)
+    edit(collection, **data)
 
-    # check vital data
-    if not collection_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need collection id'})
-    if not title:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need title'})
-
-    collection = get_collection(collection_id=collection_id)
-    if not collection:
-        raise exc.HTTPNotFound(json_body={'message': 'Collection not found'})
-
-    collection.description = description
-    collection.title = title
-
+    users = request.json_body.get('users', [])
     collection.users[:] = []
     for user in users:
         collection.users.append(get_user(user['id']))
@@ -129,45 +97,20 @@ def delete_collection(request):
     :param request:
     :return:
     """
-    collection_id = request.matchdict.get('id')
-    collection = get_collection(collection_id)
-    if not collection:
-        raise exc.HTTPNotFound(json_body={'message': 'No collection found.'})
-
-    session.query(Collection). \
-        filter(Collection.id == collection_id). \
-        delete(synchronize_session='fetch')
+    return delete(request, Collection)
 
 
 @view_config(route_name='collection_views.paste_collection', renderer='json', permission='add')
 def paste_collection_view(request):
-    data = request.json_body
-    collection_id = data.get('id')
+    """
+    Paste a Collection view
+    :param request:
+    :return Collection:
+    """
+    collection = get(request, Collection, as_dict=False)
+    data = {attr: getattr(collection, attr) for attr in attrs}
 
-    # check vital data
-    if not collection_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Need copied collection'})
-
-    collection = get_collection(collection_id)
-
-    # build copy of title for copied collection
-    title = 'Copy of %s' % collection.title
-    search_str = '%s%s' % (title, '%')
-    query = session.query(Collection).filter(Collection.title.ilike(search_str)) \
-        .order_by(Collection.title.desc()).all()
-
-    if query:
-        number = re.search(r'\((\d+)\)', query[0].title)
-        if number:
-            number = number.group(1)
-        if number:
-            title = '%s (%s)' % (title, (int(number) + 1))
-        else:
-            title = '%s (2)' % title
-
-    pasted_collection = Collection(title=title, description=collection.description)
-    session.add(pasted_collection)
-    session.flush()
+    pasted_collection = paste(request, Collection, data, None, 'title')
 
     # copy list of users
     for user in collection.users:
@@ -175,8 +118,8 @@ def paste_collection_view(request):
 
     # copy dashboards in collection
     for dashboard in collection.dashboards:
-        data = dashboard.as_dict()
-        pasted_dashboard = paste(request, Dashboard, data, 'collection', 'title')
+        data = {attr: getattr(dashboard, attr) for attr in dashboard_attrs}
+        pasted_dashboard = paste(request, Dashboard, data, 'collection_id', 'title')
 
         # copy list of users
         for user in dashboard.users:
@@ -188,7 +131,7 @@ def paste_collection_view(request):
 
         # copy charts
         for chart in session.query(Chart).filter(Chart.dashboard_id == dashboard.id).all():
-            data = chart.as_dict()
+            data = {attr: getattr(dashboard, attr) for attr in chart_attrs}
             pasted_chart = paste(request, Chart, data, 'dashboard_id', 'title')
 
             for group in chart.group_by:

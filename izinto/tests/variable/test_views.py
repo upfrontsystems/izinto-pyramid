@@ -58,17 +58,14 @@ class TestVariableViews(BaseTest):
             edit_variable_view(req)
         req.matchdict['id'] = 100
         req.json_body = {'name': 'Edited name'}
+        with self.assertRaises(exc.HTTPNotFound):
+            edit_variable_view(req)
+        req.matchdict['id'] = variable.id
         with self.assertRaises(exc.HTTPBadRequest):
             edit_variable_view(req)
-        req.matchdict['id'] = 100
         req.json_body = {'value': '5'}
         with self.assertRaises(exc.HTTPBadRequest):
             edit_variable_view(req)
-        req.json_body = {'name': 'Edited name', 'value': '5', 'dashboard_id': dash.id}
-        with self.assertRaises(exc.HTTPNotFound):
-            edit_variable_view(req)
-
-        req.matchdict['id'] = variable.id
         req.json_body = {'name': 'Variable2', 'value': '5', 'dashboard_id': dash.id}
         with self.assertRaises(exc.HTTPBadRequest):
             edit_variable_view(req)

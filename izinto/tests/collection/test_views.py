@@ -65,15 +65,16 @@ class TestCollectionViews(BaseTest):
         with self.assertRaises(exc.HTTPBadRequest):
             req.json_body = {}
             edit_collection(req)
-        with self.assertRaises(exc.HTTPBadRequest):
-            req.matchdict['id'] = 100
-            req.json_body = {'description': 'Description'}
-            edit_collection(req)
         with self.assertRaises(exc.HTTPNotFound):
+            req.matchdict['id'] = 100
             req.json_body = {'title': 'Edited title', 'description': 'Edited description', 'users': [user2.as_dict()]}
             edit_collection(req)
+        with self.assertRaises(exc.HTTPBadRequest):
+            req.matchdict['id'] = collection.id
+            req.json_body = {'description': 'Description'}
+            edit_collection(req)
 
-        req.matchdict['id'] = collection.id
+        req.json_body = {'title': 'Edited title', 'description': 'Edited description', 'users': [user2.as_dict()]}
         resp = edit_collection(req)
         self.assertEqual(resp['title'], 'Edited title')
         self.assertEqual(resp['users'][0], user2.as_dict())
@@ -144,7 +145,7 @@ class TestCollectionViews(BaseTest):
         with self.assertRaises(exc.HTTPBadRequest):
             paste_collection_view(req)
 
-        req.json_body['id'] = collection_id
+        req.matchdict['id'] = collection_id
         pasted = paste_collection_view(req)
         self.assertEqual(pasted['title'], 'Copy of Collection')
         self.assertEqual(len(pasted['users']), len(collection.users))

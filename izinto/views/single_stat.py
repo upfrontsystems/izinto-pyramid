@@ -95,5 +95,5 @@ def paste_single_stat_view(request):
     single_stat = get(request, SingleStat, as_dict=False)
     data = {attr: getattr(single_stat, attr) for attr in attrs}
 
-    pasted_chart = paste(request, SingleStat, data, 'dashboard_id', 'title')
-    return pasted_chart.as_dict()
+    pasted_stat = paste(request, SingleStat, data, 'dashboard_id', 'title')
+    return pasted_stat.as_dict()

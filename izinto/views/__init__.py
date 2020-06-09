@@ -43,7 +43,7 @@ def get(request, model, as_dict=True):
         raise exc.HTTPBadRequest(json_body={'message': 'Need record id'})
     record = session.query(model).filter(model.id == record_id).first()
     if not record:
-        raise exc.HTTPNotFound(json_body={'message': 'record not found'})
+        raise exc.HTTPNotFound(json_body={'message': 'Record not found'})
     if as_dict:
         return record.as_dict()
     else:

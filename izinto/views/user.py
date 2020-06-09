@@ -148,5 +148,3 @@ def delete_user(request):
     session.query(User). \
         filter(User.id == user_id). \
         delete(synchronize_session='fetch')
-
-

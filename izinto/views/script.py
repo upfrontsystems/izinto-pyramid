@@ -1,7 +1,5 @@
-import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from sqlalchemy import func
-
 from izinto.models import session, Script
 from izinto.views import create, edit, reorder, delete, filtered_list, get, get_values
 

@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from sqlalchemy import func
-from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat
+from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat, User
 from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder, get_user
 from izinto.views.chart import attrs as chart_attrs
 
@@ -72,7 +72,25 @@ def list_dashboards_view(request):
     :param request:
     :return:
     """
-    return filtered_list(request, Dashboard, Dashboard.index)
+
+    filters = request.params.copy()
+    if 'user_id' in filters:
+        filters['user_id'] = request.authenticated_userid
+
+    query = session.query(Dashboard)
+
+    # filter dashboards either by collection or users
+    if 'collection_id' in filters:
+        # filter for dashboards in a collection, and dashboard not in a collection
+        if filters['collection_id']:
+            query = query.filter(Dashboard.collection_id == filters['collection_id']).order_by(Dashboard.index)
+        else:
+            query = query.filter(Dashboard.collection_id == None).order_by(Dashboard.index)
+    elif 'user_id' in filters:
+        # filter by users that can view the dashboards
+        query = query.join(Dashboard.users).filter(User.id == filters['user_id'])
+
+    return [dashboard.as_dict() for dashboard in query.all()]
 
 
 @view_config(route_name='dashboard_views.delete_dashboard', renderer='json', permission='delete')
@@ -110,7 +128,7 @@ def paste_dashboard_view(request):
     for chart in session.query(Chart).filter(Chart.dashboard_id == dashboard.id).all():
         data = {attr: getattr(chart, attr) for attr in chart_attrs}
         data['dashboard_id'] = pasted_dashboard.id
-        pasted_chart = paste(request, Chart, data, 'dashboard_id', 'title')
+        pasted_chart = create(Chart, **data)
 
         for group in chart.group_by:
             create(ChartGroupBy, chart_id=pasted_chart.id, dashboard_view_id=group.dashboard_view_id, value=group.value)

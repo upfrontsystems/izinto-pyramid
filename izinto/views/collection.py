@@ -119,20 +119,22 @@ def paste_collection_view(request):
     # copy dashboards in collection
     for dashboard in collection.dashboards:
         data = {attr: getattr(dashboard, attr) for attr in dashboard_attrs}
-        pasted_dashboard = paste(request, Dashboard, data, 'collection_id', 'title')
+        data['collection_id'] = pasted_collection.id
+        pasted_dashboard = create(Dashboard, **data)
 
         # copy list of users
         for user in dashboard.users:
-            create(UserDashboard, user_id=user['id'], dashboard_id=dashboard.id)
+            create(UserDashboard, user_id=user.id, dashboard_id=pasted_dashboard.id)
 
         # copy list of variables
         for variable in dashboard.variables:
-            create(Variable, name=variable, value=variable.value, dashboard_id=pasted_dashboard.id)
+            create(Variable, name=variable.name, value=variable.value, dashboard_id=pasted_dashboard.id)
 
         # copy charts
         for chart in session.query(Chart).filter(Chart.dashboard_id == dashboard.id).all():
-            data = {attr: getattr(dashboard, attr) for attr in chart_attrs}
-            pasted_chart = paste(request, Chart, data, 'dashboard_id', 'title')
+            data = {attr: getattr(chart, attr) for attr in chart_attrs}
+            data['dashboard_id'] = pasted_dashboard.id
+            pasted_chart = create(Chart, **data)
 
             for group in chart.group_by:
                 create(ChartGroupBy, chart_id=pasted_chart.id, dashboard_view_id=group.dashboard_view_id,

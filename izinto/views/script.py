@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+from pyramid.response import Response
 from sqlalchemy import func
 from izinto.models import session, Script
 from izinto.views import create, edit, reorder, delete, filtered_list, get, get_values
@@ -51,6 +52,21 @@ def reorder_script_view(request):
 def get_script_view(request):
     """ Get a script """
     return get(request, Script)
+
+
+@view_config(route_name='script_views.get_script_html')
+def get_script_html(request):
+    """ Get a script """
+    script = get(request, Script, as_dict=False)
+    html = """<html>
+<head>
+<script type="module">%s</script>
+</head>
+<body>
+</body>
+</html>""" % script.content
+    return Response(html)
+
 
 
 @view_config(route_name='script_views.list_scripts', renderer='json', permission='view')

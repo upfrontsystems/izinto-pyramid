@@ -232,6 +232,10 @@ def includeme(config):
                      '/script/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
+    config.add_route('script_views.get_script_html',
+                     '/script/{id}/html', request_method='GET',
+                     factory=make_public)
+
     config.add_route('script_views.edit_script',
                      '/script/{id}', request_method='PUT',
                      factory=make_protected_function(Administrator))

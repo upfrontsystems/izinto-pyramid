@@ -1,11 +1,11 @@
 from pyramid import testing as pyramid_testing
 import pyramid.httpexceptions as exc
 
-from izinto.models import Collection, Variable, Chart, DataSource, SingleStat
+from izinto.models import Collection, Variable, Chart, DataSource, SingleStat, DashboardView
 from izinto.tests import BaseTest, dummy_request, add_dashboard, add_user
 from izinto.views.dashboard import (create_dashboard_view, get_dashboard_view, edit_dashboard_view,
                                     list_dashboards_view, delete_dashboard_view, paste_dashboard_view,
-                                    reorder_dashboard_view)
+                                    reorder_dashboard_view, list_dashboard_view_items)
 
 
 class TestDashboardViews(BaseTest):
@@ -76,4 +76,14 @@ class TestDashboardViews(BaseTest):
         dashboard = paste_dashboard_view(req)
         self.assertEqual(dashboard['title'], 'Test title')
 
+    def test_list_dashboard_view_view(self):
+        self.session.add(DashboardView(name='Day', icon='day'))
+        self.session.add(DashboardView(name='Month', icon='month'))
+        self.session.add(DashboardView(name='Year', icon='year'))
+        self.session.flush()
 
+        req = dummy_request(self.session)
+        req.params = {}
+        dashboard_views = list_dashboard_view_items(req)
+        self.assertEqual(len(dashboard_views), 3)
+        self.assertEqual(dashboard_views[0]['name'], 'Day')

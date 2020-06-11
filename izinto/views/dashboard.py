@@ -1,6 +1,7 @@
 from pyramid.view import view_config
 from sqlalchemy import func
-from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat, User
+from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat, User, \
+    DashboardView
 from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder, get_user
 from izinto.views.chart import attrs as chart_attrs
 
@@ -160,9 +161,9 @@ def reorder_dashboard_view(request):
 @view_config(route_name='dashboard_views.list_dashboard_view_items', renderer='json', permission='edit')
 def list_dashboard_view_items(request):
     """
-    List dashboards by filters
+    List DashboardView by filters
     :param request:
-    :return Dashboards:
+    :return DashboardView list:
     """
 
-    return filtered_list(request, Dashboard, Dashboard.index)
+    return filtered_list(request, DashboardView, DashboardView.id)

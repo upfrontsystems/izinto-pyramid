@@ -3,7 +3,7 @@ import pyramid.httpexceptions as exc
 from izinto.models import Dashboard, DataSource
 from izinto.tests import BaseTest, dummy_request
 from izinto.views.script import (create_script_view, get_script_view, edit_script_view, list_scripts_view,
-                                 delete_script_view, reorder_script_view)
+                                 delete_script_view, reorder_script_view, get_script_html)
 
 
 class TestScriptViews(BaseTest):
@@ -243,3 +243,29 @@ class TestScriptViews(BaseTest):
         self.assertEqual(scripts[1]['id'], script2['id'])
         self.assertEqual(scripts[0]['index'], 0)
         self.assertEqual(scripts[1]['index'], 1)
+
+    def test_get_script_html(self):
+        req = dummy_request(self.session)
+        dashboard = Dashboard(title='Dashboard Title')
+        self.session.add(dashboard)
+        self.session.flush()
+
+        req.json_body = {
+            'title': 'D3 Line Chart',
+            'dashboard_id': dashboard.id,
+            'content': 'import d3',
+        }
+        script = create_script_view(req)
+        script_id = script['id']
+        req.matchdict = {'id': script_id}
+
+        response = get_script_html(req)
+        self.assertEqual(response.content_type, 'text/html')
+        content = """<html>
+<head>
+<script type="module">%s</script>
+</head>
+<body>
+</body>
+</html>""" % script['content']
+        self.assertEqual(response.text, content)

@@ -152,7 +152,7 @@ def reorder_dashboard_view(request):
 
     dashboard = get(request, Dashboard, as_dict=False)
     data = get_values(request, ['index'], ['index'])
-    collection_dashboards = session.query(Dashboard).filter(Dashboard.collection_id == dashboard.dashboard_id)
+    collection_dashboards = session.query(Dashboard).filter(Dashboard.collection_id == dashboard.collection_id)
     reorder(data.get('index'), dashboard, Dashboard, collection_dashboards)
     return {}
 

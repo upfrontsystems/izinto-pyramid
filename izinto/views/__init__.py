@@ -129,7 +129,7 @@ def paste(request, model, copied_data, parent_id_attribute, name_attribute):
         result = session.query(func.count(getattr(model, 'id')))
         if parent_id:
             result = result.filter(getattr(model, parent_id_attribute) == parent_id)
-        data['index'] = result.first()[0]
+        copied_data['index'] = result.first()[0]
 
     copied_data[name_attribute] = name
     if parent_id:

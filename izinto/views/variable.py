@@ -44,14 +44,13 @@ def edit_variable_view(request):
     :param request:
     :return:
     """
-    variable_id = request.matchdict.get('id')
+    variable = get(request, Variable, as_dict=False)
     name = request.json_body.get('name')
 
-    existing = session.query(Variable).filter_by(name=name).first()
-    if existing and existing.id != variable_id:
-        raise exc.HTTPBadRequest(json_body={'message': 'Variable with id %s already exists' % id})
+    existing = session.query(Variable).filter_by(name=name, dashboard_id=variable.dashboard_id).first()
+    if existing and existing.id != variable.id:
+        raise exc.HTTPBadRequest(json_body={'message': 'Variable with name %s already exists' % name})
 
-    variable = get(request, Variable, as_dict=False)
     data = get_values(request, attrs, required_attrs)
     edit(variable, **data)
 

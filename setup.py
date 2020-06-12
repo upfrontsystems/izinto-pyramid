@@ -63,6 +63,7 @@ setup(
         ],
         'console_scripts': [
             'initialize_izinto_db=izinto.scripts.initialize_db:main',
+            'set_index_values=izinto.scripts.set_index_values:main',
         ],
     },
 )

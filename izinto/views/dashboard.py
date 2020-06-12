@@ -117,6 +117,13 @@ def paste_dashboard_view(request):
 
     pasted_dashboard = paste(request, Dashboard, data, 'collection_id', 'title')
 
+    _paste_dashboard_relationships(dashboard, pasted_dashboard)
+
+    return pasted_dashboard.as_dict()
+
+
+def _paste_dashboard_relationships(dashboard, pasted_dashboard):
+    """ Copy all relationships when pasting new dashboard """
     # copy list of users
     for user in dashboard.users:
         create(UserDashboard, user_id=user.id, dashboard_id=pasted_dashboard.id)
@@ -129,6 +136,7 @@ def paste_dashboard_view(request):
     for chart in session.query(Chart).filter(Chart.dashboard_id == dashboard.id).all():
         data = {attr: getattr(chart, attr) for attr in chart_attrs}
         data['dashboard_id'] = pasted_dashboard.id
+        data['index'] = chart.index
         pasted_chart = create(Chart, **data)
 
         for group in chart.group_by:
@@ -139,8 +147,6 @@ def paste_dashboard_view(request):
         create(SingleStat, title=stat.title, query=stat.query, decimals=stat.decimals, format=stat.format,
                thresholds=stat.thresholds, colors=stat.colors, dashboard_id=pasted_dashboard.id,
                data_source_id=stat.data_source_id)
-
-    return pasted_dashboard.as_dict()
 
 
 @view_config(route_name='dashboard_views.reorder_dashboard', renderer='json', permission='edit')

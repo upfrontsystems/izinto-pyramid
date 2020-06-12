@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 from sqlalchemy import func
 from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat, User, \
-    DashboardView
+    DashboardView, Script
 from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder, get_user
 from izinto.views.chart import attrs as chart_attrs
 
@@ -147,6 +147,10 @@ def _paste_dashboard_relationships(dashboard, pasted_dashboard):
         create(SingleStat, title=stat.title, query=stat.query, decimals=stat.decimals, format=stat.format,
                thresholds=stat.thresholds, colors=stat.colors, dashboard_id=pasted_dashboard.id,
                data_source_id=stat.data_source_id)
+
+    # copy scripts
+    for script in session.query(Script).filter(Script.dashboard_id == dashboard.id).all():
+        create(Script, title=script.title, index=script.index, content=script.content, dashboard_id=pasted_dashboard.id)
 
 
 @view_config(route_name='dashboard_views.reorder_dashboard', renderer='json', permission='edit')

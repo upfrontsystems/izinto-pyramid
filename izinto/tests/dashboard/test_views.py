@@ -27,6 +27,24 @@ class TestDashboardViews(BaseTest):
         resp = create_dashboard_view(req)
         self.assertEqual(resp['title'], 'Title')
 
+    def test_create_dashboard_in_collection(self):
+        collection = Collection(title='Title')
+        self.session.add(collection)
+        self.session.flush()
+        user = add_user(self.session)
+        req = dummy_request(self.session)
+        req.json_body = {'title': 'Title', 'description': 'Description', 'collection_id': collection.id,
+                         'users': [user.as_dict()]}
+        resp = create_dashboard_view(req)
+        self.assertEqual(resp['title'], 'Title')
+        self.assertEqual(resp['collection_id'], collection.id)
+        self.assertEqual(resp['index'], 0)
+        self.assertEqual(resp['users'][0], user.as_dict())
+
+        req.json_body = {'title': 'Title', 'description': 'Description', 'collection_id': collection.id}
+        resp = create_dashboard_view(req)
+        self.assertEqual(resp['index'], 1)
+
     def test_get_dashboard_view(self):
         dashboard = add_dashboard(self.session, title='Test title')
         req = dummy_request(self.session)
@@ -37,6 +55,63 @@ class TestDashboardViews(BaseTest):
         req.matchdict = {'id': dashboard.id}
         dashboard = get_dashboard_view(req)
         self.assertEqual(dashboard['title'], 'Test title')
+
+    def test_edit_dashboard_view(self):
+        collection = Collection(title='Title')
+        self.session.add(collection)
+        self.session.flush()
+        user = add_user(self.session)
+        dashboard = add_dashboard(self.session, title='Test title')
+        req = dummy_request(self.session)
+
+        with self.assertRaises(exc.HTTPBadRequest):
+            edit_dashboard_view(req)
+
+        req.matchdict = {'id': dashboard.id}
+        req.json_body = {'title': 'Edit title', 'description': 'Description', 'collection_id': collection.id,
+                         'users': [user.as_dict()]}
+        dashboard = edit_dashboard_view(req)
+        self.assertEqual(dashboard['title'], 'Edit title')
+        self.assertEqual(dashboard['users'][0], user.as_dict())
+
+    def test_list_dashboards_view(self):
+        user = add_user(self.session)
+        self.config.testing_securitypolicy(userid=user.id, permissive=True)
+        add_dashboard(self.session, title='Dashboard 1')
+        add_dashboard(self.session, title='Dashboard 2')
+        add_dashboard(self.session, title='Dashboard 3', users=[user])
+
+        collection = Collection(title='Title')
+        self.session.add(collection)
+        self.session.flush()
+        add_dashboard(self.session, title='Dashboard 4', collection_id=collection.id)
+        add_dashboard(self.session, title='Dashboard 5', collection_id=collection.id, users=[user])
+        req = dummy_request(self.session)
+        req.params = {}
+        dashboards = list_dashboards_view(req)
+        self.assertEqual(len(dashboards), 5)
+
+        req.params = {'collection_id': None}
+        dashboards = list_dashboards_view(req)
+        self.assertEqual(len(dashboards), 3)
+
+        req.params = {'collection_id': collection.id}
+        dashboards = list_dashboards_view(req)
+        self.assertEqual(len(dashboards), 2)
+
+        req.params = {'user_id': True}
+        dashboards = list_dashboards_view(req)
+        self.assertEqual(len(dashboards), 2)
+
+    def test_delete_dashboard_view(self):
+        dashboard = add_dashboard(self.session, title='Dashboard')
+        req = dummy_request(self.session)
+        req.matchdict = {'id': dashboard.id}
+
+        delete_dashboard_view(req)
+
+        with self.assertRaises(exc.HTTPNotFound):
+            get_dashboard_view(req)
 
     def test_paste_dashboard_view(self):
         collection = Collection(title='Collection 1')
@@ -75,6 +150,41 @@ class TestDashboardViews(BaseTest):
         req.json_body = {'collection_id': collection2_id}
         dashboard = paste_dashboard_view(req)
         self.assertEqual(dashboard['title'], 'Test title')
+
+    def test_reorder_dashboards_view(self):
+        req = dummy_request(self.session)
+        collection = Collection(title='Collection')
+        self.session.add(collection)
+        self.session.flush()
+        collection_id = collection.id
+
+        req.json_body = {'title': 'Dashboard 1', 'collection_id': collection_id}
+        dashboard = create_dashboard_view(req)
+        req.json_body = {'title': 'Dashboard 2', 'collection_id': collection_id}
+        create_dashboard_view(req)
+        req.json_body = {'title': 'Dashboard 3', 'collection_id': collection_id}
+        create_dashboard_view(req)
+
+        with self.assertRaises(exc.HTTPNotFound):
+            req.matchdict = {'id': 100}
+            req.json_body = {'collection_id': collection_id,
+                             'index': 1}
+            reorder_dashboard_view(req)
+
+        req = dummy_request(self.session)
+        req.params = {'collection_id': collection_id}
+
+        dashboards = list_dashboards_view(req)
+        self.assertEqual(dashboards[0]['index'], 0)
+        self.assertEqual(dashboards[0]['id'], dashboard['id'])
+
+        req.matchdict = {'id': dashboard['id']}
+        req.json_body = {'collection_id': collection_id,
+                         'index': 1}
+        reorder_dashboard_view(req)
+        dashboards = list_dashboards_view(req)
+        self.assertEqual(dashboards[1]['index'], 1)
+        self.assertEqual(dashboards[1]['id'], dashboard['id'])
 
     def test_list_dashboard_view_view(self):
         self.session.add(DashboardView(name='Day', icon='day'))

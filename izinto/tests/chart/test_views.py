@@ -121,6 +121,43 @@ class TestChartViews(BaseTest):
         chart = get_chart_view(req)
         self.assertEqual(chart['title'], 'Title Edit')
 
+    def test_edit_chart_with_group_by(self):
+        req = dummy_request(self.session)
+        dashboard = Dashboard(title='Dashboard Title')
+        dashboard_view = DashboardView(name='Name', icon='')
+        self.session.add(dashboard)
+        self.session.add(dashboard_view)
+        data_source = DataSource(name='Datasource')
+        self.session.add(data_source)
+        self.session.flush()
+
+        req.json_body = {
+            'title': 'Title',
+            'dashboard_id': dashboard.id,
+            'data_source_id': data_source.id,
+            'unit': 'U',
+            'group_by': [{'value': '10', 'dashboard_view_id': dashboard_view.id}]
+        }
+
+        chart = create_chart_view(req)
+        self.assertEqual(chart['group_by'][0]['value'], '10')
+        chart_id = chart['id']
+
+        req.json_body = {}
+        req.matchdict = {'id': chart_id}
+        req.json_body = {
+            'title': 'Title Edit',
+            'dashboard_id': dashboard.id,
+            'data_source_id': data_source.id,
+            'unit': 'R',
+            'group_by': [{'value': '100', 'dashboard_view_id': dashboard_view.id}]
+        }
+        edit_chart(req)
+
+        chart = get_chart_view(req)
+        self.assertEqual(chart['title'], 'Title Edit')
+        self.assertEqual(chart['group_by'][0]['value'], '100')
+
     def test_list_charts(self):
         req = dummy_request(self.session)
         dashboard = Dashboard(title='Dashboard Title')

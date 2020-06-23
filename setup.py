@@ -9,7 +9,6 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
     CHANGES = f.read()
 
 requires = [l.strip() for l in open(os.path.join(here, 'requirements.txt')).readlines()]
-print(requires)
 
 tests_require = [
     'WebTest >= 1.3.1',  # py3 compat

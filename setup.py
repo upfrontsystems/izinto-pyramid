@@ -8,26 +8,8 @@ with open(os.path.join(here, 'README.txt')) as f:
 with open(os.path.join(here, 'CHANGES.txt')) as f:
     CHANGES = f.read()
 
-requires = [
-    'alembic==1.0.10',
-    'html2text',
-    'MiniMock',
-    'Paste',
-    'plaster_pastedeploy==0.7',
-    'postgres==2.2.2',
-    'PyJWT==1.7.1',
-    'pyramid==1.10.4',
-    'pyramid_jinja2==2.8',
-    'pyramid_debugtoolbar==4.5',
-    'pyramid_mailer',
-    'pyramid_retry',
-    'pyramid_tm==2.2.1',
-    'requests',
-    'SQLAlchemy==1.3.3',
-    'transaction==2.4.0',
-    'waitress==1.3.0',
-    'zope.sqlalchemy==1.1',
-]
+requires = [l.strip() for l in open(os.path.join(here, 'requirements.txt')).readlines()]
+print(requires)
 
 tests_require = [
     'WebTest >= 1.3.1',  # py3 compat

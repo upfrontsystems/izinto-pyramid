@@ -26,4 +26,5 @@
 * [#115](https://github.com/upfrontsystems/izinto-angular/issues/115) Add copy and paste single stat function
 * [#121](https://github.com/upfrontsystems/izinto-angular/issues/121) Rename order column to index on Dashboard
 * [#48](https://github.com/upfrontsystems/izinto-angular/issues/48) Add Year dashboard view
+* [#117](https://github.com/upfrontsystems/izinto-angular/issues/117) Read requirements from requirements.txt
 

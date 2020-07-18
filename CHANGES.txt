@@ -1,3 +1,9 @@
+0.6
+---
+
+### Issue Fixes
+* [#150](https://github.com/upfrontsystems/izinto-angular/issues/150) Enable gzip compression
+
 0.5
 ---
 

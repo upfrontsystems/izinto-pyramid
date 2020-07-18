@@ -3,6 +3,7 @@ from base64 import b64encode
 from http.client import HTTPSConnection, HTTPConnection
 from urllib.parse import urlparse, urlencode
 from pyramid.view import view_config
+from pyramid.response import Response
 from izinto.models import DataSource
 from izinto.views import get_values, create, get, edit, filtered_list, delete
 
@@ -66,7 +67,7 @@ def delete_data_source_view(request):
     return delete(request, DataSource)
 
 
-@view_config(route_name='data_source_views.load_data_query', renderer='json', permission='view')
+@view_config(route_name='data_source_views.load_data_query', permission='view')
 def load_data_query(request):
     """
     Get chart data using data source query
@@ -90,10 +91,15 @@ def load_data_query(request):
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "application/json",
                "Authorization": "Basic %s" % auth}
+    if 'gzip' in request.accept_encoding:
+        headers["Accept-Encoding"] = 'gzip'
     params = urlencode(query)
     conn.request('POST', "/query", params, headers=headers)
-    response = conn.getresponse()
-    data = response.read()
-    data = json.loads(data.decode("utf-8"))
-
-    return data
+    remote_response = conn.getresponse()
+    headers = list({
+        'Content-Encoding': remote_response.headers.get('Content-Encoding'),
+        'Content-Type': remote_response.headers.get('Content-Type')
+    }.items())
+    response = Response(remote_response.read(), status=remote_response.status, headerlist=headers,
+                        content_type=remote_response.headers.get('Content-Type'))
+    return response

@@ -1,4 +1,3 @@
-import json
 from base64 import b64encode
 from http.client import HTTPSConnection, HTTPConnection
 from urllib.parse import urlparse, urlencode
@@ -96,10 +95,11 @@ def load_data_query(request):
     params = urlencode(query)
     conn.request('POST', "/query", params, headers=headers)
     remote_response = conn.getresponse()
-    headers = list({
-        'Content-Encoding': remote_response.headers.get('Content-Encoding'),
-        'Content-Type': remote_response.headers.get('Content-Type')
-    }.items())
+    for header in ('Content-Encoding', 'Content-Type'):
+        header_value = remote_response.headers.get('Content-Encoding')
+        if header_value:
+            headers[header] = header_value
+    headers = list(headers.items())
     response = Response(remote_response.read(), status=remote_response.status, headerlist=headers,
                         content_type=remote_response.headers.get('Content-Type'))
     return response

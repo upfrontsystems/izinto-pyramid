@@ -58,15 +58,7 @@ def get_script_view(request):
 def get_script_html(request):
     """ Get a script """
     script = get(request, Script, as_dict=False)
-    html = """<html>
-<head>
-<script type="module">%s</script>
-</head>
-<body>
-</body>
-</html>""" % script.content
-    return Response(html)
-
+    return Response(script.content)
 
 
 @view_config(route_name='script_views.list_scripts', renderer='json', permission='view')

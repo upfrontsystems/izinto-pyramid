@@ -1,11 +1,12 @@
 from pyramid import testing as pyramid_testing
 import pyramid.httpexceptions as exc
 
-from izinto.models import Collection, Variable, Chart, DataSource, SingleStat, DashboardView
+from izinto.models import Collection, Variable, Chart, DataSource, SingleStat, DashboardView, Dashboard
 from izinto.tests import BaseTest, dummy_request, add_dashboard, add_user
 from izinto.views.dashboard import (create_dashboard_view, get_dashboard_view, edit_dashboard_view,
                                     list_dashboards_view, delete_dashboard_view, paste_dashboard_view,
-                                    reorder_dashboard_view, list_dashboard_view_items)
+                                    reorder_dashboard_view, list_dashboard_view_items, edit_content_view,
+                                    get_content_view)
 
 
 class TestDashboardViews(BaseTest):
@@ -197,3 +198,24 @@ class TestDashboardViews(BaseTest):
         dashboard_views = list_dashboard_view_items(req)
         self.assertEqual(len(dashboard_views), 3)
         self.assertEqual(dashboard_views[0]['name'], 'Day')
+
+    def test_edit_content_view(self):
+        dashboard = Dashboard(title='New Dashboard Content')
+        self.session.add(dashboard)
+        self.session.flush()
+        req = dummy_request(self.session)
+        req.matchdict = {'id': dashboard.id}
+        content = b'<html>hello content!</html>'
+        req.json_body = {'content': content}
+        response = edit_content_view(req)
+        self.assertEqual(response.body, content)
+
+    def test_get_content_view(self):
+        content = b'<html>hello content!</html>'
+        dashboard = Dashboard(title='Get Dashboard Content', content=content)
+        self.session.add(dashboard)
+        self.session.flush()
+        req = dummy_request(self.session)
+        req.matchdict = {'id': dashboard.id}
+        response = get_content_view(req)
+        self.assertEqual(response.body, content)

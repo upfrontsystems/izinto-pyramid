@@ -119,6 +119,14 @@ def includeme(config):
                      '/dashboard_views', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
+    config.add_route('dashboard_views.get_content_view',
+                     '/dashboard/{id}/content', request_method='GET',
+                     factory=make_public)
+
+    config.add_route('dashboard_views.edit_content_view',
+                     '/dashboard/{id}/content', request_method='PUT',
+                     factory=make_public)
+
     # collection views
     config.add_route('collection_views.list_collections',
                      '/collections', request_method='GET',
@@ -231,10 +239,6 @@ def includeme(config):
     config.add_route('script_views.get_script',
                      '/script/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
-
-    config.add_route('script_views.get_script_html',
-                     '/script/{id}/html', request_method='GET',
-                     factory=make_public)
 
     config.add_route('script_views.edit_script',
                      '/script/{id}', request_method='PUT',

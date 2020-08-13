@@ -95,8 +95,8 @@ def reorder_chart_view(request):
     """
     chart = get(request, Chart, as_dict=False)
     data = get_values(request, ['index'], ['index'])
-    dashboard_scripts = session.query(Chart).filter(chart.dashboard_id == chart.dashboard_id)
-    reorder(data.get('index'), chart, Chart, dashboard_scripts)
+    dashboard_charts = session.query(Chart).filter(chart.dashboard_id == chart.dashboard_id)
+    reorder(data.get('index'), chart, Chart, dashboard_charts)
     return {}
 
 

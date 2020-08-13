@@ -20,7 +20,10 @@ def upgrade():
     op.drop_index('ix_script_id', table_name='script')
     op.drop_table('script')
     op.add_column('dashboard', sa.Column('content', sa.TEXT(), nullable=True))
-    op.add_column('dashboard', sa.Column('type', sa.VARCHAR(), nullable=False))
+    op.add_column('dashboard', sa.Column('type', sa.VARCHAR()))
+    conn = op.get_bind()
+    conn.execute("update dashboard set \"type\" = 'old'")
+    op.alter_column('dashboard', 'type', nullable=False, existing_type=sa.VARCHAR())
 
 
 def downgrade():

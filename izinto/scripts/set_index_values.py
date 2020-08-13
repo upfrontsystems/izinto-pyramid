@@ -8,7 +8,7 @@ from pyramid.paster import (
 )
 from sqlalchemy import engine_from_config
 
-from izinto.models import initialize_sql, Chart, Dashboard, Script
+from izinto.models import initialize_sql, Chart, Dashboard
 
 
 def usage(argv):
@@ -34,13 +34,6 @@ def main(argv=sys.argv):
         index = session.query(Chart).filter(Chart.index != None, Chart.dashboard_id == chart.dashboard_id).count()
         chart.index = index
         print("Chart %s in dashboard %s index set to %s." % (chart.title, chart.dashboard.title, index))
-
-    # fix null index in scripts
-    null_index_scripts = session.query(Script).filter(Script.index == None).order_by(Script.dashboard_id).all()
-    for script in null_index_scripts:
-        index = session.query(Script).filter(Script.index != None, Script.dashboard_id == script.dashboard_id).count()
-        script.index = index
-        print("Script %s in dashboard %s index set to %s." % (script.title, script.dashboard.title, index))
 
     # fix null index in dashboards
     null_index_dashboards = session.query(Dashboard).filter(Dashboard.index == None) \

@@ -195,14 +195,14 @@ def list_dashboard_view_items(request):
     return filtered_list(request, DashboardView, DashboardView.id)
 
 
-@view_config(route_name='dashboards_views.get_content_view')
+@view_config(route_name='dashboard_views.get_content_view')
 def get_content_view(request):
     """ Return dashboard content """
     dashboard = get(request, Dashboard, as_dict=False)
     return Response(dashboard.content)
 
 
-@view_config(route_name='dashboards_views.edit_content_view')
+@view_config(route_name='dashboard_views.edit_content_view')
 def edit_content_view(request):
     """ Return dashboard content """
     dashboard = get(request, Dashboard, as_dict=False)

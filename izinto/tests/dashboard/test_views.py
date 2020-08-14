@@ -24,9 +24,13 @@ class TestDashboardViews(BaseTest):
         with self.assertRaises(exc.HTTPBadRequest):
             create_dashboard_view(req)
 
-        req.json_body = {'title': 'Title', 'description': 'Description'}
+        req.json_body = {'title': 'Title', 'description': 'Description', 'type': 'new',
+                         'content': '<h1>Hello world!</h1>'}
         resp = create_dashboard_view(req)
         self.assertEqual(resp['title'], 'Title')
+        self.assertEqual(resp['description'], 'Description')
+        self.assertEqual(resp['type'], 'new')
+        self.assertEqual(resp['content'], '<h1>Hello world!</h1>')
 
     def test_create_dashboard_in_collection(self):
         collection = Collection(title='Title')
@@ -70,9 +74,12 @@ class TestDashboardViews(BaseTest):
 
         req.matchdict = {'id': dashboard.id}
         req.json_body = {'title': 'Edit title', 'description': 'Description', 'collection_id': collection.id,
-                         'users': [user.as_dict()]}
+                         'type': 'new', 'content': '<h1>Hello world!</h1>', 'users': [user.as_dict()]}
         dashboard = edit_dashboard_view(req)
         self.assertEqual(dashboard['title'], 'Edit title')
+        self.assertEqual(dashboard['description'], 'Description')
+        self.assertEqual(dashboard['type'], 'new')
+        self.assertEqual(dashboard['content'], '<h1>Hello world!</h1>')
         self.assertEqual(dashboard['users'][0], user.as_dict())
 
     def test_list_dashboards_view(self):

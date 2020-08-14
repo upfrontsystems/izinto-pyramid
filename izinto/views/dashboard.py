@@ -6,7 +6,7 @@ from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, Ch
 from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder, get_user
 from izinto.views.chart import attrs as chart_attrs
 
-attrs = ['title', 'description', 'collection_id']
+attrs = ['title', 'description', 'collection_id', 'type', 'content']
 required_attrs = ['title']
 
 

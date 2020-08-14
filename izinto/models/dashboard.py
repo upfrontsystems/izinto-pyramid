@@ -33,6 +33,7 @@ class Dashboard(Base):
                 'collection_id': self.collection_id,
                 'index': self.index,
                 'type': self.type,
+                'content': self.content,
                 'users': [user.as_dict() for user in self.users],
                 'variables': [var.as_dict() for var in self.variables]}
 

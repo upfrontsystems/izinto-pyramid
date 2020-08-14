@@ -3,6 +3,7 @@
 
 ### Issue Fixes
 * [#150](https://github.com/upfrontsystems/izinto-angular/issues/150) Enable gzip compression
+* [#160](https://github.com/upfrontsystems/izinto-angular/issues/160) Refactor Dashboard to render HTML content
 
 0.5
 ---

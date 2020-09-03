@@ -2,6 +2,12 @@
 ---
 
 ### Issue Fixes
+* [#171](https://github.com/upfrontsystems/izinto-angular/issues/171) Handle query on database url
+
+0.6
+---
+
+### Issue Fixes
 * [#150](https://github.com/upfrontsystems/izinto-angular/issues/150) Enable gzip compression
 * [#160](https://github.com/upfrontsystems/izinto-angular/issues/160) Refactor Dashboard to render HTML content
 

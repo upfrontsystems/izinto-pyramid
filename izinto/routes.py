@@ -219,7 +219,7 @@ def includeme(config):
                      '/data_source/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
-    config.add_route('data_source_views.load_data_query',
+    config.add_route('data_source_views.query',
                      '/data_source/{id}/query', request_method='POST',
                      factory=make_protected_function(*all_roles))
 

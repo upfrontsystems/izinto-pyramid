@@ -109,7 +109,7 @@ def list_dashboards_view(request):
             query = query.filter(Dashboard.collection_id == None).order_by(Dashboard.index)
     elif 'user_id' in filters:
         # filter by users that can view the dashboards
-        query = query.join(Dashboard.users).filter(User.id == filters['user_id'])
+        query = query.join(Dashboard.users).filter(User.id == filters['user_id']).order_by(Dashboard.index)
 
     return [dashboard.as_dict() for dashboard in query.all()]
 

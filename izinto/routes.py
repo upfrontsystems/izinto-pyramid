@@ -247,3 +247,23 @@ def includeme(config):
     config.add_route('script_views.reorder_script',
                      '/script/{id}/reorder', request_method='PUT',
                      factory=make_protected_function(Administrator))
+    # query views
+    config.add_route('query_views.list_queries',
+                     '/queries', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('query_views.create_query',
+                     '/queries', request_method='POST',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('query_views.delete_query',
+                     '/query/{id}', request_method='DELETE',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('query_views.get_query',
+                     '/query/{id}', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('query_views.edit_query',
+                     '/query/{id}', request_method='PUT',
+                     factory=make_protected_function(*all_roles))

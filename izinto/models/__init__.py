@@ -34,6 +34,7 @@ from izinto.models.data_source import DataSource
 from izinto.models.otp import OTP
 from izinto.models.permission import Permission
 from izinto.models.permisson_role import PermissionRole
+from izinto.models.query import Query
 from izinto.models.role import Role
 from izinto.models.single_stat import SingleStat
 from izinto.models.user_role import UserRole

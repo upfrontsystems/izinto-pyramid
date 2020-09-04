@@ -83,7 +83,9 @@ def run_query_view(request):
     :param request:
     :return:
     """
-    query = get(request, Query, as_dict=False)
+    query_name = request.matchdict['name']
+    user_id = request.authenticated_userid
+    query = session.query(Query).filter(Query.name == query_name, Query.user_id == user_id).first()
     query_string = query.query % request.params
 
     # query directly from database

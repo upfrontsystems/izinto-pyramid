@@ -267,3 +267,7 @@ def includeme(config):
     config.add_route('query_views.edit_query',
                      '/query/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
+
+    config.add_route('query_views.run_query',
+                     '/query/{id}/run', request_method='POST',
+                     factory=make_protected_function(*all_roles))

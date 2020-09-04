@@ -126,5 +126,6 @@ venv.bak/
 .idea/agibase.iml
 .idea/misc.xml
 .idea/izinto-pyramid.iml
+.idea/inspectionProfiles/
 
 mail

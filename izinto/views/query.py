@@ -1,11 +1,10 @@
 from pyramid.view import view_config
-from pyramid.response import Response
-from izinto.models import session, Query, Variable, Chart, ChartGroupBy, SingleStat, User
-from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder, get_user
-from izinto.views.chart import attrs as chart_attrs
+from izinto.models import session, Query
+from izinto.views import get_values, create, get, edit, delete
+from izinto.views.data_source import database_query, http_query
 
 attrs = ['name', 'query', 'user_id', 'data_source_id']
-required_attrs = ['name', 'user_id']
+required_attrs = ['name', 'data_source_id']
 
 
 @view_config(route_name='query_views.create_query', renderer='json', permission='add')
@@ -17,6 +16,7 @@ def create_query_view(request):
     """
 
     data = get_values(request, attrs, required_attrs)
+    data['user_id'] = request.authenticated_userid
     query = create(Query, **data)
 
     return query.as_dict()
@@ -74,3 +74,20 @@ def delete_query_view(request):
     :return:
     """
     return delete(request, Query)
+
+
+@view_config(route_name='query_views.run_query', renderer='json', permission='view')
+def run_query_view(request):
+    """
+    Run a query
+    :param request:
+    :return:
+    """
+    query = get(request, Query, as_dict=False)
+    query_string = query.query % request.params
+
+    # query directly from database
+    if not query.data_source.url.startswith('http'):
+        return database_query(query.data_source, query_string)
+
+    return http_query(request.accept_encoding, query.data_source, query_string)

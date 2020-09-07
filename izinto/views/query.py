@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+import pyramid.httpexceptions as exc
 from izinto.models import session, Query
 from izinto.views import get_values, create, get, edit, delete
 from izinto.views.data_source import database_query, http_query
@@ -86,7 +87,13 @@ def run_query_view(request):
     query_name = request.matchdict['name']
     user_id = request.authenticated_userid
     query = session.query(Query).filter(Query.name == query_name, Query.user_id == user_id).first()
-    query_string = query.query % request.params
+    if not query:
+        raise exc.HTTPNotFound(json_body={'message': 'Query %s not found' % query_name})
+
+    # javascript format string
+    query_string = query.query
+    for column, value in request.json_body.items():
+        query_string = query_string.replace('${%s}' % column, value)
 
     # query directly from database
     if not query.data_source.url.startswith('http'):

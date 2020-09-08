@@ -1,11 +1,11 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from izinto.models import session, Query
+from izinto.models import session, Query, Dashboard
 from izinto.views import get_values, create, get, edit, delete
 from izinto.views.data_source import database_query, http_query
 
-attrs = ['name', 'query', 'user_id', 'data_source_id']
-required_attrs = ['name', 'data_source_id']
+attrs = ['name', 'query', 'dashboard_id', 'data_source_id']
+required_attrs = ['name', 'data_source_id', 'dashboard_id']
 
 
 @view_config(route_name='query_views.create_query', renderer='json', permission='add')
@@ -17,7 +17,6 @@ def create_query_view(request):
     """
 
     data = get_values(request, attrs, required_attrs)
-    data['user_id'] = request.authenticated_userid
     query = create(Query, **data)
 
     return query.as_dict()
@@ -56,13 +55,12 @@ def list_queries_view(request):
     """
 
     filters = request.params.copy()
-    if 'user_id' in filters:
-        filters['user_id'] = request.authenticated_userid
+    if 'dashboard_id' in request.matchdict:
+        filters['dashboard_id'] = request.matchdict['dashboard_id']
 
     query = session.query(Query).order_by(Query.name)
-    if 'user_id' in filters:
-        # filter by users that can view the queries
-        query = query.filter(Query.user_id == filters['user_id'])
+    if 'dashboard_id' in filters:
+        query = query.filter(Query.dashboard_id == filters['dashboard_id'])
 
     return [query.as_dict() for query in query.all()]
 
@@ -85,15 +83,20 @@ def run_query_view(request):
     :return:
     """
     query_name = request.matchdict['name']
-    user_id = request.authenticated_userid
-    query = session.query(Query).filter(Query.name == query_name, Query.user_id == user_id).first()
+    dashboard_id = request.matchdict['dashboard_id']
+    query = session.query(Query).filter(Query.name == query_name, Query.dashboard_id == dashboard_id).first()
     if not query:
         raise exc.HTTPNotFound(json_body={'message': 'Query %s not found' % query_name})
 
+    dashboard = session.query(Dashboard).get(dashboard_id)
     # javascript format string
     query_string = query.query
     for column, value in request.json_body.items():
         query_string = query_string.replace('${%s}' % column, value)
+
+    # format in dashboard variables
+    for variable in dashboard.variables:
+        query_string = query_string.replace('${%s}' % variable.name, variable.value)
 
     # query directly from database
     if not query.data_source.url.startswith('http'):

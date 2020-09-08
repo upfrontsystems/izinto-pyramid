@@ -249,23 +249,23 @@ def includeme(config):
                      factory=make_protected_function(Administrator))
     # query views
     config.add_route('query_views.list_queries',
-                     '/queries', request_method='GET',
+                     '/dashboard/{dashboard_id}/queries', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.create_query',
-                     '/queries', request_method='POST',
+                     '/dashboard/{dashboard_id}/queries', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.delete_query',
-                     '/query/{id}', request_method='DELETE',
+                     '/dashboard/{dashboard_id}/query/{id}', request_method='DELETE',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.get_query',
-                     '/query/{id}', request_method='GET',
+                     '/dashboard/{dashboard_id}/query/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.edit_query',
-                     '/query/{id}', request_method='PUT',
+                     '/dashboard/{dashboard_id}/query/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.run_query',

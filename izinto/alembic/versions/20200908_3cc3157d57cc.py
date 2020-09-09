@@ -16,6 +16,11 @@ depends_on = None
 
 
 def upgrade():
+
+    # delete all existing queries
+    conn = op.get_bind()
+    conn.execute("delete from query")
+
     op.add_column('query', sa.Column('dashboard_id', sa.Integer(), nullable=False))
     op.drop_constraint('query_name_user_id_key', 'query', type_='unique')
     op.create_unique_constraint('query_name_dashboard_id_key', 'query', ['name', 'dashboard_id'])
@@ -25,6 +30,11 @@ def upgrade():
 
 
 def downgrade():
+
+    # delete all existing queries
+    conn = op.get_bind()
+    conn.execute("delete from query")
+
     op.add_column('query', sa.Column('user_id', sa.VARCHAR(length=32), autoincrement=False, nullable=False))
     op.drop_constraint('query_dashboard_id_fkey', 'query', type_='foreignkey')
     op.create_foreign_key('query_user_id_fkey', 'query', 'user', ['user_id'], ['id'], ondelete='CASCADE')

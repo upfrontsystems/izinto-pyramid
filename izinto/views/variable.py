@@ -4,7 +4,7 @@ from izinto.models import session, Variable
 from izinto.views import get_values, create, get, edit, filtered_list, delete
 
 attrs = ['name', 'value', 'dashboard_id']
-required_attrs = ['name', 'value']
+required_attrs = ['name', 'value', 'dashboard_id']
 
 
 @view_config(route_name='variable_views.create_variable', renderer='json', permission='add')

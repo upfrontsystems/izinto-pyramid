@@ -99,7 +99,7 @@ def run_query_view(request):
         query_string = query_string.replace('${%s}' % variable.name, variable.value)
 
     # query directly from database
-    if not query.data_source.url.startswith('http'):
-        return database_query(query.data_source, query_string)
+    if query.data_source.url.startswith('http'):
+        return http_query(request.accept_encoding, query.data_source, query_string)
 
-    return http_query(request.accept_encoding, query.data_source, query_string)
+    return database_query(query.data_source, query_string)

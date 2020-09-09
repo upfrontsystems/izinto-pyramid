@@ -121,9 +121,7 @@ def http_query(accept_encoding, data_source, statement):
 
 def database_query(data_source, statement):
     """ Query database url directly """
-    ds_session = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
     engine = create_engine(data_source.url)
-    ds_session.configure(bind=engine)
 
     data = []
     with engine.connect() as con:

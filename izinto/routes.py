@@ -46,15 +46,15 @@ def includeme(config):
                      factory=make_protected_function(Administrator))
 
     config.add_route('user_views.delete_user',
-                     '/user/{id}', request_method='DELETE',
+                     '/users/{id}', request_method='DELETE',
                      factory=make_protected_function(Administrator))
 
     config.add_route('user_views.get_user',
-                     '/user/{id}', request_method='GET',
+                     '/users/{id}', request_method='GET',
                      factory=make_protected_function(Administrator))
 
     config.add_route('user_views.edit_user',
-                     '/user/{id}', request_method='PUT',
+                     '/users/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
     # chart views
@@ -67,23 +67,23 @@ def includeme(config):
                      factory=make_protected_function(Administrator))
 
     config.add_route('chart_views.delete_chart',
-                     '/chart/{id}', request_method='DELETE',
+                     '/charts/{id}', request_method='DELETE',
                      factory=make_protected_function(Administrator))
 
     config.add_route('chart_views.get_chart',
-                     '/chart/{id}', request_method='GET',
+                     '/charts/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('chart_views.edit_chart',
-                     '/chart/{id}', request_method='PUT',
+                     '/charts/{id}', request_method='PUT',
                      factory=make_protected_function(Administrator))
 
     config.add_route('chart_views.reorder_chart',
-                     '/chart/{id}/reorder', request_method='PUT',
+                     '/charts/{id}/reorder', request_method='PUT',
                      factory=make_protected_function(Administrator))
 
     config.add_route('chart_views.paste_chart',
-                     '/chart/{id}/paste', request_method='POST',
+                     '/charts/{id}/paste', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     # dashboard views
@@ -92,7 +92,7 @@ def includeme(config):
                      factory=make_protected_function(*all_roles))
 
     config.add_route('dashboard_views.paste_dashboard',
-                     '/dashboard/{id}/paste', request_method='POST',
+                     '/dashboards/{id}/paste', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('dashboard_views.create_dashboard',
@@ -100,19 +100,19 @@ def includeme(config):
                      factory=make_protected_function(*all_roles))
 
     config.add_route('dashboard_views.delete_dashboard',
-                     '/dashboard/{id}', request_method='DELETE',
+                     '/dashboards/{id}', request_method='DELETE',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('dashboard_views.get_dashboard',
-                     '/dashboard/{id}', request_method='GET',
+                     '/dashboards/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('dashboard_views.edit_dashboard',
-                     '/dashboard/{id}', request_method='PUT',
+                     '/dashboards/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('dashboard_views.reorder_dashboard',
-                     '/dashboard/{id}/reorder', request_method='PUT',
+                     '/dashboards/{id}/reorder', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('dashboard_views.list_dashboard_view_items',
@@ -120,11 +120,11 @@ def includeme(config):
                      factory=make_protected_function(*all_roles))
 
     config.add_route('dashboard_views.get_content_view',
-                     '/dashboard/{id}/content', request_method='GET',
+                     '/dashboards/{id}/content', request_method='GET',
                      factory=make_public)
 
     config.add_route('dashboard_views.edit_content_view',
-                     '/dashboard/{id}/content', request_method='PUT',
+                     '/dashboards/{id}/content', request_method='PUT',
                      factory=make_public)
 
     # collection views
@@ -133,7 +133,7 @@ def includeme(config):
                      factory=make_protected_function(*all_roles))
 
     config.add_route('collection_views.paste_collection',
-                     '/collection/{id}/paste', request_method='POST',
+                     '/collections/{id}/paste', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('collection_views.create_collection',
@@ -141,36 +141,36 @@ def includeme(config):
                      factory=make_protected_function(*all_roles))
 
     config.add_route('collection_views.delete_collection',
-                     '/collection/{id}', request_method='DELETE',
+                     '/collections/{id}', request_method='DELETE',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('collection_views.get_collection',
-                     '/collection/{id}', request_method='GET',
+                     '/collections/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('collection_views.edit_collection',
-                     '/collection/{id}', request_method='PUT',
+                     '/collections/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
     # variable views
     config.add_route('variable_views.list_variables',
-                     '/variables', request_method='GET',
+                     '/dashboards/{dashboard_id}/variables', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('variable_views.create_variable',
-                     '/variables', request_method='POST',
+                     '/dashboards/{dashboard_id}/variables', request_method='POST',
                      factory=make_protected_function(Administrator))
 
     config.add_route('variable_views.delete_variable',
-                     '/variable/{id}', request_method='DELETE',
+                     '/dashboards/{dashboard_id}/variables/{id}', request_method='DELETE',
                      factory=make_protected_function(Administrator))
 
     config.add_route('variable_views.get_variable',
-                     '/variable/{id}', request_method='GET',
+                     '/dashboards/{dashboard_id}/variables/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('variable_views.edit_variable',
-                     '/variable/{id}', request_method='PUT',
+                     '/dashboards/{dashboard_id}/variables/{id}', request_method='PUT',
                      factory=make_protected_function(Administrator))
 
     # single_stat views
@@ -183,19 +183,19 @@ def includeme(config):
                      factory=make_protected_function(Administrator))
 
     config.add_route('single_stat_views.delete_single_stat',
-                     '/single_stat/{id}', request_method='DELETE',
+                     '/single_stats/{id}', request_method='DELETE',
                      factory=make_protected_function(Administrator))
 
     config.add_route('single_stat_views.get_single_stat',
-                     '/single_stat/{id}', request_method='GET',
+                     '/single_stats/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('single_stat_views.edit_single_stat',
-                     '/single_stat/{id}', request_method='PUT',
+                     '/single_stats/{id}', request_method='PUT',
                      factory=make_protected_function(Administrator))
     
     config.add_route('single_stat_views.paste_single_stat',
-                     '/single_stat/{id}/paste', request_method='POST',
+                     '/single_stats/{id}/paste', request_method='POST',
                      factory=make_protected_function(Administrator))
 
     # data_source views
@@ -208,19 +208,19 @@ def includeme(config):
                      factory=make_protected_function(*all_roles))
 
     config.add_route('data_source_views.delete_data_source',
-                     '/data_source/{id}', request_method='DELETE',
+                     '/data_sources/{id}', request_method='DELETE',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('data_source_views.get_data_source',
-                     '/data_source/{id}', request_method='GET',
+                     '/data_sources/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('data_source_views.edit_data_source',
-                     '/data_source/{id}', request_method='PUT',
+                     '/data_sources/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('data_source_views.query',
-                     '/data_source/{id}/query', request_method='POST',
+                     '/data_sources/{id}/query', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     # single_stat views
@@ -233,41 +233,41 @@ def includeme(config):
                      factory=make_protected_function(Administrator))
 
     config.add_route('script_views.delete_script',
-                     '/script/{id}', request_method='DELETE',
+                     '/scripts/{id}', request_method='DELETE',
                      factory=make_protected_function(Administrator))
 
     config.add_route('script_views.get_script',
-                     '/script/{id}', request_method='GET',
+                     '/scripts/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('script_views.edit_script',
-                     '/script/{id}', request_method='PUT',
+                     '/scripts/{id}', request_method='PUT',
                      factory=make_protected_function(Administrator))
 
     config.add_route('script_views.reorder_script',
-                     '/script/{id}/reorder', request_method='PUT',
+                     '/scripts/{id}/reorder', request_method='PUT',
                      factory=make_protected_function(Administrator))
     # query views
     config.add_route('query_views.list_queries',
-                     '/dashboard/{dashboard_id}/queries', request_method='GET',
+                     '/dashboards/{dashboard_id}/queries', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.create_query',
-                     '/dashboard/{dashboard_id}/queries', request_method='POST',
+                     '/dashboards/{dashboard_id}/queries', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.delete_query',
-                     '/dashboard/{dashboard_id}/query/{id}', request_method='DELETE',
+                     '/dashboards/{dashboard_id}/query/{id}', request_method='DELETE',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.get_query',
-                     '/dashboard/{dashboard_id}/query/{id}', request_method='GET',
+                     '/dashboards/{dashboard_id}/query/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.edit_query',
-                     '/dashboard/{dashboard_id}/query/{id}', request_method='PUT',
+                     '/dashboards/{dashboard_id}/queries/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.run_query',
-                     '/dashboard/{dashboard_id}/query/{name}/run', request_method='POST',
+                     '/dashboards/{dashboard_id}/queries/{name}/run', request_method='POST',
                      factory=make_protected_function(*all_roles))

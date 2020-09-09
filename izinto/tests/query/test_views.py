@@ -1,9 +1,9 @@
 import pyramid.httpexceptions as exc
 
-from izinto.models import Query, DataSource
+from izinto.models import Query, DataSource, Variable
 from izinto.tests import BaseTest, dummy_request, add_dashboard
 from izinto.views.query import (create_query_view, get_query_view, list_queries_view, delete_query_view,
-                                edit_query_view)
+                                edit_query_view, run_query_view)
 
 
 class TestQueryViews(BaseTest):
@@ -119,3 +119,32 @@ class TestQueryViews(BaseTest):
 
         with self.assertRaises(exc.HTTPNotFound):
             delete_query_view(req)
+
+    def test_run_query(self):
+        datasource = DataSource(name='datasource', url='sqlite:///:memory:')
+        self.session.add(datasource)
+        dash = add_dashboard(self.session, 'Dash', 'Dashboard')
+        self.session.add(Variable(name='variable', value='5', dashboard_id=dash.id))
+        dash2 = add_dashboard(self.session, 'Dash2', 'Dashboard2')
+        query_string = "select * from test where column = ${params} and column2 = ${variable};"
+        query = Query(name='Query', query=query_string, dashboard_id=dash.id, data_source_id=datasource.id)
+        self.session.add(query)
+        self.session.add(Query(name='Query', query='query2', dashboard_id=dash2.id, data_source_id=datasource.id))
+        req = dummy_request(self.session)
+
+        with self.assertRaises(exc.HTTPNotFound):
+            req.matchdict = {'dashboard_id': dash.id, 'name': 'notfound'}
+            run_query_view(req)
+
+        req.matchdict['dashboard_id'] = dash.id
+        req.matchdict['name'] = 'Query'
+        req.json_body = {'params': '10'}
+
+        from unittest.mock import patch
+        # sqlalchemy.engine.base.Connection.execute = Mock('sqlalchemy.engine.base.Connection.execute', returns=result)
+        # with patch.object(sqlalchemy.engine.Connection, 'execute', return_value=result) as mock_method:
+        resp = run_query_view(req)
+        self.assertIsNotNone(resp)
+        self.assertEquals(resp.json_body['id'], 1)
+
+

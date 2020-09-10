@@ -1,5 +1,6 @@
 import pyramid.httpexceptions as exc
-
+import json
+from unittest.mock import patch, Mock
 from izinto.models import Query, DataSource, Variable
 from izinto.tests import BaseTest, dummy_request, add_dashboard
 from izinto.views.query import (create_query_view, get_query_view, list_queries_view, delete_query_view,
@@ -98,7 +99,7 @@ class TestQueryViews(BaseTest):
         resp = list_queries_view(req)
         self.assertEqual(len(resp), 3)
 
-        req.params = {'dashboard_id': dash.id}
+        req.matchdict = {'dashboard_id': dash.id}
         resp = list_queries_view(req)
         self.assertEqual(len(resp), 2)
 
@@ -120,7 +121,8 @@ class TestQueryViews(BaseTest):
         with self.assertRaises(exc.HTTPNotFound):
             delete_query_view(req)
 
-    def test_run_query(self):
+    @patch('izinto.views.data_source.create_engine')
+    def test_run_database_query(self, mock_engine):
         datasource = DataSource(name='datasource', url='sqlite:///:memory:')
         self.session.add(datasource)
         dash = add_dashboard(self.session, 'Dash', 'Dashboard')
@@ -139,12 +141,44 @@ class TestQueryViews(BaseTest):
         req.matchdict['dashboard_id'] = dash.id
         req.matchdict['name'] = 'Query'
         req.json_body = {'params': '10'}
+        results = [{'id': 1, 'name': 'name'}, {'id': 2, 'name': 'test'}]
+        # mock query response
+        mock_engine.return_value.connect.return_value.__enter__.return_value.execute.return_value = results
 
-        from unittest.mock import patch
-        # sqlalchemy.engine.base.Connection.execute = Mock('sqlalchemy.engine.base.Connection.execute', returns=result)
-        # with patch.object(sqlalchemy.engine.Connection, 'execute', return_value=result) as mock_method:
+        # Test that the method returns the expected ID.
         resp = run_query_view(req)
         self.assertIsNotNone(resp)
-        self.assertEquals(resp.json_body['id'], 1)
+        resp = json.loads(resp.json_body)
+        self.assertEquals(resp[0]['id'], 1)
+
+    @patch('izinto.views.data_source.HTTPConnection')
+    def test_run_http_query(self, mock_http_connection):
+        datasource = DataSource(name='datasource', url='http://ipaddress:port', username='username', password='pass')
+        self.session.add(datasource)
+        dash = add_dashboard(self.session, 'Dash', 'Dashboard')
+        self.session.add(Variable(name='variable', value='5', dashboard_id=dash.id))
+        query_string = "select * from test where column = ${params} and column2 = ${variable};"
+        query = Query(name='Query', query=query_string, dashboard_id=dash.id, data_source_id=datasource.id)
+        self.session.add(query)
+        req = dummy_request(self.session)
+
+        req.matchdict['dashboard_id'] = dash.id
+        req.matchdict['name'] = 'Query'
+        req.json_body = {'params': '10'}
+        req.accept_encoding = 'encoding'
+        results = [{'id': 1, 'name': 'name'}, {'id': 2, 'name': 'test'}]
+        # mock connection
+        mock_response = Mock()
+        mock_response.headers = {'Content-Encoding': 'encoding', 'Content-Type': 'type'}
+        mock_response.read.return_value = results
+        mock_response.status = 200
+        mock_http_connection.return_value.getresponse.return_value = mock_response
+
+        # Test that the method returns the expected ID.
+        resp = run_query_view(req)
+        self.assertIsNotNone(resp)
+        resp = resp.body
+        self.assertEquals(resp[0]['id'], 1)
+
 
 

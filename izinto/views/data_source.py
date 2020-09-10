@@ -7,8 +7,6 @@ from pyramid.response import Response
 from izinto.models import DataSource
 from izinto.views import get_values, create, get, edit, filtered_list, delete
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import scoped_session, sessionmaker
-from zope.sqlalchemy import ZopeTransactionExtension
 
 attrs = ['name', 'type', 'url', 'username', 'password', 'database']
 required_attrs = []

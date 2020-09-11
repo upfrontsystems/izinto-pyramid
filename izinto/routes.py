@@ -271,3 +271,7 @@ def includeme(config):
     config.add_route('query_views.run_query',
                      '/dashboards/{dashboard_id}/queries/{name}/run', request_method='POST',
                      factory=make_protected_function(*all_roles))
+
+    config.add_route('query_views.test_query',
+                     '/dashboards/{dashboard_id}/queries/test', request_method='POST',
+                     factory=make_protected_function(*all_roles))

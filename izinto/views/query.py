@@ -1,6 +1,8 @@
+import json
 from pyramid.view import view_config
+from sqlalchemy.exc import ProgrammingError
 import pyramid.httpexceptions as exc
-from izinto.models import session, Query, Dashboard
+from izinto.models import session, Query, Dashboard, DataSource
 from izinto.views import get_values, create, get, edit, delete
 from izinto.views.data_source import database_query, http_query
 
@@ -89,9 +91,45 @@ def run_query_view(request):
         raise exc.HTTPNotFound(json_body={'message': 'Query %s not found' % query_name})
 
     dashboard = session.query(Dashboard).get(dashboard_id)
+    return format_run_query(request, query.query, request.json_body, dashboard, query.data_source)
+
+
+@view_config(route_name='query_views.test_query', renderer='json', permission='view')
+def test_query_view(request):
+    """
+    Run a query with test values
+    :param request:
+    :return:
+    """
+
+    try:
+        query = request.json_body['query']
+        query_string = query['query']
+        test_data = json.loads(request.json_body['data'])
+        dashboard_id = request.matchdict['dashboard_id']
+        dashboard = session.query(Dashboard).get(dashboard_id)
+        data_source = session.query(DataSource).get(query['data_source_id'])
+    except KeyError as err:
+        return {'KeyError': str(err)}
+    except TypeError as err:
+        return {'TypeError': str(err)}
+    except Exception as err:
+        return {'Error': repr(err)}
+
+    try:
+        return format_run_query(request, query_string, test_data, dashboard, data_source)
+    except KeyError as err:
+        return {'KeyError': str(err)}
+    except ProgrammingError as err:
+        return {'SQL ProgrammingError': str(err)}
+    except Exception as err:
+        return {'Error': repr(err)}
+
+
+def format_run_query(request, query_string, data, dashboard, data_source):
+    """" Format query string and return result """
     # javascript format string
-    query_string = query.query
-    for column, value in request.json_body.items():
+    for column, value in data.items():
         query_string = query_string.replace('${%s}' % column, value)
 
     # format in dashboard variables
@@ -99,7 +137,7 @@ def run_query_view(request):
         query_string = query_string.replace('${%s}' % variable.name, variable.value)
 
     # query directly from database
-    if query.data_source.url.startswith('http'):
-        return http_query(request.accept_encoding, query.data_source, query_string)
+    if data_source.url.startswith('http'):
+        return http_query(request.accept_encoding, data_source, query_string)
 
-    return database_query(query.data_source, query_string)
+    return database_query(data_source, query_string)

@@ -1,7 +1,10 @@
+import decimal
 import json
 from base64 import b64encode
 from http.client import HTTPSConnection, HTTPConnection
 from urllib.parse import urlparse, urlencode
+
+from datetime import datetime
 from pyramid.view import view_config
 from pyramid.response import Response
 from izinto.models import DataSource
@@ -124,6 +127,15 @@ def database_query(data_source, statement):
     data = []
     with engine.connect() as con:
         result = con.execute(text(statement))
-        data = json.dumps([(dict(row.items())) for row in result])
+        data = json.dumps([(dict(row.items())) for row in result], cls=ResponseEncoder)
     response = Response(json_body=data)
     return response
+
+
+class ResponseEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+        if isinstance(o, datetime):
+            return str(o)
+        return super(ResponseEncoder, self).default(o)

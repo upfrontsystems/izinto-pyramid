@@ -1,7 +1,7 @@
 from pyramid import testing as pyramid_testing
 import pyramid.httpexceptions as exc
 
-from izinto.models import Collection, Variable, Chart, DataSource, SingleStat, DashboardView, Dashboard
+from izinto.models import Collection, Variable, Chart, DataSource, SingleStat, DashboardView, Dashboard, Query
 from izinto.tests import BaseTest, dummy_request, add_dashboard, add_user
 from izinto.views.dashboard import (create_dashboard_view, get_dashboard_view, edit_dashboard_view,
                                     list_dashboards_view, delete_dashboard_view, paste_dashboard_view,
@@ -141,6 +141,7 @@ class TestDashboardViews(BaseTest):
         self.session.add(Chart(title='Chart', data_source_id=data_source.id, dashboard_id=dashboard.id))
         self.session.add(Chart(title='Chart', data_source_id=data_source.id, dashboard_id=dashboard.id))
         self.session.add(SingleStat(title='Single stat', data_source_id=data_source.id, dashboard_id=dashboard_id))
+        self.session.add(Query(name="Query", query="query", dashboard_id=dashboard.id, data_source_id=data_source.id))
         self.session.flush()
 
         req = dummy_request(self.session)
@@ -158,6 +159,9 @@ class TestDashboardViews(BaseTest):
         req.json_body = {'collection_id': collection2_id}
         dashboard = paste_dashboard_view(req)
         self.assertEqual(dashboard['title'], 'Test title')
+
+        dashboard = self.session.query(Dashboard).get(dashboard['id'])
+        self.assertEqual(dashboard.queries[0].name, "Query")
 
     def test_reorder_dashboards_view(self):
         req = dummy_request(self.session)

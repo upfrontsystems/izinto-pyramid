@@ -2,9 +2,10 @@ from pyramid.view import view_config
 from pyramid.response import Response
 from sqlalchemy import func
 from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat, User, \
-    DashboardView
+    DashboardView, Query
 from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder, get_user
 from izinto.views.chart import attrs as chart_attrs
+from izinto.views.query import attrs as query_attrs
 
 attrs = ['title', 'description', 'collection_id', 'type', 'content']
 required_attrs = ['title']
@@ -167,6 +168,12 @@ def _paste_dashboard_relationships(dashboard, pasted_dashboard):
         create(SingleStat, title=stat.title, query=stat.query, decimals=stat.decimals, format=stat.format,
                thresholds=stat.thresholds, colors=stat.colors, dashboard_id=pasted_dashboard.id,
                data_source_id=stat.data_source_id)
+
+    # copy queries
+    for query in session.query(Query).filter(Query.dashboard_id == dashboard.id).all():
+        data = {attr: getattr(query, attr) for attr in query_attrs}
+        data['dashboard_id'] = pasted_dashboard.id
+        create(Query, **data)
 
 
 @view_config(route_name='dashboard_views.reorder_dashboard', renderer='json', permission='edit')

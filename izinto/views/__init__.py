@@ -36,6 +36,7 @@ def get(request, model, as_dict=True):
     Get a record
     :param request: HTTP Request
     :param model: SQLAlchemy model instance
+    :param as_dict:
     :return:
     """
     record_id = request.matchdict.get('id')
@@ -132,7 +133,7 @@ def paste(request, model, copied_data, parent_id_attribute, name_attribute):
         copied_data['index'] = result.first()[0]
 
     copied_data[name_attribute] = name
-    if parent_id:
+    if parent_id_attribute:
         copied_data[parent_id_attribute] = parent_id
 
     return create(model, **copied_data)

@@ -1,7 +1,9 @@
 import json
+
+import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 from sqlalchemy.exc import ProgrammingError
-import pyramid.httpexceptions as exc
+
 from izinto.models import session, Query, Dashboard, DataSource
 from izinto.views import get_values, create, get, edit, delete
 from izinto.views.data_source import database_query, http_query
@@ -19,6 +21,9 @@ def create_query_view(request):
     """
 
     data = get_values(request, attrs, required_attrs)
+    existing = session.query(Query).filter_by(name=data['name'], dashboard_id=data['dashboard_id']).first()
+    if existing:
+        raise exc.HTTPBadRequest(json_body={'message': 'Query %s already exists for this dashboard' % data['name']})
     query = create(Query, **data)
 
     return query.as_dict()

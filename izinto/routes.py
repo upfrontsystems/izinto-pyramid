@@ -257,11 +257,11 @@ def includeme(config):
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.delete_query',
-                     '/dashboards/{dashboard_id}/query/{id}', request_method='DELETE',
+                     '/dashboards/{dashboard_id}/queries/{id}', request_method='DELETE',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.get_query',
-                     '/dashboards/{dashboard_id}/query/{id}', request_method='GET',
+                     '/dashboards/{dashboard_id}/queries/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('query_views.edit_query',

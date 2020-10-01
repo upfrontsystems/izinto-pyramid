@@ -1,4 +1,4 @@
-from sqlalchemy import (Column, Unicode, Integer, ForeignKey, TEXT, VARCHAR)
+from sqlalchemy import (Column, Unicode, Integer, ForeignKey, TEXT, VARCHAR, Boolean)
 from sqlalchemy.orm import relationship
 
 from izinto.models import Base
@@ -20,6 +20,7 @@ class Dashboard(Base):
     # new type dashboards are html documents stored in `content`
     type = Column(VARCHAR, nullable=False, default='new')
     index = Column(Integer, default=1)
+    date_hidden = Column(Boolean)
 
     collections = relationship('Collection')
     users = relationship('User', secondary="user_dashboard", backref='dashboards')
@@ -35,7 +36,8 @@ class Dashboard(Base):
                 'type': self.type,
                 'content': self.content,
                 'users': [user.as_dict() for user in self.users],
-                'variables': [var.as_dict() for var in self.variables]}
+                'variables': [var.as_dict() for var in self.variables],
+                'date_hidden': self.date_hidden}
 
     def __repr__(self):
         return 'Dashboard<title: %s>' % self.title

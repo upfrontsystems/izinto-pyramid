@@ -7,7 +7,7 @@ from izinto.views import get_values, create, get, edit, filtered_list, delete, p
 from izinto.views.chart import attrs as chart_attrs
 from izinto.views.query import attrs as query_attrs
 
-attrs = ['title', 'description', 'collection_id', 'type', 'content']
+attrs = ['title', 'description', 'collection_id', 'type', 'content', 'date_hidden']
 required_attrs = ['title']
 
 

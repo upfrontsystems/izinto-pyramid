@@ -1,4 +1,4 @@
-from sqlalchemy import (Column, Unicode, Integer, ForeignKey, TEXT, VARCHAR, Boolean)
+from sqlalchemy import (Column, Unicode, Integer, ForeignKey, TEXT, VARCHAR, Boolean, LargeBinary)
 from sqlalchemy.orm import relationship
 
 from izinto.models import Base
@@ -14,6 +14,7 @@ class Dashboard(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(Unicode(length=100))
     description = Column(Unicode(length=500))
+    image = Column(LargeBinary)
     collection_id = Column(Integer, ForeignKey('collection.id', ondelete='CASCADE'), nullable=True)
     content = Column(TEXT)
     # a dashboard can be an 'old' or a 'new' type dashboard
@@ -27,6 +28,9 @@ class Dashboard(Base):
     variables = relationship('Variable')
 
     def as_dict(self):
+        image_data = None
+        if self.image:
+            image_data = self.image.decode()
 
         return {'id': self.id,
                 'title': self.title,
@@ -37,7 +41,8 @@ class Dashboard(Base):
                 'content': self.content,
                 'users': [user.as_dict() for user in self.users],
                 'variables': [var.as_dict() for var in self.variables],
-                'date_hidden': self.date_hidden}
+                'date_hidden': self.date_hidden,
+                'image': image_data}
 
     def __repr__(self):
         return 'Dashboard<title: %s>' % self.title

@@ -40,7 +40,8 @@ class TestCollectionModel(BaseTest):
             'id': collection.id,
             'title': "Collection",
             'description': "Description",
-            'users': [user.as_dict()]
+            'users': [user.as_dict(),],
+            'image': None
         })
 
     def test__repr__(self):

@@ -6,6 +6,7 @@
 * [#173](https://github.com/upfrontsystems/izinto-angular/issues/173) Add Query model and view
 * [#179](https://github.com/upfrontsystems/izinto-angular/issues/179) Link queries per dashboard
 * [#197](https://github.com/upfrontsystems/izinto-angular/issues/197) Add optional date selector flag to dashboard
+* [#199](https://github.com/upfrontsystems/izinto-angular/issues/199) Add image to collection and dashboard
 
 0.6
 ---

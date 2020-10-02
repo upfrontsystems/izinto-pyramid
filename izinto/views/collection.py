@@ -1,12 +1,10 @@
 from pyramid.view import view_config
-from izinto.models import session, Collection, User, UserCollection, Dashboard, UserDashboard, Variable, Chart, \
-    ChartGroupBy, SingleStat
+from izinto.models import session, Collection, User, UserCollection, Dashboard
 from izinto.security import Administrator
 from izinto.views import paste, create, get_user, get_values, get, edit, delete
 from izinto.views.dashboard import attrs as dashboard_attrs, _paste_dashboard_relationships
-from izinto.views.chart import attrs as chart_attrs
 
-attrs = ['title', 'description']
+attrs = ['title', 'description', 'image']
 required_attrs = ['title']
 
 

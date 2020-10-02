@@ -14,6 +14,9 @@ def get_values(request, attrs, required_attrs):
         value = data.get(attr, None)
         if value is None and attr in required_attrs:
             raise exc.HTTPBadRequest(json_body={'message': '%s required' % attr})
+        # encode image data
+        if attr == 'image' and value:
+            value = value.encode('utf-8')
         values[attr] = value
     return values
 

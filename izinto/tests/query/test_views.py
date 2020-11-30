@@ -121,7 +121,7 @@ class TestQueryViews(BaseTest):
         with self.assertRaises(exc.HTTPNotFound):
             delete_query_view(req)
 
-    @patch('izinto.views.data_source.create_engine')
+    @patch('izinto.services.query.create_engine')
     def test_run_database_query(self, mock_engine):
         datasource = DataSource(name='datasource', url='sqlite:///:memory:')
         self.session.add(datasource)
@@ -151,7 +151,7 @@ class TestQueryViews(BaseTest):
         resp = json.loads(resp.json_body)
         self.assertEquals(resp[0]['id'], 1)
 
-    @patch('izinto.views.data_source.HTTPConnection')
+    @patch('izinto.services.query.HTTPConnection')
     def test_run_http_query(self, mock_http_connection):
         datasource = DataSource(name='datasource', url='http://ipaddress:port', username='username', password='pass')
         self.session.add(datasource)

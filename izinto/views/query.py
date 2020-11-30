@@ -5,8 +5,8 @@ from pyramid.view import view_config
 from sqlalchemy.exc import ProgrammingError
 
 from izinto.models import session, Query, Dashboard, DataSource
+from izinto.services.query import format_run_query
 from izinto.views import get_values, create, get, edit, delete
-from izinto.views.data_source import database_query, http_query
 
 attrs = ['name', 'query', 'dashboard_id', 'data_source_id']
 required_attrs = ['name', 'data_source_id', 'dashboard_id']
@@ -96,7 +96,9 @@ def run_query_view(request):
         raise exc.HTTPNotFound(json_body={'message': 'Query %s not found' % query_name})
 
     dashboard = session.query(Dashboard).get(dashboard_id)
-    return format_run_query(request, query.query, request.json_body, dashboard, query.data_source)
+    # format query with parameters and dashboard variables
+    # run http or database query
+    return format_run_query(request, query.query, request.json_body, dashboard.variables, query.data_source)
 
 
 @view_config(route_name='query_views.test_query', renderer='json', permission='view')
@@ -122,27 +124,10 @@ def test_query_view(request):
         return {'Error': repr(err)}
 
     try:
-        return format_run_query(request, query_string, test_data, dashboard, data_source)
+        return format_run_query(request, query_string, test_data, dashboard.variables, data_source)
     except KeyError as err:
         return {'KeyError': str(err)}
     except ProgrammingError as err:
         return {'SQL ProgrammingError': str(err)}
     except Exception as err:
         return {'Error': repr(err)}
-
-
-def format_run_query(request, query_string, data, dashboard, data_source):
-    """" Format query string and return result """
-    # javascript format string
-    for column, value in data.items():
-        query_string = query_string.replace('${%s}' % column, value)
-
-    # format in dashboard variables
-    for variable in dashboard.variables:
-        query_string = query_string.replace('${%s}' % variable.name, variable.value)
-
-    # query directly from database
-    if data_source.url.startswith('http'):
-        return http_query(request.accept_encoding, data_source, query_string)
-
-    return database_query(data_source, query_string)

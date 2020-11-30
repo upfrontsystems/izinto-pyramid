@@ -22,7 +22,6 @@ def create_dashboard_view(request):
     data = get_values(request, attrs, required_attrs)
     users = request.json_body.get('users', [])
     collection_id = request.json_body.get('collection_id')
-    variables = request.json_body.get('variables', [])
 
     if data.get('index') is None and collection_id:
         result = session.query(func.count(Dashboard.id)).filter(Dashboard.collection_id == collection_id).first()
@@ -35,10 +34,6 @@ def create_dashboard_view(request):
 
     for user in users:
         create(UserDashboard, user_id=user['id'], dashboard_id=dashboard.id)
-
-    # add variables with dashboard
-    for variable in variables:
-        create(Variable, name=variable['name'], value=variable['value'], dashboard_id=dashboard.id)
 
     return dashboard.as_dict()
 
@@ -62,7 +57,6 @@ def edit_dashboard_view(request):
     """
 
     dashboard = get(request, Dashboard, as_dict=False)
-    variables = request.json_body.get('variables', [])
     users = request.json_body.get('users', [])
 
     data = get_values(request, attrs, required_attrs)
@@ -71,18 +65,6 @@ def edit_dashboard_view(request):
     dashboard.users[:] = []
     for user in users:
         dashboard.users.append(get_user(user['id']))
-
-    # update and delete dashboard variables
-    removed = dashboard.variables
-    for data in variables:
-        if data.get('id'):
-            removed = [rem for rem in removed if rem.id != data['id']]
-            variable = session.query(Variable).get(data['id'])
-            edit(variable, name=data['name'], value=data['value'])
-        else:
-            create(Variable, name=data['name'], value=data['value'], dashboard_id=dashboard.id)
-    for rem in removed:
-        session.query(Variable).filter(Variable.id == rem.id).delete(synchronize_session='fetch')
 
     return dashboard.as_dict()
 

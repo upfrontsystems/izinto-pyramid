@@ -8,3 +8,4 @@ class UserCollection(Base):
 
     user_id = Column(VARCHAR(length=32), ForeignKey('user.id', ondelete="cascade"), primary_key=True, nullable=False)
     collection_id = Column(Integer, ForeignKey('collection.id', ondelete="cascade"), primary_key=True, nullable=False)
+    role_id = Column(Integer, ForeignKey('role.id'), nullable=True)

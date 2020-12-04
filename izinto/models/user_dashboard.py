@@ -8,3 +8,4 @@ class UserDashboard(Base):
 
     user_id = Column(VARCHAR(length=32), ForeignKey('user.id', ondelete="cascade"), primary_key=True, nullable=False)
     dashboard_id = Column(Integer, ForeignKey('dashboard.id', ondelete="cascade"), primary_key=True, nullable=False)
+    role_id = Column(Integer, ForeignKey('role.id'), nullable=True)

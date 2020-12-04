@@ -2,7 +2,8 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from sqlalchemy import func
 from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat, User, \
-    DashboardView, Query
+    DashboardView, Query, Role
+from izinto.security import Administrator
 from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder, get_user
 from izinto.views.chart import attrs as chart_attrs
 from izinto.views.query import attrs as query_attrs
@@ -28,12 +29,13 @@ def create_dashboard_view(request):
         data['index'] = result[0]
 
     dashboard = create(Dashboard, **data)
-    # add logged in user to dashboard
+    # add logged in user to dashboard with admin role
     if not [user for user in users if user['id'] == request.authenticated_userid]:
-        create(UserDashboard, user_id=request.authenticated_userid, dashboard_id=dashboard.id)
+        admin_role = session.query(Role).filter_by(name=Administrator).first()
+        create(UserDashboard, user_id=request.authenticated_userid, dashboard_id=dashboard.id, role_id=admin_role.id)
 
     for user in users:
-        create(UserDashboard, user_id=user['id'], dashboard_id=dashboard.id)
+        create(UserDashboard, user_id=user['id'], dashboard_id=dashboard.id, role_id=user.get('role_id'))
 
     return dashboard.as_dict()
 
@@ -64,7 +66,7 @@ def edit_dashboard_view(request):
 
     dashboard.users[:] = []
     for user in users:
-        dashboard.users.append(get_user(user['id']))
+        create(UserDashboard, user_id=user['id'], dashboard_id=dashboard.id, role_id=user.get('role_id'))
 
     return dashboard.as_dict()
 

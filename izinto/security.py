@@ -4,7 +4,7 @@ from pyramid.authentication import CallbackAuthenticationPolicy
 from pyramid.decorator import reify
 from pyramid.security import Allow, Deny, Everyone
 
-from izinto.models import Role, session
+from izinto.models import Role, session, UserDashboard, UserCollection
 
 # Roles
 Authenticated = 'Authenticated'
@@ -78,6 +78,50 @@ def role_finder(request):
     auth = request.headers.get('Authorization')
     if auth and auth.startswith('Bearer '):
         validated, userid, roles = verify_token(request, auth[7:])
+
+        if request.method != 'GET':
+            local_roles = []
+            # check user access to a collection
+            if 'collection' in request.path:
+                if 'id' in request.matchdict:
+                    local_roles = session.query(Role.name).join(UserCollection).filter(
+                        UserCollection.user_id == userid, UserCollection.collection_id == request.matchdict['id']).all()
+            elif 'dashboards' in request.path:
+                # check user access to adding to a dashboard
+                if 'dashboard_id' in request.matchdict:
+                    local_roles = session.query(Role.name).join(UserDashboard).filter(
+                        UserDashboard.user_id == userid,
+                        UserDashboard.dashboard_id == request.matchdict['dashboard_id']).all()
+                # check user access to editing a dashboard
+                elif 'id' in request.matchdict:
+                    local_roles = session.query(Role.name).join(UserDashboard).filter(
+                        UserDashboard.user_id == userid, UserDashboard.dashboard_id == request.matchdict['id']).all()
+                # check user access to creating a dashboard in a collection
+                elif request.json_body and 'collection_id' in request.json_body.keys():
+                    local_roles = session.query(Role.name).join(UserCollection).filter(
+                        UserCollection.user_id == userid,
+                        UserCollection.collection_id == request.json_body['collection_id']).all()
+            # check user access to adding a chart to a dashboard
+            elif 'charts' in request.path:
+                if request.json_body and 'dashboard_id' in request.json_body.keys():
+                    local_roles = session.query(Role.name).join(UserDashboard).filter(
+                        UserDashboard.user_id == userid,
+                        UserDashboard.dashboard_id == request.json_body['dashboard_id']).all()
+            # check user access to adding a single stat to a dashboard
+            elif 'single_stats' in request.path:
+                if request.json_body and 'dashboard_id' in request.json_body.keys():
+                    local_roles = session.query(Role.name).join(UserDashboard).filter(
+                        UserDashboard.user_id == userid,
+                        UserDashboard.dashboard_id == request.json_body['dashboard_id']).all()
+            # check user access to adding a query to a dashboard
+            elif 'single_stats' in request.path:
+                if request.json_body and 'dashboard_id' in request.json_body.keys():
+                    local_roles = session.query(Role.name).join(UserDashboard).filter(
+                        UserDashboard.user_id == userid,
+                        UserDashboard.dashboard_id == request.json_body['dashboard_id']).all()
+
+            # add user local roles to role finder
+            roles += [role[0] for role in local_roles]
         if roles:
             return [role for role in roles if role in all_roles]
     return []

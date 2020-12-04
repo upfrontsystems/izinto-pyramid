@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from izinto.models import session, Collection, User, UserCollection, Dashboard
+from izinto.models import session, Collection, User, UserCollection, Dashboard, Role
 from izinto.security import Administrator
 from izinto.views import paste, create, get_user, get_values, get, edit, delete
 from izinto.views.dashboard import attrs as dashboard_attrs, _paste_dashboard_relationships
@@ -20,11 +20,12 @@ def create_collection(request):
 
     collection = create(Collection, **data)
 
-    # add logged in user to collection
+    # add logged in user to collection with admin role
     if not [user for user in users if user['id'] == request.authenticated_userid]:
-        create(UserCollection, user_id=request.authenticated_userid, collection_id=collection.id)
+        admin_role = session.query(Role).filter_by(name=Administrator).first()
+        create(UserCollection, user_id=request.authenticated_userid, collection_id=collection.id, role_id=admin_role.id)
     for user in users:
-        create(UserCollection, user_id=user['id'], collection_id=collection.id)
+        create(UserCollection, user_id=user['id'], collection_id=collection.id, role_id=user.get('role_id'))
 
     return collection.as_dict()
 
@@ -58,7 +59,7 @@ def edit_collection(request):
     users = request.json_body.get('users', [])
     collection.users[:] = []
     for user in users:
-        collection.users.append(get_user(user['id']))
+        create(UserCollection, user_id=user['id'], collection_id=collection.id, role_id=user.get('role_id'))
 
     return collection.as_dict()
 

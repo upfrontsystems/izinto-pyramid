@@ -200,3 +200,33 @@ def edit_content_view(request):
     content = request.json_body.get('content', '')
     edit(dashboard, content=content)
     return Response(dashboard.content)
+
+
+@view_config(route_name='dashboard_views.list_user_access', renderer='json', permission='view')
+def list_dashboards_user_access_view(request):
+    """
+    List user dashboards mapping for this dashboard with roles
+    :param request:
+    :return:
+    """
+
+    dashboard_id = request.matchdict['id']
+    user_access = session.query(UserDashboard).filter(UserDashboard.dashboard_id == dashboard_id).all()
+
+    return [access.as_dict() for access in user_access]
+
+
+@view_config(route_name='dashboard_views.edit_user_access', renderer='json', permission='edit')
+def edit_dashboard_user_access_view(request):
+    """
+    Set user role for this dashboard
+    :param request:
+    :return:
+    """
+
+    dashboard_id = request.matchdict['id']
+    user_id = request.json_body['user_id']
+    role = request.json_body['role']
+    user_access = session.query(UserDashboard).filter(UserDashboard.dashboard_id == dashboard_id,
+                                                      UserDashboard.user_id == user_id).first()
+    user_access.role = role

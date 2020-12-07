@@ -1,7 +1,6 @@
+from izinto.models import Base
 from sqlalchemy import (Column, Unicode, Integer, LargeBinary)
 from sqlalchemy.orm import relationship
-
-from izinto.models import Base
 
 
 class Collection(Base):
@@ -27,7 +26,6 @@ class Collection(Base):
         return {'id': self.id,
                 'title': self.title,
                 'description': self.description,
-                'users': [user.as_dict() for user in self.users],
                 'image': image_data}
 
     def __repr__(self):

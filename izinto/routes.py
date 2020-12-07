@@ -127,6 +127,14 @@ def includeme(config):
                      '/dashboards/{id}/content', request_method='PUT',
                      factory=make_public)
 
+    config.add_route('dashboard_views.list_user_access',
+                     '/dashboards/{id}/access', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('dashboard_views.edit_user_access',
+                     '/dashboards/{id}/access', request_method='PUT',
+                     factory=make_protected_function(*all_roles))
+
     # collection views
     config.add_route('collection_views.list_collections',
                      '/collections', request_method='GET',
@@ -150,6 +158,14 @@ def includeme(config):
 
     config.add_route('collection_views.edit_collection',
                      '/collections/{id}', request_method='PUT',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('collection_views.list_user_access',
+                     '/collections/{id}/access', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('collection_views.edit_user_access',
+                     '/collections/{id}/access', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
     # variable views

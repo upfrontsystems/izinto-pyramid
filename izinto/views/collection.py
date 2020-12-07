@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+
 from izinto.models import session, Collection, User, UserCollection, Dashboard, Role
 from izinto.security import Administrator
 from izinto.views import paste, create, get_user, get_values, get, edit, delete
@@ -125,3 +126,33 @@ def paste_collection_view(request):
         _paste_dashboard_relationships(dashboard, pasted_dashboard)
 
     return pasted_collection.as_dict()
+
+
+@view_config(route_name='collection_views.list_user_access', renderer='json', permission='view')
+def list_collections_user_access_view(request):
+    """
+    List user collections mapping for this collection with roles
+    :param request:
+    :return:
+    """
+
+    collection_id = request.matchdict['id']
+    user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection_id).all()
+
+    return [access.as_dict() for access in user_access]
+
+
+@view_config(route_name='collection_views.edit_user_access', renderer='json', permission='edit')
+def edit_collection_user_access_view(request):
+    """
+    Set user role for this collection
+    :param request:
+    :return:
+    """
+
+    collection_id = request.matchdict['id']
+    user_id = request.json_body['user_id']
+    role = request.json_body['role']
+    user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection_id,
+                                                       UserCollection.user_id == user_id).first()
+    user_access.role = role

@@ -152,7 +152,42 @@ def edit_collection_user_access_view(request):
 
     collection_id = request.matchdict['id']
     user_id = request.json_body['user_id']
-    role = request.json_body['role']
+    role_name = request.json_body['role']
     user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection_id,
                                                        UserCollection.user_id == user_id).first()
+    role = session.query(Role).filter(Role.name == role_name).first()
     user_access.role = role
+
+
+@view_config(route_name='collection_views.add_user_access', renderer='json', permission='edit')
+def add_collection_user_access_view(request):
+    """
+    Add user access role for this collection
+    :param request:
+    :return:
+    """
+
+    collection_id = request.matchdict['id']
+    user_id = request.json_body['user_id']
+    role_name = request.json_body['role']
+    role = session.query(Role).filter(Role.name == role_name).first()
+    user_access = create(UserCollection, user_id=user_id, collection_id=collection_id, role_id=role.id)
+
+    return user_access.as_dict()
+
+
+@view_config(route_name='collection_views.delete_user_access', renderer='json', permission='edit')
+def delete_collection_user_access_view(request):
+    """
+    Delete user role for this collection
+    :param request:
+    :return:
+    """
+
+    collection_id = request.matchdict['id']
+    user_id = request.params['user_id']
+    session.query(UserCollection). \
+        filter(UserCollection.collection_id == collection_id, UserCollection.user_id == user_id). \
+        delete(synchronize_session='fetch')
+
+    return {}

@@ -13,6 +13,7 @@ class UserDashboard(Base):
     role_id = Column(Integer, ForeignKey('role.id'), nullable=True)
 
     role = relationship('Role')
+    user = relationship('User')
 
     def as_dict(self):
         """
@@ -22,6 +23,7 @@ class UserDashboard(Base):
         role = self.role and self.role.name
 
         return {'user_id': self.user_id,
+                'user': self.user.as_dict(),
                 'dashboard_id': self.dashboard_id,
                 'role_id': self.role_id,
                 'role': role}

@@ -23,14 +23,16 @@ def upgrade():
     edit_role = conn.execute("select * from role where name = 'Edit'").first()
     # add permissions to role
     edit_permission = conn.execute("select * from permission where name = 'edit'").first()
+    view_permission = conn.execute("select * from permission where name = 'view'").first()
     conn.execute("insert into permission_role (role_id, permission_id) values (%s, %s)"
                  % (edit_role.id, edit_permission.id))
+    conn.execute("insert into permission_role (role_id, permission_id) values (%s, %s)"
+                 % (edit_role.id, view_permission.id))
 
     # add view role
     conn.execute("insert into role (name) values ('View')")
     view_role = conn.execute("select * from role where name = 'View'").first()
     # add permissions to role
-    view_permission = conn.execute("select * from permission where name = 'view'").first()
     conn.execute("insert into permission_role (role_id, permission_id) values (%s, %s)"
                  % (view_role.id, view_permission.id))
 
@@ -38,9 +40,13 @@ def upgrade():
 def downgrade():
     conn = op.get_bind()
     edit_role = conn.execute("select * from role where name = 'Edit'").first()
+    conn.execute("delete from user_collection where role_id = %s" % edit_role.id)
+    conn.execute("delete from user_dashboard where role_id = %s" % edit_role.id)
     conn.execute("delete from permission_role where role_id = %s" % edit_role.id)
     conn.execute("delete from role where id = %s" % edit_role.id)
 
     view_role = conn.execute("select * from role where name = 'View'").first()
+    conn.execute("delete from user_collection where role_id = %s" % view_role.id)
+    conn.execute("delete from user_dashboard where role_id = %s" % view_role.id)
     conn.execute("delete from permission_role where role_id = %s" % view_role.id)
     conn.execute("delete from role where id = %s" % view_role.id)

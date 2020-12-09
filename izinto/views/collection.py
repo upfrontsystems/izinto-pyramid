@@ -17,16 +17,11 @@ def create_collection(request):
     :return Collection:
     """
     data = get_values(request, attrs, required_attrs)
-    users = request.json_body.get('users', [])
-
     collection = create(Collection, **data)
 
     # add logged in user to collection with admin role
-    if not [user for user in users if user['id'] == request.authenticated_userid]:
-        admin_role = session.query(Role).filter_by(name=Administrator).first()
-        create(UserCollection, user_id=request.authenticated_userid, collection_id=collection.id, role_id=admin_role.id)
-    for user in users:
-        create(UserCollection, user_id=user['id'], collection_id=collection.id, role_id=user.get('role_id'))
+    admin_role = session.query(Role).filter_by(name=Administrator).first()
+    create(UserCollection, user_id=request.authenticated_userid, collection_id=collection.id, role_id=admin_role.id)
 
     return collection.as_dict()
 
@@ -57,11 +52,6 @@ def edit_collection(request):
     data = get_values(request, attrs, required_attrs)
     edit(collection, **data)
 
-    users = request.json_body.get('users', [])
-    collection.users[:] = []
-    for user in users:
-        create(UserCollection, user_id=user['id'], collection_id=collection.id, role_id=user.get('role_id'))
-
     return collection.as_dict()
 
 
@@ -77,17 +67,35 @@ def list_collections(request):
 
     user = get_user(request.authenticated_userid)
     if not user.has_role(Administrator):
+        # list collections with user access
         query = query.join(Collection.users).filter(User.id == request.authenticated_userid)
 
     collections = []
     for collection in query.order_by(Collection.title).all():
         cdata = collection.as_dict()
         if 'list_dashboards' in filters:
-            dashboards = session.query(Dashboard).filter(Dashboard.collection_id == collection.id).all()
-            cdata['dashboards'] = [dash.as_dict() for dash in dashboards]
+            dashboards = session.query(Dashboard).filter(Dashboard.collection_id == collection.id)
+            if not user.has_role(Administrator):
+                # list dashboards with user access
+                dashboards = dashboards.join(Dashboard.users).filter(User.id == request.authenticated_userid)
+            cdata['dashboards'] = [dash.as_dict() for dash in dashboards.all()]
         collections.append(cdata)
 
     return collections
+
+
+@view_config(route_name='collection_views.get_user_access', renderer='json', permission='view')
+def get_collections_user_access_view(request):
+    """
+    Get the logged in user access role for this collection
+    :param request:
+    :return:
+    """
+
+    collection_id = request.matchdict['id']
+    user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection_id,
+                                                       UserCollection.user_id == request.authenticated_userid).first()
+    return user_access.as_dict()
 
 
 @view_config(route_name='collection_views.delete_collection', renderer='json', permission='delete')
@@ -113,8 +121,9 @@ def paste_collection_view(request):
     pasted_collection = paste(request, Collection, data, None, 'title')
 
     # copy list of users
-    for user in collection.users:
-        session.add(UserCollection(user_id=user.id, collection_id=pasted_collection.id))
+    user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection.id).all()
+    for access in user_access:
+        create(UserCollection, user_id=access.user_id, collection_id=pasted_collection.id, role_id=access.role_id)
 
     # copy dashboards in collection
     for dashboard in collection.dashboards:

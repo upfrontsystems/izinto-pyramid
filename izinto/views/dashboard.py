@@ -2,7 +2,7 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from sqlalchemy import func
 from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat, User, \
-    DashboardView, Query, Role
+    DashboardView, Query, Role, UserCollection
 from izinto.security import Administrator
 from izinto.views import get_values, create, get, edit, filtered_list, delete, paste, reorder, get_user
 from izinto.views.chart import attrs as chart_attrs
@@ -21,7 +21,6 @@ def create_dashboard_view(request):
     """
 
     data = get_values(request, attrs, required_attrs)
-    users = request.json_body.get('users', [])
     collection_id = request.json_body.get('collection_id')
 
     if data.get('index') is None and collection_id:
@@ -29,13 +28,18 @@ def create_dashboard_view(request):
         data['index'] = result[0]
 
     dashboard = create(Dashboard, **data)
-    # add logged in user to dashboard with admin role
-    if not [user for user in users if user['id'] == request.authenticated_userid]:
+
+    # when creating a dashboard in a collection copy the user access from the collection
+    user_access = []
+    if collection_id:
+        user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection_id).all()
+        for access in user_access:
+            create(UserDashboard, user_id=access.user_id, dashboard_id=dashboard.id, role_id=access.role_id)
+
+    if not [access for access in user_access if access.user_id == request.authenticated_userid]:
+        # add logged in user to dashboard with admin role
         admin_role = session.query(Role).filter_by(name=Administrator).first()
         create(UserDashboard, user_id=request.authenticated_userid, dashboard_id=dashboard.id, role_id=admin_role.id)
-
-    for user in users:
-        create(UserDashboard, user_id=user['id'], dashboard_id=dashboard.id, role_id=user.get('role_id'))
 
     return dashboard.as_dict()
 
@@ -59,14 +63,9 @@ def edit_dashboard_view(request):
     """
 
     dashboard = get(request, Dashboard, as_dict=False)
-    users = request.json_body.get('users', [])
 
     data = get_values(request, attrs, required_attrs)
     edit(dashboard, **data)
-
-    dashboard.users[:] = []
-    for user in users:
-        create(UserDashboard, user_id=user['id'], dashboard_id=dashboard.id, role_id=user.get('role_id'))
 
     return dashboard.as_dict()
 
@@ -80,9 +79,6 @@ def list_dashboards_view(request):
     """
 
     filters = request.params.copy()
-    if 'user_id' in filters:
-        filters['user_id'] = request.authenticated_userid
-
     query = session.query(Dashboard)
 
     # filter dashboards either by collection or users
@@ -92,9 +88,11 @@ def list_dashboards_view(request):
             query = query.filter(Dashboard.collection_id == filters['collection_id']).order_by(Dashboard.index)
         else:
             query = query.filter(Dashboard.collection_id == None).order_by(Dashboard.index)
-    elif 'user_id' in filters:
+
+    user = get_user(request.authenticated_userid)
+    if not user.has_role(Administrator) or filters.get('user_id'):
         # filter by users that can view the dashboards
-        query = query.join(Dashboard.users).filter(User.id == filters['user_id']).order_by(Dashboard.index)
+        query = query.join(Dashboard.users).filter(User.id == user.id).order_by(Dashboard.index)
 
     return [dashboard.as_dict() for dashboard in query.all()]
 
@@ -130,8 +128,9 @@ def paste_dashboard_view(request):
 def _paste_dashboard_relationships(dashboard, pasted_dashboard):
     """ Copy all relationships when pasting new dashboard """
     # copy list of users
-    for user in dashboard.users:
-        create(UserDashboard, user_id=user.id, dashboard_id=pasted_dashboard.id)
+    user_access = session.query(UserDashboard).filter(UserDashboard.dashboard_id == dashboard.id).all()
+    for access in user_access:
+        create(UserDashboard, user_id=access.user_id, dashboard_id=pasted_dashboard.id, role_id=access.role_id)
 
     # copy list of variables
     for variable in dashboard.variables:
@@ -214,6 +213,20 @@ def list_dashboards_user_access_view(request):
     user_access = session.query(UserDashboard).filter(UserDashboard.dashboard_id == dashboard_id).all()
 
     return [access.as_dict() for access in user_access]
+
+
+@view_config(route_name='dashboard_views.get_user_access', renderer='json', permission='view')
+def get_dashboards_user_access_view(request):
+    """
+    Get the logged in user access role for this dashboard
+    :param request:
+    :return:
+    """
+
+    dashboard_id = request.matchdict['id']
+    user_access = session.query(UserDashboard).filter(UserDashboard.dashboard_id == dashboard_id,
+                                                      UserDashboard.user_id == request.authenticated_userid).first()
+    return user_access.as_dict()
 
 
 @view_config(route_name='dashboard_views.edit_user_access', renderer='json', permission='edit')

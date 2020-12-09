@@ -131,6 +131,10 @@ def includeme(config):
                      '/dashboards/{id}/access', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
+    config.add_route('dashboard_views.get_user_access',
+                     '/dashboards/{id}/access/user', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
     config.add_route('dashboard_views.edit_user_access',
                      '/dashboards/{id}/access', request_method='PUT',
                      factory=make_protected_function(*all_roles))
@@ -182,6 +186,10 @@ def includeme(config):
 
     config.add_route('collection_views.delete_user_access',
                      '/collections/{id}/access', request_method='DELETE',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('collection_views.get_user_access',
+                     '/collections/{id}/access/user', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     # variable views

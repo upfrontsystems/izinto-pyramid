@@ -2,6 +2,7 @@ from sqlalchemy import (Column, Unicode, Integer, ForeignKey, TEXT, VARCHAR, Boo
 from sqlalchemy.orm import relationship
 
 from izinto.models import Base
+from izinto.services.user_access import get_user_access
 
 
 class Dashboard(Base):
@@ -27,10 +28,15 @@ class Dashboard(Base):
     users = relationship('User', secondary="user_dashboard", backref='dashboards')
     variables = relationship('Variable')
 
-    def as_dict(self):
+    def as_dict(self, user_id=None):
         image_data = None
         if self.image:
             image_data = self.image.decode()
+
+        # include user access
+        user_access = {}
+        if user_id:
+            user_access = get_user_access(Dashboard, 'dashboard_id', self.id, user_id)
 
         return {'id': self.id,
                 'title': self.title,
@@ -41,7 +47,8 @@ class Dashboard(Base):
                 'content': self.content,
                 'variables': [var.as_dict() for var in self.variables],
                 'date_hidden': self.date_hidden,
-                'image': image_data}
+                'image': image_data,
+                'user_access': user_access}
 
     def __repr__(self):
         return 'Dashboard<title: %s>' % self.title

@@ -2,6 +2,7 @@ from pyramid.view import view_config
 
 from izinto.models import session, Collection, User, UserCollection, Dashboard, Role
 from izinto.security import Administrator
+from izinto.services.user_access import get_user_access
 from izinto.views import paste, create, get_user, get_values, get, edit, delete
 from izinto.views.dashboard import attrs as dashboard_attrs, _paste_dashboard_relationships
 
@@ -23,7 +24,7 @@ def create_collection(request):
     admin_role = session.query(Role).filter_by(name=Administrator).first()
     create(UserCollection, user_id=request.authenticated_userid, collection_id=collection.id, role_id=admin_role.id)
 
-    return collection.as_dict()
+    return collection.as_dict(request.authenticated_userid)
 
 
 @view_config(route_name='collection_views.get_collection', renderer='json', permission='view')
@@ -35,9 +36,15 @@ def get_collection_view(request):
    """
     collection = get(request, Collection, as_dict=False)
 
-    collection_data = collection.as_dict()
-    dashboards = session.query(Dashboard).filter(Dashboard.collection_id == collection.id).all()
-    collection_data['dashboards'] = [dash.as_dict() for dash in dashboards]
+    collection_data = collection.as_dict(request.authenticated_userid)
+
+    # include user dashboards with access
+    user = get_user(request.authenticated_userid)
+    dashboards = session.query(Dashboard).filter(Dashboard.collection_id == collection.id)
+    if not user.has_role(Administrator):
+        dashboards = dashboards.join(Dashboard.users).filter(User.id == request.authenticated_userid)
+    collection_data['dashboards'] = [dash.as_dict(request.authenticated_userid) for dash in dashboards.all()]
+
     return collection_data
 
 
@@ -52,7 +59,7 @@ def edit_collection(request):
     data = get_values(request, attrs, required_attrs)
     edit(collection, **data)
 
-    return collection.as_dict()
+    return collection.as_dict(request.authenticated_userid)
 
 
 @view_config(route_name='collection_views.list_collections', renderer='json', permission='view')
@@ -72,30 +79,16 @@ def list_collections(request):
 
     collections = []
     for collection in query.order_by(Collection.title).all():
-        cdata = collection.as_dict()
+        cdata = collection.as_dict(request.authenticated_userid)
         if 'list_dashboards' in filters:
             dashboards = session.query(Dashboard).filter(Dashboard.collection_id == collection.id)
             if not user.has_role(Administrator):
                 # list dashboards with user access
                 dashboards = dashboards.join(Dashboard.users).filter(User.id == request.authenticated_userid)
-            cdata['dashboards'] = [dash.as_dict() for dash in dashboards.all()]
+            cdata['dashboards'] = [dash.as_dict(request.authenticated_userid) for dash in dashboards.all()]
         collections.append(cdata)
 
     return collections
-
-
-@view_config(route_name='collection_views.get_user_access', renderer='json', permission='view')
-def get_collections_user_access_view(request):
-    """
-    Get the logged in user access role for this collection
-    :param request:
-    :return:
-    """
-
-    collection_id = request.matchdict['id']
-    user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection_id,
-                                                       UserCollection.user_id == request.authenticated_userid).first()
-    return user_access.as_dict()
 
 
 @view_config(route_name='collection_views.delete_collection', renderer='json', permission='delete')
@@ -135,6 +128,20 @@ def paste_collection_view(request):
         _paste_dashboard_relationships(dashboard, pasted_dashboard)
 
     return pasted_collection.as_dict()
+
+
+@view_config(route_name='collection_views.get_user_access', renderer='json', permission='view')
+def get_collections_user_access_view(request):
+    """
+    Get the logged in user access role for this collection
+    :param request:
+    :return:
+    """
+
+    collection_id = request.matchdict['id']
+    user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection_id,
+                                                       UserCollection.user_id == request.authenticated_userid).first()
+    return user_access.as_dict()
 
 
 @view_config(route_name='collection_views.list_user_access', renderer='json', permission='view')

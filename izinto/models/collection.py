@@ -2,6 +2,8 @@ from izinto.models import Base
 from sqlalchemy import (Column, Unicode, Integer, LargeBinary)
 from sqlalchemy.orm import relationship
 
+from izinto.services.user_access import get_user_access
+
 
 class Collection(Base):
     """
@@ -18,15 +20,21 @@ class Collection(Base):
     users = relationship('User', secondary="user_collection", backref="collections")
     dashboards = relationship('Dashboard')
 
-    def as_dict(self):
+    def as_dict(self, user_id=None):
         image_data = None
         if self.image:
             image_data = self.image.decode()
 
+        # include user access
+        user_access = {}
+        if user_id:
+            user_access = get_user_access(Collection, 'collection_id', self.id, user_id)
+
         return {'id': self.id,
                 'title': self.title,
                 'description': self.description,
-                'image': image_data}
+                'image': image_data,
+                'user_access': user_access}
 
     def __repr__(self):
         return 'Collection<id: %s, title: "%s">' % (self.id, self.title)

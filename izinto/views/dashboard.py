@@ -1,6 +1,7 @@
 from pyramid.response import Response
 from pyramid.view import view_config
 from sqlalchemy import func
+
 from izinto.models import session, Dashboard, UserDashboard, Variable, Chart, ChartGroupBy, SingleStat, User, \
     DashboardView, Query, Role, UserCollection
 from izinto.security import Administrator
@@ -41,17 +42,18 @@ def create_dashboard_view(request):
         admin_role = session.query(Role).filter_by(name=Administrator).first()
         create(UserDashboard, user_id=request.authenticated_userid, dashboard_id=dashboard.id, role_id=admin_role.id)
 
-    return dashboard.as_dict()
+    return dashboard.as_dict(request.authenticated_userid)
 
 
 @view_config(route_name='dashboard_views.get_dashboard', renderer='json', permission='view')
 def get_dashboard_view(request):
     """
-   Get a dashboard
-   :param request:
-   :return:
-   """
-    return get(request, Dashboard)
+    Get a dashboard
+    :param request:
+    :return:
+    """
+    dashboard = get(request, Dashboard, as_dict=False)
+    return dashboard.as_dict(request.authenticated_userid)
 
 
 @view_config(route_name='dashboard_views.edit_dashboard', renderer='json', permission='edit')
@@ -67,7 +69,7 @@ def edit_dashboard_view(request):
     data = get_values(request, attrs, required_attrs)
     edit(dashboard, **data)
 
-    return dashboard.as_dict()
+    return dashboard.as_dict(request.authenticated_userid)
 
 
 @view_config(route_name='dashboard_views.list_dashboards', renderer='json', permission='view')
@@ -94,7 +96,7 @@ def list_dashboards_view(request):
         # filter by users that can view the dashboards
         query = query.join(Dashboard.users).filter(User.id == user.id).order_by(Dashboard.index)
 
-    return [dashboard.as_dict() for dashboard in query.all()]
+    return [dashboard.as_dict(request.authenticated_userid) for dashboard in query.all()]
 
 
 @view_config(route_name='dashboard_views.delete_dashboard', renderer='json', permission='delete')
@@ -122,7 +124,7 @@ def paste_dashboard_view(request):
 
     _paste_dashboard_relationships(dashboard, pasted_dashboard)
 
-    return pasted_dashboard.as_dict()
+    return pasted_dashboard.as_dict(request.authenticated_userid)
 
 
 def _paste_dashboard_relationships(dashboard, pasted_dashboard):

@@ -36,7 +36,8 @@ class Dashboard(Base):
         # include user access
         user_access = {}
         if user_id:
-            user_access = get_user_access(Dashboard, 'dashboard_id', self.id, user_id)
+            from izinto.models import UserDashboard
+            user_access = get_user_access(UserDashboard, 'dashboard_id', self.id, user_id)
 
         return {'id': self.id,
                 'title': self.title,

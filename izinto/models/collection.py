@@ -28,7 +28,8 @@ class Collection(Base):
         # include user access
         user_access = {}
         if user_id:
-            user_access = get_user_access(Collection, 'collection_id', self.id, user_id)
+            from izinto.models import UserCollection
+            user_access = get_user_access(UserCollection, 'collection_id', self.id, user_id)
 
         return {'id': self.id,
                 'title': self.title,

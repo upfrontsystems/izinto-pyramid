@@ -1,8 +1,7 @@
 from pyramid.view import view_config
 
-from izinto.models import session, Collection, User, UserCollection, Dashboard, Role
+from izinto.models import session, Collection, User, UserCollection, Dashboard, Role, UserDashboard
 from izinto.security import Administrator
-from izinto.services.user_access import get_user_access
 from izinto.views import paste, create, get_user, get_values, get, edit, delete
 from izinto.views.dashboard import attrs as dashboard_attrs, _paste_dashboard_relationships
 
@@ -153,7 +152,8 @@ def list_collections_user_access_view(request):
     """
 
     collection_id = request.matchdict['id']
-    user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection_id).all()
+    user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection_id) \
+        .join(UserCollection.user).order_by(User.surname).all()
 
     return [access.as_dict() for access in user_access]
 
@@ -188,6 +188,12 @@ def add_collection_user_access_view(request):
     role_name = request.json_body['role']
     role = session.query(Role).filter(Role.name == role_name).first()
     user_access = create(UserCollection, user_id=user_id, collection_id=collection_id, role_id=role.id)
+
+    # add access to dashboards in collection
+    dashboards = session.query(Dashboard.id).filter(Dashboard.collection_id == collection_id).all()
+    for dash in dashboards:
+        if not session.query(UserDashboard).filter_by(dashboard_id=dash.id, user_id=user_id).count():
+            create(UserDashboard, user_id=user_id, dashboard_id=dash.id, role_id=role.id)
 
     return user_access.as_dict()
 

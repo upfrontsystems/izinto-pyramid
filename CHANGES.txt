@@ -2,6 +2,12 @@
 ---
 
 ### Issue Fixes
+* [#226](https://github.com/upfrontsystems/izinto-angular/issues/226) Refactor user access to collections and dashboards
+
+0.7
+---
+
+### Issue Fixes
 * [#171](https://github.com/upfrontsystems/izinto-angular/issues/171) Handle query on database url
 * [#173](https://github.com/upfrontsystems/izinto-angular/issues/173) Add Query model and view
 * [#179](https://github.com/upfrontsystems/izinto-angular/issues/179) Link queries per dashboard

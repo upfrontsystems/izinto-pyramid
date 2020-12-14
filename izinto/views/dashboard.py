@@ -212,7 +212,8 @@ def list_dashboards_user_access_view(request):
     """
 
     dashboard_id = request.matchdict['id']
-    user_access = session.query(UserDashboard).filter(UserDashboard.dashboard_id == dashboard_id).all()
+    user_access = session.query(UserDashboard).filter(UserDashboard.dashboard_id == dashboard_id) \
+        .join(UserDashboard.user).order_by(User.surname).all()
 
     return [access.as_dict() for access in user_access]
 

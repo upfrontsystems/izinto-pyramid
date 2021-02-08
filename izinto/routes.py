@@ -194,23 +194,23 @@ def includeme(config):
 
     # variable views
     config.add_route('variable_views.list_variables',
-                     '/dashboards/{dashboard_id}/variables', request_method='GET',
+                     '/containers/{container_id}/variables', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('variable_views.create_variable',
-                     '/dashboards/{dashboard_id}/variables', request_method='POST',
+                     '/containers/{container_id}/variables', request_method='POST',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('variable_views.delete_variable',
-                     '/dashboards/{dashboard_id}/variables/{id}', request_method='DELETE',
+                     '/containers/{container_id}/variables/{id}', request_method='DELETE',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('variable_views.get_variable',
-                     '/dashboards/{dashboard_id}/variables/{id}', request_method='GET',
+                     '/containers/{container_id}/variables/{id}', request_method='GET',
                      factory=make_protected_function(*all_roles))
 
     config.add_route('variable_views.edit_variable',
-                     '/dashboards/{dashboard_id}/variables/{id}', request_method='PUT',
+                     '/containers/{container_id}/variables/{id}', request_method='PUT',
                      factory=make_protected_function(*all_roles))
 
     # single_stat views

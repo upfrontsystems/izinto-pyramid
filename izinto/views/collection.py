@@ -1,6 +1,7 @@
 from pyramid.view import view_config
 
-from izinto.models import session, Collection, User, UserCollection, Dashboard, Role, UserDashboard
+from izinto.models import session, Collection, User, UserCollection, Dashboard, Role,  \
+    UserDashboard, Variable
 from izinto.security import Administrator
 from izinto.views import paste, create, get_user, get_values, get, edit, delete
 from izinto.views.dashboard import attrs as dashboard_attrs, _paste_dashboard_relationships
@@ -116,6 +117,10 @@ def paste_collection_view(request):
     user_access = session.query(UserCollection).filter(UserCollection.collection_id == collection.id).all()
     for access in user_access:
         create(UserCollection, user_id=access.user_id, collection_id=pasted_collection.id, role_id=access.role_id)
+
+    # copy list of variables
+    for variable in collection.variables:
+        create(Variable, name=variable.name, value=variable.value, container_id=pasted_collection.id)
 
     # copy dashboards in collection
     for dashboard in collection.dashboards:

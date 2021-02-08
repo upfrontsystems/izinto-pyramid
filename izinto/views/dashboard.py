@@ -136,7 +136,7 @@ def _paste_dashboard_relationships(dashboard, pasted_dashboard):
 
     # copy list of variables
     for variable in dashboard.variables:
-        create(Variable, name=variable.name, value=variable.value, dashboard_id=pasted_dashboard.id)
+        create(Variable, name=variable.name, value=variable.value, container_id=pasted_dashboard.id)
 
     # copy charts
     for chart in session.query(Chart).filter(Chart.dashboard_id == dashboard.id).all():

@@ -1,8 +1,9 @@
-0.7
+0.8
 ---
 
 ### Issue Fixes
 * [#226](https://github.com/upfrontsystems/izinto-angular/issues/226) Refactor user access to collections and dashboards
+* [#157](https://github.com/upfrontsystems/izinto-angular/issues/157) Add variables to collections
 
 0.7
 ---
@@ -51,4 +52,3 @@
 * [#48](https://github.com/upfrontsystems/izinto-angular/issues/48) Add Year dashboard view
 * [#117](https://github.com/upfrontsystems/izinto-angular/issues/117) Read requirements from requirements.txt
 * [#130](https://github.com/upfrontsystems/izinto-angular/issues/130) edit variables with dashboard
-

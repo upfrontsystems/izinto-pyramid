@@ -34,7 +34,7 @@ def upgrade():
     # copy collection to base
     for collection in conn.execute("select * from collection order by id"):
         conn.execute("insert into container_base (id, title, description, image, polymorphic_type)"
-                     " values (%s, '%s', '%s', '%s', 'collection')" % (
+                     " values (%s, '%s', '%s', %s, 'collection')" % (
                          collection.id, collection.title, collection.description, collection.image
                      ))
         container_id = collection.id
@@ -57,7 +57,7 @@ def upgrade():
     for dashboard in conn.execute("select * from dashboard order by id"):
         old_id = dashboard.id
         conn.execute("insert into container_base (id, title, description, image, polymorphic_type)"
-                     " values (%s, '%s', '%s', '%s', 'dashboard')" % (
+                     " values (%s, '%s', '%s', %s, 'dashboard')" % (
                          container_id, dashboard.title, dashboard.description, dashboard.image
                      ))
         # update id and foreign keys
@@ -118,8 +118,9 @@ def downgrade():
     conn = op.get_bind()
     # copy back to dashboard
     for dashboard in conn.execute("select * from dashboard"):
-        conn.execute("update dashboard set title = '%s', description = '%s', image = '%s' where id = %s;"
-                     % (dashboard.title, dashboard.description, dashboard.image, dashboard.id))
+        container = conn.execute("select * from container_base where id  = %s" % dashboard.id).first()
+        conn.execute("update dashboard set title = '%s', description = '%s', image = %s where id = %s;"
+                     % (container.title, container.description, container.image, dashboard.id))
 
     # add collection columns
     op.add_column('collection', sa.Column('description', sa.VARCHAR(
@@ -131,8 +132,9 @@ def downgrade():
 
     # copy base to collection
     for collection in conn.execute("select * from collection"):
-        conn.execute("update collection set title = '%s', description = '%s', image = '%s' where id = %s;"
-                     % (collection.title, collection.description, collection.image, collection.id))
+        container = conn.execute("select * from container_base where id  = %s" % collection.id).first()
+        conn.execute("update collection set title = '%s', description = '%s', image = %s where id = %s;"
+                     % (container.title, container.description, container.image, collection.id))
 
     op.drop_constraint('fk_collection_container_id', 'collection', type_='foreignkey')
     op.drop_index(op.f('ix_container_base_id'), table_name='container_base')

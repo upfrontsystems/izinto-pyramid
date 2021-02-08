@@ -14,7 +14,6 @@ class Collection(ContainerBase):
 
     id = Column(ForeignKey('container_base.id', ondelete='CASCADE'), primary_key=True, index=True)
     users = relationship('User', secondary="user_collection", backref="collections")
-    dashboards = relationship('Dashboard')
 
     __mapper_args__ = {
         'polymorphic_identity': 'collection',
@@ -35,7 +34,8 @@ class Collection(ContainerBase):
                 'title': self.title,
                 'description': self.description,
                 'image': image_data,
-                'user_access': user_access}
+                'user_access': user_access,
+                'variables': [var.as_dict() for var in self.variables],}
 
     def __repr__(self):
         return 'Collection<id: %s, title: "%s">' % (self.id, self.title)

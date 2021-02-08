@@ -21,7 +21,7 @@ class Dashboard(ContainerBase):
     index = Column(Integer, default=1)
     date_hidden = Column(Boolean)
 
-    collection = relationship('Collection')
+    collection = relationship('Collection', foreign_keys=[collection_id], backref='dashboards')
     users = relationship('User', secondary="user_dashboard", backref='dashboards')
 
     __mapper_args__ = {

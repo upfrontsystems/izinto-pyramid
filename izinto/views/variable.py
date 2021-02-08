@@ -3,8 +3,8 @@ from pyramid.view import view_config
 from izinto.models import session, Variable
 from izinto.views import get_values, create, get, edit, filtered_list, delete
 
-attrs = ['name', 'value', 'dashboard_id']
-required_attrs = ['name', 'value', 'dashboard_id']
+attrs = ['name', 'value', 'container_id']
+required_attrs = ['name', 'value', 'container_id']
 
 
 @view_config(route_name='variable_views.create_variable', renderer='json', permission='add')
@@ -15,10 +15,10 @@ def create_variable_view(request):
     :return DataSource:
     """
     name = request.json_body.get('name')
-    dashboard_id = request.json_body.get('dashboard_id')
+    container_id = request.json_body.get('container_id')
 
     # check duplicates
-    existing = session.query(Variable).filter_by(name=name, dashboard_id=dashboard_id).first()
+    existing = session.query(Variable).filter_by(name=name, container_id=container_id).first()
     if existing:
         raise exc.HTTPBadRequest(json_body={'message': 'Variable with same id %s already exists' % name})
 
@@ -47,7 +47,7 @@ def edit_variable_view(request):
     variable = get(request, Variable, as_dict=False)
     name = request.json_body.get('name')
 
-    existing = session.query(Variable).filter_by(name=name, dashboard_id=variable.dashboard_id).first()
+    existing = session.query(Variable).filter_by(name=name, container_id=variable.container_id).first()
     if existing and existing.id != variable.id:
         raise exc.HTTPBadRequest(json_body={'message': 'Variable with name %s already exists' % name})
 

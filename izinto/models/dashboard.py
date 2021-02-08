@@ -1,21 +1,18 @@
 from sqlalchemy import (Column, Unicode, Integer, ForeignKey, TEXT, VARCHAR, Boolean, LargeBinary)
 from sqlalchemy.orm import relationship
 
-from izinto.models import Base
+from izinto.models import ContainerBase
 from izinto.services.user_access import get_user_access
 
 
-class Dashboard(Base):
+class Dashboard(ContainerBase):
     """
-    Dashboard Model
+    Dashboard Model inherits from Collection
     """
 
     __tablename__ = 'dashboard'
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(Unicode(length=100))
-    description = Column(Unicode(length=500))
-    image = Column(LargeBinary)
+    id = Column(ForeignKey('container_base.id', ondelete='CASCADE'), primary_key=True)
     collection_id = Column(Integer, ForeignKey('collection.id', ondelete='CASCADE'), nullable=True)
     content = Column(TEXT)
     # a dashboard can be an 'old' or a 'new' type dashboard
@@ -24,10 +21,13 @@ class Dashboard(Base):
     index = Column(Integer, default=1)
     date_hidden = Column(Boolean)
 
-    collections = relationship('Collection')
+    collection = relationship('Collection')
     users = relationship('User', secondary="user_dashboard", backref='dashboards')
-    variables = relationship('Variable')
 
+    __mapper_args__ = {
+        'polymorphic_identity': 'dashboard',
+    }
+    
     def as_dict(self, user_id=None):
         image_data = None
         if self.image:

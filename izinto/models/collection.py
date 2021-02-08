@@ -1,24 +1,24 @@
-from izinto.models import Base
-from sqlalchemy import (Column, Unicode, Integer, LargeBinary)
+from izinto.models import ContainerBase
+from sqlalchemy import (Column, Unicode, Integer, LargeBinary, ForeignKey)
 from sqlalchemy.orm import relationship
 
 from izinto.services.user_access import get_user_access
 
 
-class Collection(Base):
+class Collection(ContainerBase):
     """
     A collection of dashboards
     """
 
     __tablename__ = 'collection'
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(Unicode(length=100))
-    description = Column(Unicode(length=500))
-    image = Column(LargeBinary)
-
+    id = Column(ForeignKey('container_base.id', ondelete='CASCADE'), primary_key=True, index=True)
     users = relationship('User', secondary="user_collection", backref="collections")
     dashboards = relationship('Dashboard')
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'collection',
+    }
 
     def as_dict(self, user_id=None):
         image_data = None

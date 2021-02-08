@@ -27,6 +27,7 @@ def initialize_sql(engine):
 # Base.metadata prior to any initialization routines
 from izinto.models.chart import Chart
 from izinto.models.chart_group_by import ChartGroupBy
+from izinto.models.container_base import ContainerBase
 from izinto.models.collection import Collection
 from izinto.models.dashboard import Dashboard
 from izinto.models.dashboard_view import DashboardView

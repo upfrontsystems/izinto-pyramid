@@ -14,18 +14,16 @@ class Variable(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(Unicode(length=100))
     value = Column(Unicode(length=100))
-    dashboard_id = Column(Integer, ForeignKey('dashboard.id', ondelete='CASCADE'), nullable=False)
+    container_id = Column(Integer, ForeignKey('container_base.id', ondelete='CASCADE'), nullable=False)
 
-    dashboard = relationship('Dashboard')
-
-    __table_args__ = (UniqueConstraint('name', 'dashboard_id'),)
+    __table_args__ = (UniqueConstraint('name', 'container_id'),)
 
     def as_dict(self):
 
         return {'id': self.id,
                 'name': self.name,
                 'value': self.value,
-                'dashboard_id': self.dashboard_id}
+                'container_id': self.container_id}
 
     def __repr__(self):
         return 'Variable<name: %s>' % self.name

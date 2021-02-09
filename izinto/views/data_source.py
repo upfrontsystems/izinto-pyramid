@@ -76,4 +76,4 @@ def query(request):
 
     # query formatted in front end
     # run http or database query
-    return format_run_query(request, query_string, {}, [], data_source)
+    return format_run_query(request, query_string, {}, None, data_source)

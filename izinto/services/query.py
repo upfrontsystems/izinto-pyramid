@@ -7,16 +7,30 @@ from urllib.parse import urlparse, urlencode
 
 from pyramid.response import Response
 from sqlalchemy import create_engine, text
+from izinto.models import session, Dashboard, Variable
 
 
-def format_run_query(request, query_string, data, variables, data_source):
+def format_run_query(request, query_string, data, dashboard_id, data_source):
     """" Format query string and execute using data source """
+    dashboard_variables = []
+    collection_variables = []
+
+    if dashboard_id:
+        dashboard = session.query(Dashboard).get(dashboard_id)
+        dashboard_variables = dashboard.variables
+        if dashboard.collection_id:
+            collection_variables = session.query(Variable).filter_by(container_id=dashboard.collection_id).all()
+
     # javascript format string
     for column, value in data.items():
         query_string = query_string.replace('${%s}' % column, value)
 
     # format in dashboard variables
-    for variable in variables:
+    for variable in dashboard_variables:
+        query_string = query_string.replace('${%s}' % variable.name, variable.value)
+
+    # format in collection variables
+    for variable in collection_variables:
         query_string = query_string.replace('${%s}' % variable.name, variable.value)
 
     # query directly over http connection

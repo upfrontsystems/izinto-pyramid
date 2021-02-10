@@ -30,10 +30,10 @@ def create_collection(request):
 @view_config(route_name='collection_views.get_collection', renderer='json', permission='view')
 def get_collection_view(request):
     """
-   Get a collection
-   :param request:
-   :return:
-   """
+    Get a collection
+    :param request:
+    :return:
+    """
     collection = get(request, Collection, as_dict=False)
 
     collection_data = collection.as_dict(request.authenticated_userid)

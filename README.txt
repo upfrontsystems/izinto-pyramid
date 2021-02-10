@@ -41,4 +41,4 @@ Getting Started
 
 - Run your project.
 
-    venv/bin/pserve development.ini
+    venv/bin/pserve development.ini --reload

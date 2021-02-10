@@ -35,7 +35,7 @@ class Collection(ContainerBase):
                 'description': self.description,
                 'image': image_data,
                 'user_access': user_access,
-                'variables': [var.as_dict() for var in self.variables],}
+                'variables': [var.as_dict() for var in self.variables]}
 
     def __repr__(self):
         return 'Collection<id: %s, title: "%s">' % (self.id, self.title)

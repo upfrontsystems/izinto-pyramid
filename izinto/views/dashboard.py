@@ -184,7 +184,7 @@ def list_dashboard_view_items(request):
     :return DashboardView list:
     """
 
-    return filtered_list(request, DashboardView, DashboardView.id)
+    return filtered_list(request.params, DashboardView, DashboardView.id)
 
 
 @view_config(route_name='dashboard_views.get_content_view')

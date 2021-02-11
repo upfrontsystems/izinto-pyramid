@@ -18,6 +18,7 @@ class DataSource(Base):
     username = Column(Unicode(length=100))
     password = Column(Unicode(length=100))
     database = Column(Unicode(length=200))
+    owner_id = Column(VARCHAR(length=32), ForeignKey('user.id', ondelete="cascade"), nullable=False)
 
     def as_dict(self):
 

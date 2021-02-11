@@ -72,7 +72,7 @@ def list_single_stats_view(request):
     :param request:
     :return:
     """
-    return filtered_list(request, SingleStat, SingleStat.title)
+    return filtered_list(request.params, SingleStat, SingleStat.title)
 
 
 @view_config(route_name='single_stat_views.delete_single_stat', renderer='json', permission='delete')

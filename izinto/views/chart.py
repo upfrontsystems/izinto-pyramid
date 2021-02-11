@@ -73,7 +73,7 @@ def list_charts_view(request):
     :param request:
     :return:
     """
-    return filtered_list(request, Chart, Chart.index)
+    return filtered_list(request.params, Chart, Chart.index)
 
 
 @view_config(route_name='chart_views.delete_chart', renderer='json', permission='delete')

@@ -64,7 +64,7 @@ def list_variables_view(request):
     :param request:
     :return:
     """
-    return filtered_list(request, Variable, Variable.name)
+    return filtered_list(request.params, Variable, Variable.name)
 
 
 @view_config(route_name='variable_views.delete_variable', renderer='json', permission='delete')

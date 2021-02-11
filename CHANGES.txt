@@ -2,6 +2,12 @@
 ---
 
 ### Issue Fixes
+* [#229](https://github.com/upfrontsystems/izinto-angular/issues/229) Add owner to data source
+
+0.8
+---
+
+### Issue Fixes
 * [#226](https://github.com/upfrontsystems/izinto-angular/issues/226) Refactor user access to collections and dashboards
 * [#157](https://github.com/upfrontsystems/izinto-angular/issues/157) Add variables to collections
 

@@ -54,15 +54,14 @@ def get(request, model, as_dict=True):
         return record
 
 
-def filtered_list(request, model, order_by):
+def filtered_list(filters, model, order_by):
     """
     List records and filter if filters specified
-    :param request: HTTP Request
+    :param filters: Dictionary
     :param model: SQLAlchemy model instance
     :param order_by: SQLAlchemy column
     :return:
     """
-    filters = request.params
     query = session.query(model)
     for column, value in filters.items():
         query = query.filter(getattr(model, column) == value)

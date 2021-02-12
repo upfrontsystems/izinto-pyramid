@@ -33,11 +33,49 @@ def format_run_query(request, query_string, data, dashboard_id, data_source):
     for variable in collection_variables:
         query_string = query_string.replace('${%s}' % variable.name, variable.value)
 
+    # query with http request parameters
+    if data_source.type == 'HTTP':
+        return request_params_query(request.accept_encoding, data_source, query_string)
+
     # query directly over http connection
     if data_source.url.startswith('http'):
         return http_query(request.accept_encoding, data_source, query_string)
     # query directly from database
     return database_query(data_source, query_string)
+
+
+def request_params_query(accept_encoding, data_source, statement):
+    """ Query over http connection """
+    query_params = {
+        'q': statement,
+        'db': data_source.database
+    }
+    request_params = json.parse(data_source.request)
+    parse = urlparse(request_params['url'])
+    if parse.scheme == 'https':
+        conn = HTTPSConnection(parse.netloc)
+    else:
+        conn = HTTPConnection(parse.netloc)
+
+    auth = b64encode(b"%s:%s" % (data_source.username.encode('utf-8'),
+                                 data_source.password.encode('utf-8'))).decode("ascii")
+    headers = {"Content-type": "application/x-www-form-urlencoded",
+               "Accept": "application/json",
+               "Authorization": "Basic %s" % auth}
+    if 'gzip' in accept_encoding:
+        headers["Accept-Encoding"] = 'gzip'
+
+    request_params['params'] = urlencode(query_params)
+    conn.request(**request_params)
+    remote_response = conn.getresponse()
+    for header in ('Content-Encoding', 'Content-Type'):
+        header_value = remote_response.headers.get('Content-Encoding')
+        if header_value:
+            headers[header] = header_value
+    headers = list(headers.items())
+    response = Response(remote_response.read(), status=remote_response.status, headerlist=headers,
+                        content_type=remote_response.headers.get('Content-Type'))
+    return response
 
 
 def http_query(accept_encoding, data_source, statement):

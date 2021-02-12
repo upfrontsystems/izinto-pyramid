@@ -7,7 +7,7 @@ from izinto.security import Administrator
 from izinto.views import get_values, create, get, edit, filtered_list, delete
 from izinto.views.user import get_user
 
-attrs = ['name', 'type', 'url', 'username', 'password', 'database']
+attrs = ['name', 'type', 'url', 'username', 'password', 'database', 'request']
 required_attrs = []
 
 

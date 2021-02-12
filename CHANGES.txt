@@ -1,8 +1,9 @@
-0.8
+0.9
 ---
 
 ### Issue Fixes
 * [#229](https://github.com/upfrontsystems/izinto-angular/issues/229) Add owner to data source
+* [#230](https://github.com/upfrontsystems/izinto-angular/issues/230) Add request config to data source
 
 0.8
 ---

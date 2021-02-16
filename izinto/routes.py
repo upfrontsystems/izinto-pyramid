@@ -291,3 +291,12 @@ def includeme(config):
     config.add_route('query_views.test_query',
                      '/dashboards/{dashboard_id}/queries/test', request_method='POST',
                      factory=make_protected_function(*all_roles))
+
+    # branding views
+    config.add_route('branding_views.get_branding',
+                     '/dashboards/{dashboard_id}/queries/{id}', request_method='GET',
+                     factory=make_protected_function(Administrator))
+
+    config.add_route('branding_views.edit_branding',
+                     '/dashboards/{dashboard_id}/queries/{id}', request_method='PUT',
+                     factory=make_protected_function(Administrator))

@@ -17,7 +17,7 @@ class Branding(Base):
     logo = Column(Unicode(length=500))
     banner = Column(Unicode(length=500))
     user_id = Column(VARCHAR(length=32), ForeignKey('user.id', ondelete="cascade"), nullable=False)
-    
+
     def as_dict(self):
         return {'id': self.id,
                 'hostname': self.hostname,

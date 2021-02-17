@@ -10,6 +10,7 @@ def main(global_config, **settings):
                           root_factory=make_protected(Authenticated))
     config.include('pyramid_jinja2')
     config.include('pyramid_mailer')
+    config.include('pyramid_storage')
     config.add_static_view('static', 'static', cache_max_age=3600)
 
     # Authentication and Authorization

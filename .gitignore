@@ -133,3 +133,4 @@ venv.bak/
 .idea/inspectionProfiles/
 
 mail
+/storage

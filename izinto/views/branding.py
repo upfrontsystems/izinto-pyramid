@@ -6,6 +6,7 @@ from izinto.models import Branding, session
 from izinto.views import get_values, get, edit, create
 
 attrs = ['hostname', 'favicon', 'logo', 'banner']
+image_attrs = ['favicon', 'logo', 'banner']
 required_attrs = ['hostname']
 
 
@@ -16,22 +17,21 @@ def create_branding(request):
     :param request:
     :return Branding:
     """
-    data = get_values(request, attrs, required_attrs)
-    data['user_id'] = request.authenticated_userid
+
+    data = {'hostname': request.POST.get('hostname')}
     # check hostname is unique
+    if not data.get('hostname'):
+        raise exc.HTTPBadRequest(json_body={'message': 'Hostname required'})
     if session.query(Branding).filter(Branding.hostname == data['hostname']).first():
         raise exc.HTTPBadRequest(json_body={'message': 'Hostname %s already exists' % data['hostname']})
 
+    data['user_id'] = request.authenticated_userid
+
     # store branding images
     folder_path = ['domains', data['hostname']]
-    for fieldname in attrs:
-        try:
-            folder_name = os.path.join(*folder_path)
-            store_filename = os.path.basename(request.storage.save(
-                request.POST['file'], folder=folder_name))
-        except Exception as e:
-            return exc.HTTPBadRequest(json_body={'message': 'Invalid file path'})
-
+    for fieldname in image_attrs:
+        folder_name = os.path.join(*folder_path)
+        store_filename = os.path.basename(request.storage.save(request.POST[fieldname], folder=folder_name))
         data[fieldname] = os.path.join(*folder_path, store_filename)
 
     branding = create(Branding, **data)
@@ -47,11 +47,10 @@ def get_branding_view(request):
     """
 
     branding = get(request, Branding)
-
-    # include image data in response
-    for fieldname in attrs:
-        with open(branding[fieldname], "rb") as image_file:
-            branding['%s_image' % fieldname] = b64encode(image_file.read()).decode('utf-8')
+    # set image data in response
+    for fieldname in image_attrs:
+        image_data = b64encode(open(request.storage.path(branding[fieldname]), 'rb').read()).decode('utf-8')
+        branding[fieldname] = image_data
     return branding
 
 
@@ -74,11 +73,11 @@ def search_branding_view(request):
     if not branding:
         return {}
 
-    # include image data in response
+    # set image data in response
     data = branding.as_dict()
-    for fieldname in attrs:
-        with open(data[fieldname], "rb") as image_file:
-            data['%s_image' % fieldname] = b64encode(image_file.read()).decode('utf-8')
+    for fieldname in image_attrs:
+        image_data = b64encode(open(request.storage.path(getattr(branding, fieldname)), 'rb').read()).decode('utf-8')
+        data[fieldname] = image_data
     return data
 
 
@@ -92,22 +91,25 @@ def edit_branding_view(request):
     """
 
     branding = get(request, Branding, as_dict=False)
-    data = get_values(request, attrs, required_attrs)
+    data = {'hostname': request.POST.get('hostname')}
     # check hostname is unique
+    if not data.get('hostname'):
+        raise exc.HTTPBadRequest(json_body={'message': 'Hostname required'})
     if session.query(Branding).filter(Branding.hostname == data['hostname'], Branding.id != branding.id).first():
         raise exc.HTTPBadRequest(json_body={'message': 'Hostname %s already exists' % data['hostname']})
 
     # store branding images
     folder_path = ['domains', data['hostname']]
-    for fieldname in attrs:
-        try:
-            folder_name = os.path.join(*folder_path)
-            store_filename = os.path.basename(request.storage.save(
-                request.POST['file'], folder=folder_name))
-        except Exception as e:
-            return exc.HTTPBadRequest(json_body={'message': 'Invalid file path'})
+    for fieldname in image_attrs:
+        if fieldname in request.POST:
+            # delete existing file
+            if getattr(branding, fieldname):
+                request.storage.delete(getattr(branding, fieldname))
 
-        data[fieldname] = os.path.join(*folder_path, store_filename)
+            folder_name = os.path.join(*folder_path)
+            store_filename = os.path.basename(request.storage.save(request.POST[fieldname], folder=folder_name))
+
+            data[fieldname] = os.path.join(*folder_path, store_filename)
 
     edit(branding, **data)
     return branding.as_dict()

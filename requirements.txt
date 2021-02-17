@@ -33,6 +33,7 @@ pyramid-jinja2==2.8
 pyramid-mailer==0.15.1
 pyramid-mako==1.1.0
 pyramid-retry==2.1
+pyramid-storage==0.3.1
 pyramid-tm==2.2.1
 pyramid==1.10.4
 pytest-cov==2.8.1

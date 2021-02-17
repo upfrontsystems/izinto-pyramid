@@ -293,10 +293,18 @@ def includeme(config):
                      factory=make_protected_function(*all_roles))
 
     # branding views
+    config.add_route('branding_views.search_branding',
+                     '/branding/search', request_method='GET',
+                     factory=make_protected_function(*all_roles))
+
+    config.add_route('branding_views.create_branding',
+                     '/branding', request_method='POST',
+                     factory=make_protected_function(Administrator))
+
     config.add_route('branding_views.get_branding',
-                     '/dashboards/{dashboard_id}/queries/{id}', request_method='GET',
+                     '/branding/{id}', request_method='GET',
                      factory=make_protected_function(Administrator))
 
     config.add_route('branding_views.edit_branding',
-                     '/dashboards/{dashboard_id}/queries/{id}', request_method='PUT',
+                     '/branding/{id}', request_method='PUT',
                      factory=make_protected_function(Administrator))

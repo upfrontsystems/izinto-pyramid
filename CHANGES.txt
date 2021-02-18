@@ -4,6 +4,7 @@
 ### Issue Fixes
 * [#229](https://github.com/upfrontsystems/izinto-angular/issues/229) Add owner to data source
 * [#230](https://github.com/upfrontsystems/izinto-angular/issues/230) Add request config to data source
+* [#160](https://github.com/upfrontsystems/izinto-angular/issues/160) Add branding model
 
 0.8
 ---

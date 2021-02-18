@@ -3,10 +3,10 @@ from base64 import b64encode
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from izinto.models import Branding, session
-from izinto.views import get_values, get, edit, create
+from izinto.views import get, edit, create
 
-attrs = ['hostname', 'favicon', 'logo', 'banner']
-image_attrs = ['favicon', 'logo', 'banner']
+attrs = ['hostname', 'favicon', 'logo', 'logo_mobile', 'banner']
+image_attrs = ['favicon', 'logo', 'logo_mobile', 'banner']
 required_attrs = ['hostname']
 
 

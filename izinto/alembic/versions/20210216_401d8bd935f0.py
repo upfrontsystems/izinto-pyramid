@@ -24,6 +24,7 @@ def upgrade():
                     sa.Column('favicon', sa.Unicode(
                         length=500), nullable=True),
                     sa.Column('logo', sa.Unicode(length=500), nullable=True),
+                    sa.Column('logo_mobile', sa.Unicode(length=500), nullable=True),
                     sa.Column('banner', sa.Unicode(length=500), nullable=True),
                     sa.Column('user_id', sa.VARCHAR(
                         length=32), nullable=False),

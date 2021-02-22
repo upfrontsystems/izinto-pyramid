@@ -2,12 +2,14 @@ import os
 from base64 import b64encode
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
+from PIL import Image
 from izinto.models import Branding, session
 from izinto.views import get, edit, create
 
 attrs = ['hostname', 'favicon', 'logo', 'logo_mobile', 'banner']
 image_attrs = ['favicon', 'logo', 'logo_mobile', 'banner']
 required_attrs = ['hostname']
+sizes = [72, 96, 128, 144, 152, 192, 384, 512]
 
 
 @view_config(route_name='branding_views.create_branding', renderer='json', permission='add')
@@ -32,6 +34,18 @@ def create_branding(request):
     for fieldname in image_attrs:
         folder_name = os.path.join(*folder_path)
         store_filename = os.path.basename(request.storage.save(request.POST[fieldname], folder=folder_name))
+        # create different logo sizes
+        if fieldname == 'logo':
+            input_file = request.POST[fieldname].file
+            input_file.seek(0)
+            img = Image.open(input_file)
+            for size in sizes:
+                img = img.resize((size, size), Image.LANCZOS)
+                resized_name = store_filename.replace('logo.', 'logo-%sx%s' % (size, size))
+                resized_path = os.path.abspath(request.storage.path(
+                    os.path.join(*folder_path, resized_name)))
+                img.save(resized_path)
+                   
         data[fieldname] = os.path.join(*folder_path, store_filename)
 
     branding = create(Branding, **data)
@@ -81,7 +95,6 @@ def search_branding_view(request):
     return data
 
 
-
 @view_config(route_name='branding_views.edit_branding', renderer='json', permission='edit')
 def edit_branding_view(request):
     """
@@ -105,11 +118,26 @@ def edit_branding_view(request):
             # delete existing file
             if getattr(branding, fieldname):
                 request.storage.delete(getattr(branding, fieldname))
+                for size in sizes:
+                    path = getattr(branding, fieldname)
+                    resized_name = ('logo-%sx%s.' % (size, size)).join(path.rsplit('logo.', 1))
+                    request.storage.delete(resized_name)
 
             folder_name = os.path.join(*folder_path)
             store_filename = os.path.basename(request.storage.save(request.POST[fieldname], folder=folder_name))
-
             data[fieldname] = os.path.join(*folder_path, store_filename)
+
+            # create different logo sizes
+            if fieldname == 'logo':
+                input_file = request.POST[fieldname].file
+                input_file.seek(0)
+                img = Image.open(input_file)
+                for size in sizes:
+                    img = img.resize((size, size), Image.LANCZOS)
+                    resized_name = store_filename.replace('logo.', 'logo-%sx%s' % (size, size))
+                    resized_path = os.path.abspath(request.storage.path(
+                        os.path.join(*folder_path, resized_name)))
+                    img.save(resized_path)
 
     edit(branding, **data)
     return branding.as_dict()

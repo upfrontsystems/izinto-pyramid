@@ -2,9 +2,12 @@ import os
 from base64 import b64encode
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from PIL import Image
+from PIL import Image, ImageFile
 from izinto.models import Branding, session
 from izinto.views import get, edit, create
+
+# tell PIL to accept truncated files
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 attrs = ['hostname', 'favicon', 'logo', 'logo_mobile', 'banner']
 image_attrs = ['favicon', 'logo', 'logo_mobile', 'banner']

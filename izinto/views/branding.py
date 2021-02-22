@@ -36,16 +36,14 @@ def create_branding(request):
         store_filename = os.path.basename(request.storage.save(request.POST[fieldname], folder=folder_name))
         # create different logo sizes
         if fieldname == 'logo':
-            input_file = request.POST[fieldname].file
-            input_file.seek(0)
-            img = Image.open(input_file)
+            img = Image.open(request.POST[fieldname].file)
             for size in sizes:
                 img = img.resize((size, size), Image.LANCZOS)
-                resized_name = store_filename.replace('logo.', 'logo-%sx%s' % (size, size))
+                resized_name = store_filename.replace('logo', 'logo-%sx%s' % (size, size))
                 resized_path = os.path.abspath(request.storage.path(
                     os.path.join(*folder_path, resized_name)))
                 img.save(resized_path)
-                   
+
         data[fieldname] = os.path.join(*folder_path, store_filename)
 
     branding = create(Branding, **data)
@@ -120,7 +118,7 @@ def edit_branding_view(request):
                 request.storage.delete(getattr(branding, fieldname))
                 for size in sizes:
                     path = getattr(branding, fieldname)
-                    resized_name = ('logo-%sx%s.' % (size, size)).join(path.rsplit('logo.', 1))
+                    resized_name = ('logo-%sx%s' % (size, size)).join(path.rsplit('logo', 1))
                     request.storage.delete(resized_name)
 
             folder_name = os.path.join(*folder_path)
@@ -129,12 +127,10 @@ def edit_branding_view(request):
 
             # create different logo sizes
             if fieldname == 'logo':
-                input_file = request.POST[fieldname].file
-                input_file.seek(0)
-                img = Image.open(input_file)
+                img = Image.open(request.POST[fieldname].file)
                 for size in sizes:
                     img = img.resize((size, size), Image.LANCZOS)
-                    resized_name = store_filename.replace('logo.', 'logo-%sx%s' % (size, size))
+                    resized_name = store_filename.replace('logo', 'logo-%sx%s' % (size, size))
                     resized_path = os.path.abspath(request.storage.path(
                         os.path.join(*folder_path, resized_name)))
                     img.save(resized_path)

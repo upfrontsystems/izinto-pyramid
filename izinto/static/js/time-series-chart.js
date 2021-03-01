@@ -1,7 +1,7 @@
 function timeSeriesChart() {
     var margin = { top: 20, right: 20, bottom: 20, left: 20 },
-        width = 760,
-        height = 120,
+        width = null,
+        height = null,
         xValue = function (d) { return d.date; },
         yValue = function (d) { return d.value; },
         xScale = d3.scaleTime(),
@@ -12,6 +12,13 @@ function timeSeriesChart() {
 
     function chart(selection) {
         selection.each(function (dataSets) {
+
+            if (width === null) {
+                width = window.innerWidth - 140;
+            }
+            if (height === null) {
+                height = 250;
+            }
 
             // Convert data to standard representation greedily;
             // this is needed for nondeterministic accessors.
@@ -72,6 +79,7 @@ function timeSeriesChart() {
                 .call(xAxis);
 
             addLegend(svg, dataSets);
+            addGrid(svg, dataSets, yScale);
         });
     }
 
@@ -96,7 +104,7 @@ function timeSeriesChart() {
                 labelWidth = fieldName.length * 10,
                 legendWidth = rectWidth + labelWidth + recordValueWidth;
             var seriesLegend = legendGroup.append('g')
-                .style('font-size', '12px')
+                .style('font-size', '14px')
                 .attr('class', 'series-legend')
                 .attr('series-index', dix);
             var textFill = 'black',
@@ -118,6 +126,28 @@ function timeSeriesChart() {
         }
     }
 
+    // add grid to chart
+    function addGrid(svg, dataSets, yScale) {
+        var tickCount = 4;
+        if (!dataSets.length) {
+            tickCount = 2;
+        }
+        var fontSize = 11;
+        const gridLines = d3.axisLeft(yScale).ticks(tickCount).tickSize(-(width - margin.left - margin.right));
+
+        svg.selectAll('g.grid > *').remove();
+        svg.select('g.grid')
+            .call(gridLines)
+            .call(g => g.selectAll('.tick line')
+                .attr('stroke-opacity', 0.5)
+                .attr('stroke-dasharray', '2,2'))
+            .call(g => g.selectAll('.tick text')
+                .style('font-size', fontSize + 'px')
+                .attr('x', -fontSize * 2))
+            .call(g => g.select('.domain')
+                .remove());
+    }
+    
     // The x-accessor for the path generator; xScale ∘ xValue.
     function X(d) {
         return xScale(d[0]);

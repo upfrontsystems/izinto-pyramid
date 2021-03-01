@@ -2,8 +2,8 @@ function timeSeriesChart() {
     var margin = { top: 20, right: 20, bottom: 20, left: 20 },
         width = 760,
         height = 120,
-        xValue = function (d) { return d[0]; },
-        yValue = function (d) { return d[1]; },
+        xValue = function (d) { return d.date; },
+        yValue = function (d) { return d.value; },
         xScale = d3.scaleTime(),
         yScale = d3.scaleLinear(),
         xAxis = d3.axisBottom(xScale).tickSize(6, 0),
@@ -17,18 +17,18 @@ function timeSeriesChart() {
             // this is needed for nondeterministic accessors.
             var standardData = dataSets.map(function (data) {
                 return data.map(function (d, i) {
-                    return [xValue.call(data, d, i), yValue.call(data, d, i)];
+                    return [d.date, d.value];
                 });
             });
 
             // Update the x-scale.
             xScale
-                .domain(d3.extent(dataSets[0], function (d) { return d.value; }))
+                .domain(d3.extent(dataSets[0], function (d) { return d.date; }))
                 .range([0, width - margin.left - margin.right]);
 
             // Update the y-scale.
             yScale
-                .domain([0, d3.max(dataSets[0], function (d) { return d.date; })])
+                .domain([0, d3.max(dataSets[0], function (d) { return d.value; })])
                 .range([height - margin.top - margin.bottom, 0]);
 
             var svg = d3.select('svg > g'),
@@ -37,7 +37,7 @@ function timeSeriesChart() {
             if (create) {
                 var svg = d3.select(this)
                     .append('svg')
-                    .attr('viewBox', '0 0 ' + width + ' ' + height)
+                    .attr('viewBox', '0 0 ' + width + ' ' + (height + margin.bottom))
                     .attr('preserveAspectRatio', 'xMidYMid meet')
                     .attr('width', width)
                     .attr('height', height)
@@ -80,7 +80,7 @@ function timeSeriesChart() {
         var legendGroup = svg.append('g')
             .attr('class', 'legend'),
             labels = [],
-            yOffset = height - 60,
+            yOffset = height,
             xOffset = -10;
 
         for (var dix = 0; dix < dataSets.length; dix += 1) {
@@ -88,7 +88,6 @@ function timeSeriesChart() {
             if (dataSets.length === 0) {
                 continue;
             }
-            console.log(data);
             var header = data[0].header || (dix + 1).toString(),
                 fieldName = dataSets.length === 1 ? data[0].fieldName : header;
             var padding = 5,
@@ -121,12 +120,12 @@ function timeSeriesChart() {
 
     // The x-accessor for the path generator; xScale ∘ xValue.
     function X(d) {
-        return xScale(d.date);
+        return xScale(d[0]);
     }
 
     // The x-accessor for the path generator; yScale ∘ yValue.
     function Y(d) {
-        return yScale(d.value);
+        return yScale(d[1]);
     }
 
     chart.margin = function (_) {

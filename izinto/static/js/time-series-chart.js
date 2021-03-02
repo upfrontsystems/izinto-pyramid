@@ -80,6 +80,9 @@ function timeSeriesChart() {
 
             addLegend(svg, dataSets);
             addGrid(svg, dataSets, yScale);
+            if (create && dataSet.length > 0) {
+                toolTip(d3.select('svg.chart'));
+            }
         });
     }
 
@@ -133,7 +136,7 @@ function timeSeriesChart() {
             tickCount = 2;
         }
         var fontSize = 11;
-        const gridLines = d3.axisLeft(yScale).ticks(tickCount).tickSize(-(width - margin.left - margin.right));
+        var gridLines = d3.axisLeft(yScale).ticks(tickCount).tickSize(-(width - margin.left - margin.right));
 
         svg.selectAll('g.grid > *').remove();
         svg.select('g.grid')
@@ -147,7 +150,149 @@ function timeSeriesChart() {
             .call(g => g.select('.domain')
                 .remove());
     }
-    
+
+    function dropShadow(svg) {
+        var defs = svg.append('defs');
+
+        // black drop shadow
+        var filter = defs.append('filter')
+            .attr('id', 'drop-shadow');
+
+        filter.append('feGaussianBlur')
+            .attr('in', 'SourceAlpha')
+            .attr('stdDeviation', 1)
+            .attr('result', 'blur');
+        filter.append('feOffset')
+            .attr('in', 'blur')
+            .attr('dx', 1)
+            .attr('dy', 1)
+            .attr('result', 'offsetBlur');
+        filter.append('feFlood')
+            .attr('in', 'offsetBlur')
+            .attr('flood-color', '#2f3d4a')
+            .attr('flood-opacity', '0.5')
+            .attr('result', 'offsetColor');
+        filter.append('feComposite')
+            .attr('in', 'offsetColor')
+            .attr('in2', 'offsetBlur')
+            .attr('operator', 'in')
+            .attr('result', 'offsetBlur');
+
+        var feMerge = filter.append('feMerge');
+
+        feMerge.append('feMergeNode')
+            .attr('in', 'offsetBlur');
+        feMerge.append('feMergeNode')
+            .attr('in', 'SourceGraphic');
+    }
+
+    function toolTip(svg) {
+        dropShadow(svg);
+        var focus = svg.append('g')
+            .attr('transform', 'translate(' + -chartWidth + ',0)')
+            .attr('class', 'focus g-' + chart.id)
+            .style('display', 'none');
+
+        focus.append('line')
+            .attr('class', 'x-hover-line hover-line')
+            .attr('stroke', '#eef5f9')
+            .attr('stroke-width', '2px')
+            .attr('y1', 0)
+            .attr('y2', chartHeight);
+
+        var toolTipInfo = focus.append('g').attr('class', 'tooltip');
+        // add date label
+        toolTipInfo.append('text')
+            .style('font-size', '12px')
+            .attr('class', 'hover-text dataset-date')
+            .attr('x', 10)
+            .attr('y', 40)
+            .attr('font-family', 'Poppins')
+            .attr('fill', 'black');
+
+        // overlay to capture mouse move events on chart
+        // it doesn't cover the full `chartHeight` to ensure that click events on legends can fire
+        svg.append('rect')
+            .attr('transform', 'translate(' + margin.left + ',0)')
+            .attr('class', 'overlay')
+            .attr('width', innerWidth)
+            .attr('height', chartHeight - margin.bottom)
+            .attr('fill', 'none')
+            .attr('pointer-events', 'all');
+    }
+
+    function mouseover() {
+        d3.select('g.focus.g-toolip').style('display', null);
+    }
+
+    function mouseout() {
+        d3.select('g.focus.g-tooltip').style('display', 'none');
+    }
+
+    function mousemove(xcoord) {
+        if (dataSets.length === 0) {
+            return;
+        }
+        var bisectDate = d3Array.bisector(function (d) {
+            return d.date;
+        }).right;
+
+        var markerHeight = this.chartHeight,
+            newX = xcoord + this.margin.left,
+            xscale = this.xAxisScale(),
+            xdate = xscale.invert(xcoord),
+            decimals = this.chart.decimals,
+            tooltip = d3.select('g.focus.g-tooltip'),
+            legend = d3.select('g.legend.g-tooltip');
+
+        // update marker label for each dataset
+        for (var dix = 0; dix < dataSets.length; dix += 1) {
+            var rix = bisectDate(dataSets[dix], xdate) - 1;
+            var record = dataSets[dix][rix];
+            if (record === undefined) {
+                continue;
+            }
+
+            tooltip
+                .attr('transform', 'translate(' + newX + ',' + 0 + ')')
+                .style('display', null)
+                .select('.x-hover-line').attr('y2', markerHeight);
+
+            var legendText = legend.select('text.legend-label.dataset-' + dix).node();
+            if (legendText) {
+                var bBox = legendText.getBBox();
+                legend.select('text.legend-value.dataset-' + dix)
+                    .text(function () {
+                            return record.value.toFixed(decimals) + ' ' + record.unit;
+                    })
+                    .attr('x', bBox.x + bBox.width + 5);
+            }
+        }
+
+        // update date label
+        tooltip
+            .select('text.dataset-date')
+            .text(function () {
+                return d3TimeFormat.timeFormat('%d %B, %H:%M')(xdate);
+            });
+
+        var boxWidth = (tooltip.select('text.dataset-date').node()).getBBox().width;
+
+        if (newX + boxWidth > this.innerWidth) {
+            var boxX = -boxWidth - 30;
+            if (this.windowWidth <= 600) {
+                boxX = this.innerWidth - (newX + boxWidth);
+            }
+            tooltip
+                .select('g.tooltip')
+                .attr('transform', 'translate(' + boxX + ', 0)');
+        } else {
+            tooltip
+                .select('g.tooltip')
+                .attr('transform', 'translate(0, 0)');
+        }
+    }
+
     // The x-accessor for the path generator; xScale ∘ xValue.
     function X(d) {
         return xScale(d[0]);

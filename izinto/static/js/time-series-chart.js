@@ -8,10 +8,12 @@ function timeSeriesChart() {
         yScale = d3.scaleLinear(),
         xAxis = d3.axisBottom(xScale).tickSize(6, 0),
         area = d3.area().x(X).y1(Y),
-        line = d3.line().x(X).y(Y);
+        line = d3.line().x(X).y(Y),
+        dataSets = [];
 
     function chart(selection) {
-        selection.each(function (dataSets) {
+        selection.each(function (datum) {
+            dataSets = datum;
 
             if (width === null) {
                 width = window.innerWidth - 140;
@@ -78,18 +80,17 @@ function timeSeriesChart() {
                 .attr('transform', "translate(0," + yScale.range()[0] + ")")
                 .call(xAxis);
 
-            addLegend(svg, dataSets);
-            addGrid(svg, dataSets, yScale);
-            if (create && dataSet.length > 0) {
-                toolTip(d3.select('svg.chart'));
+            addLegend(svg);
+            addGrid(svg, yScale);
+            if (create && dataSets.length > 0) {
+                toolTip(svg);
             }
         });
     }
 
-    function addLegend(svg, dataSets) {
+    function addLegend(svg) {
         svg.selectAll('g.legend').remove();
-        var legendGroup = svg.append('g')
-            .attr('class', 'legend'),
+        var legendGroup = svg.append('g').attr('class', 'legend g-chart'),
             labels = [],
             yOffset = height,
             xOffset = -10;
@@ -125,12 +126,26 @@ function timeSeriesChart() {
                 .attr('y', yOffset)
                 .attr('fill', textFill)
                 .text(fieldName + ': ');
+            if (label.node()) {
+                const bBox = (label.node()).getBBox();
+                seriesLegend.append('text')
+                    .style('font-weight', '600')
+                    .attr('class', 'legend-value dataset-' + dix)
+                    .attr('x', bBox.x + bBox.width + padding)
+                    .attr('y', yOffset)
+                    .attr('fill', textFill);
+            }
             xOffset += legendWidth;
+            // wrap to next line if legend does not fit
+            if ((xOffset + legendWidth) > width) {
+                xOffset = -20;
+                yOffset += 25;
+            }
         }
     }
 
     // add grid to chart
-    function addGrid(svg, dataSets, yScale) {
+    function addGrid(svg, yScale) {
         var tickCount = 4;
         if (!dataSets.length) {
             tickCount = 2;
@@ -189,8 +204,8 @@ function timeSeriesChart() {
     function toolTip(svg) {
         dropShadow(svg);
         var focus = svg.append('g')
-            .attr('transform', 'translate(' + -chartWidth + ',0)')
-            .attr('class', 'focus g-' + chart.id)
+            .attr('transform', 'translate(' + -width + ',0)')
+            .attr('class', 'focus g-tooltip')
             .style('display', 'none');
 
         focus.append('line')
@@ -198,7 +213,7 @@ function timeSeriesChart() {
             .attr('stroke', '#eef5f9')
             .attr('stroke-width', '2px')
             .attr('y1', 0)
-            .attr('y2', chartHeight);
+            .attr('y2', height);
 
         var toolTipInfo = focus.append('g').attr('class', 'tooltip');
         // add date label
@@ -213,37 +228,45 @@ function timeSeriesChart() {
         // overlay to capture mouse move events on chart
         // it doesn't cover the full `chartHeight` to ensure that click events on legends can fire
         svg.append('rect')
-            .attr('transform', 'translate(' + margin.left + ',0)')
+            .attr('transform', 'translate(0, 0)')
             .attr('class', 'overlay')
-            .attr('width', innerWidth)
-            .attr('height', chartHeight - margin.bottom)
+            .attr('width', (width - margin.left - margin.right))
+            .attr('height', height - margin.bottom)
             .attr('fill', 'none')
-            .attr('pointer-events', 'all');
+            .attr('pointer-events', 'all')
+            .on("mousemove", mousemove)
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseout);
     }
 
     function mouseover() {
         d3.select('g.focus.g-toolip').style('display', null);
     }
 
-    function mouseout() {
+    function mouseout(d, i) {
         d3.select('g.focus.g-tooltip').style('display', 'none');
     }
 
-    function mousemove(xcoord) {
+    function mousemove(event) {
+        var target = event.target,
+            bounds = target.getBoundingClientRect(),
+            xcoord = event.clientX;
+
         if (dataSets.length === 0) {
             return;
         }
-        var bisectDate = d3Array.bisector(function (d) {
-            return d.date;
-        }).right;
+        var bisectDate = d3.bisector(function (d) { return d.date; }).right;
 
-        var markerHeight = this.chartHeight,
-            newX = xcoord + this.margin.left,
-            xscale = this.xAxisScale(),
-            xdate = xscale.invert(xcoord),
-            decimals = this.chart.decimals,
+        // add offset for scaled svg
+        function elementScale() {
+            return bounds.left - event.clientX/15;
+        }
+
+        var markerHeight = height - margin.bottom,
+            newX = xcoord - elementScale(),
+            xdate = xScale.invert(xcoord),
             tooltip = d3.select('g.focus.g-tooltip'),
-            legend = d3.select('g.legend.g-tooltip');
+            legend = d3.select('g.legend.g-chart');
 
         // update marker label for each dataset
         for (var dix = 0; dix < dataSets.length; dix += 1) {
@@ -258,12 +281,12 @@ function timeSeriesChart() {
                 .style('display', null)
                 .select('.x-hover-line').attr('y2', markerHeight);
 
-            var legendText = legend.select('text.legend-label.dataset-' + dix).node();
+            var legendText = (legend.select('text.legend-label.dataset-' + dix)).node();
             if (legendText) {
                 var bBox = legendText.getBBox();
                 legend.select('text.legend-value.dataset-' + dix)
                     .text(function () {
-                            return record.value.toFixed(decimals) + ' ' + record.unit;
+                        return record.value;
                     })
                     .attr('x', bBox.x + bBox.width + 5);
             }
@@ -273,22 +296,17 @@ function timeSeriesChart() {
         tooltip
             .select('text.dataset-date')
             .text(function () {
-                return d3TimeFormat.timeFormat('%d %B, %H:%M')(xdate);
+                return d3.timeFormat('%d %B, %H:%M')(xdate);
             });
 
         var boxWidth = (tooltip.select('text.dataset-date').node()).getBBox().width;
 
-        if (newX + boxWidth > this.innerWidth) {
+        if (newX + boxWidth > (width - margin.left - margin.right)) {
             var boxX = -boxWidth - 30;
-            if (this.windowWidth <= 600) {
-                boxX = this.innerWidth - (newX + boxWidth);
-            }
-            tooltip
-                .select('g.tooltip')
+            tooltip.select('g.tooltip')
                 .attr('transform', 'translate(' + boxX + ', 0)');
         } else {
-            tooltip
-                .select('g.tooltip')
+            tooltip.select('g.tooltip')
                 .attr('transform', 'translate(0, 0)');
         }
     }

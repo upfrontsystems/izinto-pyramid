@@ -10,7 +10,7 @@ html2text==2019.9.26
 hupper==1.9.1
 idna==2.8
 importlib-metadata==0.23
-Jinja2==2.10.3
+Jinja2==2.11.3
 Mako==1.1.0
 MarkupSafe==1.1.1
 MiniMock==1.2.8
